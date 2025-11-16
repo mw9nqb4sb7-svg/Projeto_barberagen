@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+{% block title %}Meu Dashboard{% endblock %}
+
+{% block content %}
+    <h1>👋 Olá, {{ session['usuario_nome'] }}!</h1>
+
+    <!-- Quick Actions -->
+    <div class="dashboard-actions mb-4">
+        <a href="{{ url_for('nova_reserva', slug=barbearia.slug if barbearia else 'principal') }}" class="btn btn-success btn-large btn-full">
+            ✨ Nova Reserva
+        </a>
+    </div>
+
+    <!-- Agendamentos -->
+    <div class="card-form">
+        <h2>📅 Seus Agendamentos</h2>
+
+        {% if reservas %}
+            <!-- Desktop Table -->
+            <div class="table-container desktop-only">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Serviço</th>
+                            <th>Data</th>
+                            <th>Hora</th>
+                            <th>Preço</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for r in reservas %}
+                            <tr>
+                                <td data-label="Serviço">{{ r.servico.nome if r.servico else 'N/A' }}</td>
+                                <td data-label="Data">{{ r.data }}</td>
+                                <td data-label="Hora">{{ r.hora }}</td>
+                                <td data-label="Preço">R$ {{ "%.2f"|format(r.servico.preco) if r.servico else 'N/A' }}</td>
+                                <td data-label="Ações">
+                                    <a href="{{ url_for('cancelar_reserva', reserva_id=r.id) }}" 
+                                       class="btn btn-danger-outline btn-small" 
+                                       onclick="return confirm('❌ Cancelar esta reserva?')">
+                                        Cancelar
+                                    </a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Mobile Cards -->
+            <div class="mobile-only">
+                {% for r in reservas %}
+                    <div class="mobile-card">
+                        <div class="mobile-card-header">
+                            {{ r.servico.nome if r.servico else 'N/A' }}
+                        </div>
+                        <div class="mobile-card-content">
+                            <div class="mobile-card-item">
+                                <span class="mobile-card-label">📅 Data:</span>
+                                <span class="mobile-card-value">{{ r.data }}</span>
+                            </div>
+                            <div class="mobile-card-item">
+                                <span class="mobile-card-label">⏰ Hora:</span>
+                                <span class="mobile-card-value">{{ r.hora }}</span>
+                            </div>
+                            <div class="mobile-card-item">
+                                <span class="mobile-card-label">💰 Preço:</span>
+                                <span class="mobile-card-value">R$ {{ "%.2f"|format(r.servico.preco) if r.servico else 'N/A' }}</span>
+                            </div>
+                            <div class="mobile-card-item">
+                                <a href="{{ url_for('cancelar_reserva', reserva_id=r.id) }}" 
+                                   class="btn btn-danger-outline btn-small btn-full" 
+                                   onclick="return confirm('❌ Cancelar esta reserva?')">
+                                    Cancelar Reserva
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="custom-alert custom-alert-info">
+                <div>
+                    <strong>📋 Nenhum agendamento ainda</strong>
+                    <p>Que tal criar sua primeira reserva? É super fácil!</p>
+                </div>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Serviços Disponíveis -->
+    <div class="card-form">
+        <h2>🎯 Serviços Disponíveis</h2>
+
+        {% if servicos %}
+            <div class="services-grid">
+                {% for s in servicos %}
+                    <div class="service-card">
+                        <div class="service-card-body">
+                            <div class="service-info">
+                                <div class="service-title">{{ s.nome }}</div>
+                                <div class="service-price">💰 R$ {{ "%.2f"|format(s.preco) }}</div>
+                            </div>
+                            <div class="service-actions">
+                                <a href="{{ url_for('nova_reserva', slug=barbearia.slug if barbearia else 'principal') }}" 
+                                   class="btn btn-primary btn-full">
+                                    📅 Agendar Agora
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="custom-alert custom-alert-warning">
+                <strong>⚠️ Nenhum serviço disponível</strong>
+                <p>Em breve teremos novos serviços para você!</p>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}
+
+<style>
+/* Dashboard Actions */
+.dashboard-actions {
+    margin-bottom: var(--spacing-xl);
+}
+
+/* Services Grid */
+.services-grid {
+    display: grid;
+    gap: var(--spacing-lg);
+    grid-template-columns: 1fr;
+}
+
+.service-card {
+    background: white;
+    border: 2px solid var(--gray-200);
+    border-radius: var(--border-radius-xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    transition: all var(--transition-normal);
+    position: relative;
+}
+
+.service-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+}
+
+.service-card:hover {
+    border-color: var(--primary-color);
+    box-shadow: var(--shadow-xl);
+    transform: translateY(-2px);
+}
+
+.service-card-body {
+    padding: var(--spacing-xl);
+}
+
+.service-info {
+    margin-bottom: var(--spacing-lg);
+}
+
+.service-title {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: var(--gray-800);
+    margin-bottom: var(--spacing-sm);
+}
+
+.service-price {
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--success-color);
+}
+
+/* Responsive Visibility */
+.desktop-only {
+    display: block;
+}
+
+.mobile-only {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .desktop-only {
+        display: none;
+    }
+    
+    .mobile-only {
+        display: block;
+    }
+    
+    .services-grid {
+        grid-template-columns: 1fr;
+        gap: var(--spacing-md);
+    }
+    
+    .service-card-body {
+        padding: var(--spacing-lg);
+    }
+    
+    .service-title {
+        font-size: var(--font-size-lg);
+    }
+    
+    .service-price {
+        font-size: var(--font-size-base);
+    }
+}
+
+@media (min-width: 768px) {
+    .services-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 1024px) {
+    .services-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+</style>

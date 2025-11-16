@@ -1,0 +1,382 @@
+{% extends "base.html" %}
+{% block title %}Super Admin - Usuários{% endblock %}
+
+{% block content %}
+<div class="super-admin-usuarios">
+    <!-- Header -->
+    <div class="page-header">
+        <div class="header-info">
+            <div class="super-badge">
+                <span class="badge-icon">⚡</span>
+                <span class="badge-text">SUPER ADMIN</span>
+            </div>
+            <h1>Gerenciamento de Usuários</h1>
+            <p>Visualize todos os usuários organizados por barbearia</p>
+        </div>
+        
+        <div class="header-actions">
+            <a href="{{ url_for('super_admin_dashboard') }}" class="action-btn btn-back">
+                <span class="btn-icon">🏠</span>
+                Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Usuários por Barbearia -->
+    {% for barbearia_nome, usuarios_lista in usuarios_organizados.items() %}
+    <div class="barbearia-section">
+        <div class="barbearia-header">
+            <h2 class="barbearia-title">
+                {% if barbearia_nome == 'Sistema' %}
+                <span class="title-icon">⚡</span>
+                {{ barbearia_nome }}
+                {% else %}
+                <span class="title-icon">🏢</span>
+                {{ barbearia_nome }}
+                {% endif %}
+            </h2>
+            <div class="users-count">
+                <span class="count-number">{{ usuarios_lista|length }}</span>
+                <span class="count-label">usuário{{ 's' if usuarios_lista|length != 1 else '' }}</span>
+            </div>
+        </div>
+        
+        <div class="usuarios-grid">
+            {% for item in usuarios_lista %}
+            {% set usuario = item.usuario %}
+            {% set vinculos = item.vinculos %}
+            <div class="usuario-card">
+                <div class="usuario-header">
+                    <div class="usuario-avatar">
+                        {% if usuario.tipo_conta == 'super_admin' %}⚡
+                        {% elif vinculos and vinculos[0].role == 'admin' %}🛡️
+                        {% elif vinculos and vinculos[0].role == 'barbeiro' %}✂️
+                        {% else %}👤{% endif %}
+                    </div>
+                    <div class="usuario-info">
+                        <h4 class="usuario-nome">{{ usuario.nome }}</h4>
+                        <div class="usuario-email">{{ usuario.email }}</div>
+                    </div>
+                    <div class="usuario-status">
+                        <div class="status-indicator {{ 'active' if usuario.ativo else 'inactive' }}">
+                            {{ '🟢' if usuario.ativo else '🔴' }}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="usuario-details">
+                    <div class="detail-row">
+                        <span class="detail-label">ID:</span>
+                        <span class="detail-value">{{ usuario.id }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Tipo:</span>
+                        <span class="detail-value tipo-{{ usuario.tipo_conta }}">{{ usuario.tipo_conta|replace('_', ' ')|title }}</span>
+                    </div>
+                    {% if usuario.telefone %}
+                    <div class="detail-row">
+                        <span class="detail-label">Telefone:</span>
+                        <span class="detail-value">{{ usuario.telefone }}</span>
+                    </div>
+                    {% endif %}
+                    <div class="detail-row">
+                        <span class="detail-label">Cadastro:</span>
+                        <span class="detail-value">{{ usuario.data_criacao.strftime('%d/%m/%Y') if usuario.data_criacao else 'N/A' }}</span>
+                    </div>
+                </div>
+                
+                {% if vinculos %}
+                <div class="usuario-roles">
+                    <div class="roles-label">Funções:</div>
+                    <div class="roles-list">
+                        {% for vinculo in vinculos %}
+                        <div class="role-badge role-{{ vinculo.role }}">
+                            {% if vinculo.role == 'admin' %}🛡️
+                            {% elif vinculo.role == 'barbeiro' %}✂️
+                            {% else %}👤{% endif %}
+                            {{ vinculo.role|title }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<style>
+.super-admin-usuarios {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: var(--spacing-xl);
+}
+
+/* Header */
+.page-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: var(--spacing-2xl);
+    border-radius: var(--border-radius-xl);
+    margin-bottom: var(--spacing-2xl);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.super-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    background: rgba(255, 255, 255, 0.2);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border-radius: 9999px;
+    font-weight: 700;
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--spacing-md);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.page-header h1 {
+    font-size: var(--font-size-3xl);
+    font-weight: 800;
+    margin-bottom: var(--spacing-sm);
+}
+
+.page-header p {
+    font-size: var(--font-size-lg);
+    opacity: 0.9;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all var(--transition-normal);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.action-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+/* Seções de Barbearia */
+.barbearia-section {
+    margin-bottom: var(--spacing-2xl);
+}
+
+.barbearia-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-xl);
+    padding: var(--spacing-lg);
+    background: var(--gray-50);
+    border-radius: var(--border-radius-lg);
+    border-left: 4px solid #667eea;
+}
+
+.barbearia-title {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: var(--gray-800);
+}
+
+.title-icon {
+    font-size: var(--font-size-xl);
+}
+
+.users-count {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    background: white;
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--border-radius-md);
+    border: 2px solid var(--gray-200);
+}
+
+.count-number {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    color: #667eea;
+}
+
+.count-label {
+    color: var(--gray-600);
+    font-size: var(--font-size-sm);
+}
+
+/* Grid de Usuários */
+.usuarios-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.usuario-card {
+    background: white;
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius-xl);
+    box-shadow: var(--shadow-lg);
+    border: 2px solid var(--gray-100);
+    transition: all var(--transition-normal);
+}
+
+.usuario-card:hover {
+    border-color: #667eea;
+    box-shadow: var(--shadow-xl);
+    transform: translateY(-2px);
+}
+
+.usuario-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.usuario-avatar {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background: var(--gray-100);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--font-size-xl);
+}
+
+.usuario-info {
+    flex: 1;
+}
+
+.usuario-nome {
+    font-size: var(--font-size-lg);
+    font-weight: 700;
+    color: var(--gray-800);
+    margin-bottom: var(--spacing-xs);
+}
+
+.usuario-email {
+    color: var(--gray-600);
+    font-size: var(--font-size-sm);
+}
+
+.status-indicator {
+    font-size: var(--font-size-lg);
+}
+
+/* Detalhes do Usuário */
+.usuario-details {
+    margin-bottom: var(--spacing-lg);
+}
+
+.detail-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-sm) 0;
+    border-bottom: 1px solid var(--gray-100);
+}
+
+.detail-label {
+    color: var(--gray-600);
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+}
+
+.detail-value {
+    color: var(--gray-800);
+    font-size: var(--font-size-sm);
+}
+
+.detail-value.tipo-super-admin { color: #8b5cf6; font-weight: 700; }
+.detail-value.tipo-admin-barbearia { color: #ef4444; font-weight: 700; }
+.detail-value.tipo-barbeiro { color: #f59e0b; font-weight: 700; }
+.detail-value.tipo-cliente { color: #06b6d4; font-weight: 700; }
+
+/* Roles */
+.usuario-roles {
+    background: var(--gray-50);
+    padding: var(--spacing-md);
+    border-radius: var(--border-radius-lg);
+}
+
+.roles-label {
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    color: var(--gray-700);
+    margin-bottom: var(--spacing-sm);
+}
+
+.roles-list {
+    display: flex;
+    gap: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+.role-badge {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius-sm);
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.role-admin {
+    background: var(--error-color);
+    color: white;
+}
+
+.role-barbeiro {
+    background: var(--warning-color);
+    color: white;
+}
+
+.role-cliente {
+    background: var(--info-color);
+    color: white;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        text-align: center;
+        gap: var(--spacing-lg);
+    }
+    
+    .barbearia-header {
+        flex-direction: column;
+        gap: var(--spacing-md);
+        text-align: center;
+    }
+    
+    .usuarios-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .usuario-header {
+        flex-direction: column;
+        text-align: center;
+        gap: var(--spacing-sm);
+    }
+}
+</style>
+{% endblock %}

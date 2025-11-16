@@ -1,0 +1,445 @@
+{% extends "base.html" %}
+{% block title %}Nova Reserva{% endblock %}
+
+{% block content %}
+<div class="col-centered">
+    <h1>📅 Nova Reserva</h1>
+    
+    <div class="card-form">
+        <form method="POST" id="reservaForm">
+            <!-- Passo 1: Serviço -->
+            <div class="form-step">
+                <div class="step-header">
+                    <span class="step-number">1</span>
+                    <h3>Escolha o Serviço</h3>
+                </div>
+                <div class="form-group">
+                    <label for="servico" class="form-label">🎯 Qual serviço você deseja?</label>
+                    <select name="servico" id="servico" class="form-input" required>
+                        <option value="">👆 Selecione um serviço</option>
+                        {% for s in servicos %}
+                            <option value="{{ s.id }}">{{ s.nome }} - 💰 R$ {{ "%.2f"|format(s.preco) }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            
+            <!-- Passo 2: Data -->
+            <div class="form-step">
+                <div class="step-header">
+                    <span class="step-number">2</span>
+                    <h3>Escolha a Data</h3>
+                </div>
+                <div class="form-group">
+                    <label for="data" class="form-label">📆 Que dia funciona para você?</label>
+                    <input type="date" name="data" id="data" class="form-input" required>
+                    <small class="form-help">📱 Dica: Após escolher a data, os horários disponíveis aparecerão</small>
+                </div>
+            </div>
+            
+            <!-- Passo 3: Horário -->
+            <div class="form-step">
+                <div class="step-header">
+                    <span class="step-number">3</span>
+                    <h3>Escolha o Horário</h3>
+                </div>
+                <div class="form-group">
+                    <label for="hora" class="form-label">⏰ Qual horário prefere?</label>
+                    <select name="hora" id="hora" class="form-input" required disabled>
+                        <option value="">⬆️ Primeiro selecione uma data</option>
+                    </select>
+                    
+                    <div id="loading-horarios" class="loading-state" style="display: none;">
+                        <div class="loading-spinner"></div>
+                        <span>Carregando horários disponíveis...</span>
+                    </div>
+                    
+                    <div id="sem-horarios" class="empty-state" style="display: none;">
+                        <div class="empty-icon">😔</div>
+                        <p>Ops! Não há horários disponíveis para esta data.</p>
+                        <small>Tente escolher outro dia</small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Resumo da Reserva -->
+            <div id="reserva-resumo" class="reservation-summary" style="display: none;">
+                <h3>📋 Resumo da sua Reserva</h3>
+                <div class="summary-content">
+                    <div class="summary-item">
+                        <span class="summary-label">Serviço:</span>
+                        <span class="summary-value" id="resumo-servico">-</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Data:</span>
+                        <span class="summary-value" id="resumo-data">-</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Horário:</span>
+                        <span class="summary-value" id="resumo-hora">-</span>
+                    </div>
+                    <div class="summary-item summary-total">
+                        <span class="summary-label">Valor:</span>
+                        <span class="summary-value" id="resumo-preco">-</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Ações -->
+            <div class="form-actions">
+                <button type="submit" class="btn btn-success btn-full" id="btnAgendar" disabled>
+                    ✨ Confirmar Reserva
+                </button>
+                <a href="{{ url_for('barbearia_publica', slug=barbearia.slug if barbearia else 'principal') }}" class="btn btn-secondary btn-full">
+                    ← Voltar ao Dashboard
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const dataInput = document.getElementById('data');
+    const horaSelect = document.getElementById('hora');
+    const btnAgendar = document.getElementById('btnAgendar');
+    const loadingDiv = document.getElementById('loading-horarios');
+    const semHorariosDiv = document.getElementById('sem-horarios');
+    
+    // Configurar data mínima (hoje)
+    const hoje = new Date();
+    dataInput.min = hoje.toISOString().split('T')[0];
+    
+    dataInput.addEventListener('change', function() {
+        const dataSelecionada = this.value;
+        if (!dataSelecionada) return;
+        
+        // Limpar horários anteriores
+        horaSelect.innerHTML = '<option value="">Carregando...</option>';
+        horaSelect.disabled = true;
+        btnAgendar.disabled = true;
+        loadingDiv.style.display = 'block';
+        semHorariosDiv.style.display = 'none';
+        
+        // Buscar horários disponíveis
+        fetch(`/api/horarios_disponiveis?data=${dataSelecionada}`)
+            .then(response => response.json())
+            .then(data => {
+                loadingDiv.style.display = 'none';
+                
+                if (data.error) {
+                    horaSelect.innerHTML = '<option value="">Erro ao carregar horários</option>';
+                    console.error('Erro:', data.error);
+                    return;
+                }
+                
+                horaSelect.innerHTML = '';
+                
+                if (data.horarios && data.horarios.length > 0) {
+                    horaSelect.innerHTML = '<option value="">Selecione um horário</option>';
+                    data.horarios.forEach(horario => {
+                        const option = document.createElement('option');
+                        option.value = horario;
+                        option.textContent = horario;
+                        horaSelect.appendChild(option);
+                    });
+                    horaSelect.disabled = false;
+                    semHorariosDiv.style.display = 'none';
+                } else {
+                    horaSelect.innerHTML = '<option value="">Nenhum horário disponível</option>';
+                    semHorariosDiv.style.display = 'block';
+                }
+            })
+            .catch(error => {
+                loadingDiv.style.display = 'none';
+                horaSelect.innerHTML = '<option value="">Erro ao carregar horários</option>';
+                console.error('Erro na requisição:', error);
+            });
+    });
+    
+    horaSelect.addEventListener('change', function() {
+        btnAgendar.disabled = !this.value;
+        atualizarResumo();
+    });
+    
+    // Listeners para atualizar resumo
+    document.getElementById('servico').addEventListener('change', atualizarResumo);
+    dataInput.addEventListener('change', atualizarResumo);
+    
+    function atualizarResumo() {
+        const servicoSelect = document.getElementById('servico');
+        const dataValue = dataInput.value;
+        const horaValue = horaSelect.value;
+        const resumoDiv = document.getElementById('reserva-resumo');
+        
+        if (servicoSelect.value && dataValue && horaValue) {
+            // Mostrar resumo
+            resumoDiv.style.display = 'block';
+            
+            // Atualizar valores
+            const servicoText = servicoSelect.options[servicoSelect.selectedIndex].text;
+            const servicoParts = servicoText.split(' - ');
+            const servicoNome = servicoParts[0];
+            const servicoPreco = servicoParts[1] || 'R$ 0,00';
+            
+            // Formatar data
+            const dataFormatada = new Date(dataValue + 'T00:00:00').toLocaleDateString('pt-BR');
+            
+            document.getElementById('resumo-servico').textContent = servicoNome;
+            document.getElementById('resumo-data').textContent = dataFormatada;
+            document.getElementById('resumo-hora').textContent = horaValue;
+            document.getElementById('resumo-preco').textContent = servicoPreco;
+        } else {
+            resumoDiv.style.display = 'none';
+        }
+    }
+    
+    // Validação do formulário
+    document.getElementById('reservaForm').addEventListener('submit', function(e) {
+        if (!document.getElementById('servico').value || !dataInput.value || !horaSelect.value) {
+            e.preventDefault();
+            alert('Por favor, preencha todos os campos antes de continuar.');
+        }
+    });
+});
+</script>
+
+<style>
+/* Estilos específicos para Nova Reserva */
+.form-step {
+    margin-bottom: var(--spacing-2xl);
+    padding: var(--spacing-xl);
+    background: linear-gradient(135deg, var(--gray-50) 0%, white 100%);
+    border-radius: var(--border-radius-xl);
+    border: 2px solid var(--gray-200);
+    transition: all var(--transition-normal);
+}
+
+.form-step:hover {
+    border-color: var(--primary-light);
+    box-shadow: var(--shadow-md);
+}
+
+.step-header {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.step-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    border-radius: 50%;
+    font-weight: 700;
+    font-size: var(--font-size-lg);
+    box-shadow: var(--shadow-md);
+}
+
+.step-header h3 {
+    margin: 0;
+    color: var(--gray-800);
+    font-size: var(--font-size-xl);
+    font-weight: 600;
+}
+
+/* Loading State */
+.loading-state {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    padding: var(--spacing-lg);
+    background: linear-gradient(135deg, rgba(66, 153, 225, 0.1) 0%, rgba(102, 126, 234, 0.1) 100%);
+    border-radius: var(--border-radius-lg);
+    margin-top: var(--spacing-md);
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+.loading-spinner {
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 2px solid var(--primary-light);
+    border-top: 2px solid var(--primary-color);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center;
+    padding: var(--spacing-xl);
+    background: linear-gradient(135deg, rgba(237, 137, 54, 0.1) 0%, rgba(245, 158, 11, 0.1) 100%);
+    border-radius: var(--border-radius-lg);
+    margin-top: var(--spacing-md);
+}
+
+.empty-icon {
+    font-size: 3rem;
+    margin-bottom: var(--spacing-md);
+}
+
+.empty-state p {
+    color: var(--gray-700);
+    font-weight: 600;
+    margin-bottom: var(--spacing-sm);
+}
+
+.empty-state small {
+    color: var(--gray-500);
+}
+
+/* Reservation Summary */
+.reservation-summary {
+    background: linear-gradient(135deg, rgba(72, 187, 120, 0.1) 0%, rgba(56, 161, 105, 0.1) 100%);
+    border: 2px solid var(--success-color);
+    border-radius: var(--border-radius-xl);
+    padding: var(--spacing-xl);
+    margin: var(--spacing-xl) 0;
+}
+
+.reservation-summary h3 {
+    color: var(--success-color);
+    margin-bottom: var(--spacing-lg);
+    text-align: center;
+}
+
+.summary-content {
+    display: grid;
+    gap: var(--spacing-md);
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-md);
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--shadow-sm);
+}
+
+.summary-label {
+    font-weight: 600;
+    color: var(--gray-600);
+}
+
+.summary-value {
+    font-weight: 700;
+    color: var(--gray-800);
+}
+
+.summary-total {
+    border: 2px solid var(--success-color);
+    background: linear-gradient(135deg, rgba(72, 187, 120, 0.05) 0%, rgba(56, 161, 105, 0.05) 100%);
+}
+
+.summary-total .summary-value {
+    color: var(--success-color);
+    font-size: var(--font-size-lg);
+}
+
+/* Mobile Optimizations */
+@media (max-width: 768px) {
+    .form-step {
+        padding: var(--spacing-lg);
+        margin-bottom: var(--spacing-lg);
+    }
+    
+    .step-header {
+        flex-direction: column;
+        text-align: center;
+        gap: var(--spacing-sm);
+    }
+    
+    .step-number {
+        width: 2rem;
+        height: 2rem;
+        font-size: var(--font-size-base);
+    }
+    
+    .step-header h3 {
+        font-size: var(--font-size-lg);
+    }
+    
+    .reservation-summary {
+        padding: var(--spacing-lg);
+    }
+    
+    .summary-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--spacing-xs);
+    }
+    
+    .summary-value {
+        font-size: var(--font-size-lg);
+    }
+}
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: 500;
+    color: #333;
+}
+
+.form-help {
+    display: block;
+    margin-top: 5px;
+    font-size: 12px;
+    color: #666;
+}
+
+.loading-message {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: #e3f2fd;
+    border: 1px solid #90caf9;
+    border-radius: 4px;
+    color: #0d47a1;
+    font-size: 14px;
+}
+
+.alert-message {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: #fff3cd;
+    border: 1px solid #ffeaa7;
+    border-radius: 4px;
+    color: #856404;
+    font-size: 14px;
+}
+
+.form-actions {
+    margin-top: 30px;
+    display: flex;
+    gap: 10px;
+}
+
+.btn-primary:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.form-input:disabled {
+    background-color: #f5f5f5;
+    cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+    .form-actions {
+        flex-direction: column;
+    }
+}
+</style>
+{% endblock %}

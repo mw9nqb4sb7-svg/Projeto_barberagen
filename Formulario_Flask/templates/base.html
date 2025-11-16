@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Sistema de Agendamentos{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <nav class="custom-nav">
+        <div class="nav-content">
+            <div class="nav-brand">
+                <a href="/barbearias" style="color: inherit; text-decoration: none;">Sistema Agendamentos</a>
+            </div>
+            <ul class="nav-list">
+                {% if session.get('usuario_id') %}
+                   
+                    
+                    {% if session.get('usuario_tipo') == 'admin' %}
+                        <!-- Links exclusivos do Admin -->
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_home') }}">Painel Admin</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('clientes') }}">Clientes</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('servicos') }}">Serviços</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('admin_disponibilidade') }}">Disponibilidade</a></li>
+                    {% else %}
+                        <!-- Links exclusivos do Cliente -->
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('meus_agendamentos', slug=barbearia.slug if barbearia else 'principal') }}">Meus Agendamentos</a></li>
+                        <li class="nav-item"><a class="nav-link" href="{{ url_for('nova_reserva', slug=barbearia.slug if barbearia else 'principal') }}">Nova Reserva</a></li>
+                    {% endif %}
+                    
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('perfil') }}">Perfil</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('logout', slug=barbearia.slug if barbearia else 'principal') }}">Sair</a></li>
+                {% else %}
+                    <!-- Links públicos (não logado) -->
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('login', slug=barbearia.slug if barbearia else 'principal') }}">Login</a></li>
+                    <li class="nav-item"><a class="nav-link" href="{{ url_for('cadastro', slug=barbearia.slug if barbearia else 'principal') }}">Cadastro</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </nav>
+
+    <div class="custom-container">
+        <!-- Mensagens Flash -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="custom-alert custom-alert-{{ category }}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Conteúdo específico de cada página -->
+        {% block content %}{% endblock %}
+    </div>
+
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,162 @@
+{% extends "base.html" %}
+{% block title %}Calendário de Disponibilidade{% endblock %}
+
+{% block content %}
+    <h1>Calendário de Disponibilidade</h1>
+    
+    <div class="card-form">
+        <p class="intro-text">
+            Configure a disponibilidade semana por semana. Clique em uma semana para definir horários específicos para cada dia.
+        </p>
+        
+        <div class="calendario-container">
+            {% for semana in semanas %}
+                <div class="semana-item {% if semana.configurada %}configurada{% else %}nao-configurada{% endif %}">
+                    <div class="semana-header">
+                        <h3>{{ semana.inicio.strftime('%d/%m') }} - {{ semana.fim.strftime('%d/%m/%Y') }}</h3>
+                        <span class="status-badge {% if semana.configurada %}status-ok{% else %}status-pending{% endif %}">
+                            {% if semana.configurada %}
+                                Configurada
+                            {% else %}
+                                Padrão
+                            {% endif %}
+                        </span>
+                    </div>
+                    
+                    <div class="semana-info">
+                        <p><strong>{{ semana.inicio.strftime('%B').title() }} de {{ semana.inicio.year }}</strong></p>
+                        <p class="semana-periodo">
+                            {{ semana.inicio.strftime('%A').title() }}, {{ semana.inicio.strftime('%d') }} - 
+                            {{ semana.fim.strftime('%A').title() }}, {{ semana.fim.strftime('%d') }}
+                        </p>
+                    </div>
+                    
+                    <div class="semana-actions">
+                        <a href="{{ url_for('admin_disponibilidade_semana', data_inicio=semana.inicio.strftime('%Y-%m-%d')) }}" 
+                           class="btn-primary btn-small">
+                            {% if semana.configurada %}
+                                Editar Semana
+                            {% else %}
+                                Configurar Semana
+                            {% endif %}
+                        </a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <style>
+    .intro-text {
+        color: #666;
+        margin-bottom: 25px;
+        font-size: 1.1em;
+        text-align: center;
+    }
+
+    .calendario-container {
+        display: grid;
+        gap: 20px;
+    }
+
+    .semana-item {
+        background: white;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        padding: 20px;
+        transition: all 0.3s ease;
+        position: relative;
+    }
+
+    .semana-item:hover {
+        border-color: #007bff;
+        box-shadow: 0 4px 12px rgba(0, 123, 255, 0.15);
+    }
+
+    .semana-item.configurada {
+        border-color: #28a745;
+        background: #f8fff9;
+    }
+
+    .semana-item.nao-configurada {
+        border-color: #ffc107;
+        background: #fffdf5;
+    }
+
+    .semana-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+    }
+
+    .semana-header h3 {
+        margin: 0;
+        color: #2c3e50;
+        font-size: 1.3em;
+    }
+
+    .status-badge {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.85em;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .status-ok {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+    }
+
+    .status-pending {
+        background: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffeaa7;
+    }
+
+    .semana-info {
+        margin-bottom: 20px;
+    }
+
+    .semana-info p {
+        margin: 5px 0;
+        color: #495057;
+    }
+
+    .semana-periodo {
+        font-size: 0.95em;
+        color: #6c757d;
+    }
+
+    .semana-actions {
+        text-align: right;
+    }
+
+    .btn-small {
+        padding: 8px 16px;
+        font-size: 0.9em;
+    }
+
+    @media (max-width: 768px) {
+        .semana-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+        
+        .semana-actions {
+            text-align: center;
+        }
+        
+        .calendario-container {
+            gap: 15px;
+        }
+        
+        .semana-item {
+            padding: 15px;
+        }
+    }
+    </style>
+{% endblock %}

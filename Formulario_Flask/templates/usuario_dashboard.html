@@ -1,0 +1,506 @@
+{% extends "base.html" %}
+{% block title %}{{ barbearia.nome }} - Dashboard{% endblock %}
+
+{% block content %}
+<div class="user-dashboard">
+    <!-- Header da Barbearia -->
+    <div class="barbearia-header">
+        <div class="barbearia-info">
+            <h1>{{ barbearia.nome }}</h1>
+            <p class="barbearia-endereco">
+                {% if barbearia.endereco %}
+                    📍 {{ barbearia.endereco }}
+                {% endif %}
+                {% if barbearia.telefone %}
+                    📞 {{ barbearia.telefone }}
+                {% endif %}
+            </p>
+        </div>
+        
+        <div class="user-info">
+            <div class="user-badge {{ user_type }}">
+                {% if user_type == 'barbeiro' %}
+                    ✂️ Barbeiro
+                {% else %}
+                    👤 Cliente
+                {% endif %}
+            </div>
+            <span class="user-name">Olá, {{ session.usuario_nome }}!</span>
+        </div>
+    </div>
+
+    <!-- Navegação -->
+    <div class="nav-actions">
+        <a href="{{ url_for('nova_reserva', slug=barbearia.slug) }}" class="nav-btn primary">
+            <span class="btn-icon">📅</span>
+            Nova Reserva
+        </a>
+        
+        {% if user_type == 'barbeiro' %}
+        <a href="{{ url_for('servicos', b=request.args.get('b', '')) }}" class="nav-btn secondary">
+            <span class="btn-icon">⚙️</span>
+            Gerenciar Serviços
+        </a>
+        {% endif %}
+        
+        <a href="{{ url_for('logout', slug=barbearia.slug if barbearia else 'principal') }}" class="nav-btn logout">
+            <span class="btn-icon">🚪</span>
+            Sair
+        </a>
+    </div>
+
+    <!-- Grid Principal -->
+    <div class="dashboard-grid">
+        <!-- Minhas Reservas -->
+        <div class="dashboard-card">
+            <div class="card-header">
+                <h3>
+                    {% if user_type == 'barbeiro' %}
+                        📋 Seus Atendimentos
+                    {% else %}
+                        📅 Suas Reservas
+                    {% endif %}
+                </h3>
+                <span class="card-count">{{ reservas|length }}</span>
+            </div>
+            
+            <div class="card-content">
+                {% if reservas %}
+                    <div class="reservas-list">
+                        {% for reserva in reservas[:5] %}
+                        <div class="reserva-item">
+                            <div class="reserva-service">
+                                <strong>{{ reserva.servico.nome }}</strong>
+                                <span class="service-price">R$ {{ "%.2f"|format(reserva.servico.preco) }}</span>
+                            </div>
+                            
+                            <div class="reserva-details">
+                                <span class="reserva-date">📅 {{ reserva.data }}</span>
+                                <span class="reserva-time">⏰ {{ reserva.hora_inicio }}</span>
+                                {% if user_type == 'barbeiro' %}
+                                    <span class="reserva-client">👤 {{ reserva.cliente.nome }}</span>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="reserva-status">
+                                <span class="status-badge {{ reserva.status }}">
+                                    {% if reserva.status == 'agendada' %}
+                                        🕐 Agendada
+                                    {% elif reserva.status == 'confirmada' %}
+                                        ✅ Confirmada
+                                    {% elif reserva.status == 'concluida' %}
+                                        ✅ Concluída
+                                    {% else %}
+                                        ❌ Cancelada
+                                    {% endif %}
+                                </span>
+                            </div>
+                            
+                            {% if user_type == 'cliente' and reserva.status == 'agendada' %}
+                            <div class="reserva-actions">
+                                <a href="{{ url_for('cancelar_reserva', reserva_id=reserva.id) }}" 
+                                   class="btn-cancel"
+                                   onclick="return confirm('Tem certeza que deseja cancelar esta reserva?')">
+                                    ❌ Cancelar
+                                </a>
+                            </div>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                        
+                        {% if reservas|length > 5 %}
+                        <div class="more-items">
+                            <small>E mais {{ reservas|length - 5 }} reservas...</small>
+                        </div>
+                        {% endif %}
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <div class="empty-icon">📭</div>
+                        {% if user_type == 'barbeiro' %}
+                            <p>Nenhum atendimento agendado ainda</p>
+                            <small>Os clientes verão seus horários disponíveis aqui</small>
+                        {% else %}
+                            <p>Você ainda não tem reservas</p>
+                            <small>Clique em "Nova Reserva" para agendar</small>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Serviços Disponíveis -->
+        <div class="dashboard-card">
+            <div class="card-header">
+                <h3>💼 Serviços Disponíveis</h3>
+                <span class="card-count">{{ servicos|length }}</span>
+            </div>
+            
+            <div class="card-content">
+                {% if servicos %}
+                    <div class="servicos-grid">
+                        {% for servico in servicos %}
+                        <div class="servico-item">
+                            <div class="servico-info">
+                                <strong>{{ servico.nome }}</strong>
+                                <span class="servico-duracao">⏱️ {{ servico.duracao }}min</span>
+                            </div>
+                            <div class="servico-preco">
+                                R$ {{ "%.2f"|format(servico.preco) }}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="empty-state">
+                        <div class="empty-icon">⚙️</div>
+                        <p>Nenhum serviço cadastrado</p>
+                        <small>Entre em contato com o administrador</small>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Ações Rápidas -->
+    <div class="quick-actions">
+        <a href="/" class="quick-btn">
+            <span class="btn-icon">🏠</span>
+            <span class="btn-text">Todas as Barbearias</span>
+        </a>
+        
+        <a href="{{ url_for('perfil') }}" class="quick-btn">
+            <span class="btn-icon">👤</span>
+            <span class="btn-text">Meu Perfil</span>
+        </a>
+        
+        {% if user_type == 'barbeiro' %}
+        <a href="{{ url_for('admin_disponibilidade', b=request.args.get('b', '')) }}" class="quick-btn">
+            <span class="btn-icon">📋</span>
+            <span class="btn-text">Horários</span>
+        </a>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+.user-dashboard {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--spacing-lg);
+}
+
+.barbearia-header {
+    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+    color: white;
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius-xl);
+    margin-bottom: var(--spacing-xl);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.barbearia-header h1 {
+    font-size: var(--font-size-2xl);
+    margin-bottom: var(--spacing-sm);
+}
+
+.barbearia-endereco {
+    opacity: 0.9;
+    display: flex;
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+}
+
+.user-info {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: var(--spacing-sm);
+}
+
+.user-badge {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--border-radius-lg);
+    font-weight: 600;
+    font-size: var(--font-size-sm);
+}
+
+.user-badge.barbeiro {
+    background: rgba(72, 187, 120, 0.3);
+    border: 2px solid rgba(72, 187, 120, 0.5);
+}
+
+.user-badge.cliente {
+    background: rgba(66, 153, 225, 0.3);
+    border: 2px solid rgba(66, 153, 225, 0.5);
+}
+
+.nav-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-xl);
+    flex-wrap: wrap;
+}
+
+.nav-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all var(--transition-normal);
+    border: none;
+}
+
+.nav-btn.primary {
+    background: var(--success-color);
+    color: white;
+}
+
+.nav-btn.secondary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.nav-btn.logout {
+    background: var(--error-color);
+    color: white;
+    margin-left: auto;
+}
+
+.nav-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: var(--spacing-xl);
+    margin-bottom: var(--spacing-xl);
+}
+
+.dashboard-card {
+    background: white;
+    border-radius: var(--border-radius-xl);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+}
+
+.card-header {
+    background: var(--gray-50);
+    padding: var(--spacing-lg);
+    border-bottom: 2px solid var(--gray-100);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.card-header h3 {
+    margin: 0;
+    color: var(--gray-800);
+}
+
+.card-count {
+    background: var(--primary-color);
+    color: white;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius-lg);
+    font-weight: 700;
+    font-size: var(--font-size-sm);
+}
+
+.card-content {
+    padding: var(--spacing-lg);
+}
+
+.reservas-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.reserva-item {
+    padding: var(--spacing-md);
+    border: 2px solid var(--gray-100);
+    border-radius: var(--border-radius-lg);
+    transition: all var(--transition-normal);
+}
+
+.reserva-item:hover {
+    border-color: var(--primary-light);
+    box-shadow: var(--shadow-sm);
+}
+
+.reserva-service {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-sm);
+}
+
+.service-price {
+    color: var(--success-color);
+    font-weight: 700;
+}
+
+.reserva-details {
+    display: flex;
+    gap: var(--spacing-md);
+    font-size: var(--font-size-sm);
+    color: var(--gray-600);
+    margin-bottom: var(--spacing-sm);
+    flex-wrap: wrap;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius);
+    font-size: var(--font-size-xs);
+    font-weight: 600;
+}
+
+.status-badge.agendada {
+    background: var(--warning-light);
+    color: var(--warning-dark);
+}
+
+.status-badge.confirmada,
+.status-badge.concluida {
+    background: var(--success-light);
+    color: var(--success-dark);
+}
+
+.status-badge.cancelada {
+    background: var(--error-light);
+    color: var(--error-dark);
+}
+
+.btn-cancel {
+    color: var(--error-color);
+    text-decoration: none;
+    font-size: var(--font-size-xs);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border: 1px solid var(--error-color);
+    border-radius: var(--border-radius);
+    transition: all var(--transition-normal);
+}
+
+.btn-cancel:hover {
+    background: var(--error-color);
+    color: white;
+}
+
+.servicos-grid {
+    display: grid;
+    gap: var(--spacing-sm);
+}
+
+.servico-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--spacing-sm);
+    background: var(--gray-50);
+    border-radius: var(--border-radius);
+}
+
+.servico-info {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+}
+
+.servico-duracao {
+    font-size: var(--font-size-xs);
+    color: var(--gray-500);
+}
+
+.servico-preco {
+    font-weight: 700;
+    color: var(--success-color);
+}
+
+.empty-state {
+    text-align: center;
+    padding: var(--spacing-xl);
+    color: var(--gray-500);
+}
+
+.empty-icon {
+    font-size: var(--font-size-3xl);
+    margin-bottom: var(--spacing-md);
+}
+
+.quick-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.quick-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--spacing-xs);
+    padding: var(--spacing-md);
+    background: white;
+    border: 2px solid var(--gray-200);
+    border-radius: var(--border-radius-lg);
+    text-decoration: none;
+    color: var(--gray-700);
+    transition: all var(--transition-normal);
+    min-width: 100px;
+}
+
+.quick-btn:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+    transform: translateY(-2px);
+}
+
+.btn-text {
+    font-size: var(--font-size-sm);
+    font-weight: 500;
+}
+
+.more-items {
+    text-align: center;
+    padding: var(--spacing-sm);
+    color: var(--gray-500);
+    font-style: italic;
+}
+
+@media (max-width: 768px) {
+    .barbearia-header {
+        flex-direction: column;
+        text-align: center;
+        gap: var(--spacing-md);
+    }
+    
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .nav-actions {
+        justify-content: center;
+    }
+    
+    .nav-btn.logout {
+        margin-left: 0;
+    }
+    
+    .reserva-details {
+        flex-direction: column;
+        gap: var(--spacing-xs);
+    }
+}
+</style>
+{% endblock %}

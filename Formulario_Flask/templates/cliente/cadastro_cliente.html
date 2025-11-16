@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Cadastro{% endblock %}
+
+{% block content %}
+<div class="col-centered">
+    <h1>✨ Criar Conta</h1>
+    <div class="card-form">
+        <form method="POST">
+            {% if request.args.get('b') %}
+            <input type="hidden" name="barbearia_slug" value="{{ request.args.get('b') }}">
+            {% endif %}
+            <div class="form-group">
+                <label for="nome" class="form-label">👤 Nome Completo</label>
+                <input type="text" class="form-input" id="nome" name="nome" 
+                       placeholder="Seu nome completo" required autocomplete="name">
+                <small class="form-help">Como você gostaria de ser chamado?</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="email" class="form-label">📧 Email</label>
+                <input type="email" class="form-input" id="email" name="email" 
+                       placeholder="seu@email.com" required autocomplete="email">
+                <small class="form-help">Usaremos para enviar confirmações de agendamento</small>
+            </div>
+            
+            <div class="form-group">
+                <label for="senha" class="form-label">🔐 Senha</label>
+                <input type="password" class="form-input" id="senha" name="senha" 
+                       placeholder="Crie uma senha segura" required autocomplete="new-password">
+                <small class="form-help">Escolha uma senha que você lembre facilmente</small>
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="btn btn-success btn-full">
+                    🚀 Criar Minha Conta
+                </button>
+            </div>
+        </form>
+        
+        <div class="text-center mt-4">
+            <p class="text-gray-600">Já tem uma conta?</p>
+            <a href="{{ url_for('login', slug=barbearia.slug if barbearia else 'principal') }}" class="btn btn-primary-outline btn-full">
+                Fazer Login
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+.text-gray-600 {
+    color: var(--gray-600);
+    margin-bottom: var(--spacing-sm);
+}
+
+@media (max-width: 480px) {
+    .col-centered {
+        padding: 0 var(--spacing-sm);
+    }
+}
+</style>
+{% endblock %}

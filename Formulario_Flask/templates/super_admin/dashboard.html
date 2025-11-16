@@ -1,0 +1,573 @@
+{% extends "base.html" %}
+{% block title %}Super Admin - Dashboard Global{% endblock %}
+
+{% block content %}
+<div class="super-admin-dashboard">
+    <!-- Header -->
+    <div class="dashboard-header">
+        <div class="header-info">
+            <div class="super-badge">
+                <span class="badge-icon">⚡</span>
+                <span class="badge-text">SUPER ADMIN</span>
+            </div>
+            <h1>Dashboard Global do Sistema</h1>
+            <p>Visão completa de todas as barbearias e dados do sistema</p>
+        </div>
+        
+        <div class="header-actions">
+            <a href="{{ url_for('super_admin_barbearias') }}" class="action-btn btn-barbearias">
+                <span class="btn-icon">🏢</span>
+                Barbearias
+            </a>
+            <a href="{{ url_for('super_admin_usuarios') }}" class="action-btn btn-usuarios">
+                <span class="btn-icon">👥</span>
+                Usuários
+            </a>
+            <a href="{{ url_for('super_admin_relatorios') }}" class="action-btn btn-relatorios">
+                <span class="btn-icon">📊</span>
+                Relatórios
+            </a>
+            <a href="/super_admin/logout" class="action-btn btn-logout">
+                <span class="btn-icon">🚪</span>
+                Sair
+            </a>
+        </div>
+    </div>
+
+    <!-- Estatísticas Globais -->
+    <div class="global-stats">
+        <h2 class="section-title">📈 Estatísticas Globais</h2>
+        <div class="stats-grid">
+            <div class="stat-card stat-barbearias">
+                <div class="stat-icon">🏢</div>
+                <div class="stat-content">
+                    <div class="stat-number">{{ total_barbearias }}</div>
+                    <div class="stat-label">Barbearias Ativas</div>
+                </div>
+            </div>
+            
+            <div class="stat-card stat-usuarios">
+                <div class="stat-icon">👥</div>
+                <div class="stat-content">
+                    <div class="stat-number">{{ total_usuarios }}</div>
+                    <div class="stat-label">Usuários Totais</div>
+                </div>
+            </div>
+            
+            <div class="stat-card stat-servicos">
+                <div class="stat-icon">💼</div>
+                <div class="stat-content">
+                    <div class="stat-number">{{ total_servicos }}</div>
+                    <div class="stat-label">Serviços Ativos</div>
+                </div>
+            </div>
+            
+            <div class="stat-card stat-reservas">
+                <div class="stat-icon">📅</div>
+                <div class="stat-content">
+                    <div class="stat-number">{{ total_reservas }}</div>
+                    <div class="stat-label">Reservas Totais</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tipos de Usuários -->
+    <div class="users-breakdown">
+        <h3 class="subsection-title">👤 Distribuição de Usuários</h3>
+        <div class="users-grid">
+            <div class="user-type-card type-super">
+                <div class="type-icon">⚡</div>
+                <div class="type-info">
+                    <div class="type-number">{{ usuarios_stats.super_admin }}</div>
+                    <div class="type-label">Super Admins</div>
+                </div>
+            </div>
+            
+            <div class="user-type-card type-admin">
+                <div class="type-icon">🛡️</div>
+                <div class="type-info">
+                    <div class="type-number">{{ usuarios_stats.admin_barbearia }}</div>
+                    <div class="type-label">Admins de Barbearia</div>
+                </div>
+            </div>
+            
+            <div class="user-type-card type-barbeiro">
+                <div class="type-icon">✂️</div>
+                <div class="type-info">
+                    <div class="type-number">{{ usuarios_stats.barbeiro }}</div>
+                    <div class="type-label">Barbeiros</div>
+                </div>
+            </div>
+            
+            <div class="user-type-card type-cliente">
+                <div class="type-icon">👤</div>
+                <div class="type-info">
+                    <div class="type-number">{{ usuarios_stats.cliente }}</div>
+                    <div class="type-label">Clientes</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Detalhes das Barbearias -->
+    <div class="barbearias-section">
+        <h3 class="subsection-title">🏪 Visão Geral das Barbearias</h3>
+        <div class="barbearias-grid">
+            {% for stats in barbearias_stats %}
+            <div class="barbearia-card">
+                <div class="barbearia-header">
+                    <h4 class="barbearia-name">{{ stats.barbearia.nome }}</h4>
+                    <div class="barbearia-badge">
+                        <span class="badge-slug">{{ stats.barbearia.slug }}</span>
+                    </div>
+                </div>
+                
+                <div class="barbearia-info">
+                    <div class="info-item">
+                        <span class="info-icon">🆔</span>
+                        <span class="info-text">ID: {{ stats.barbearia.id }}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-icon">📞</span>
+                        <span class="info-text">{{ stats.barbearia.telefone or 'N/A' }}</span>
+                    </div>
+                </div>
+                
+                <div class="barbearia-stats">
+                    <div class="mini-stat">
+                        <div class="mini-stat-number">{{ stats.usuarios }}</div>
+                        <div class="mini-stat-label">Usuários</div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="mini-stat-number">{{ stats.servicos }}</div>
+                        <div class="mini-stat-label">Serviços</div>
+                    </div>
+                    <div class="mini-stat">
+                        <div class="mini-stat-number">{{ stats.reservas }}</div>
+                        <div class="mini-stat-label">Reservas</div>
+                    </div>
+                </div>
+                
+                <div class="barbearia-actions">
+                    <a href="/teste-isolamento?b={{ stats.barbearia.slug }}" class="action-link">
+                        <span class="link-icon">🔍</span>
+                        Ver Detalhes
+                    </a>
+                    <a href="/?b={{ stats.barbearia.slug }}" class="action-link">
+                        <span class="link-icon">🏠</span>
+                        Visitar
+                    </a>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Ações Rápidas -->
+    <div class="quick-actions">
+        <h3 class="subsection-title">⚡ Ações Rápidas</h3>
+        <div class="actions-grid">
+            <a href="{{ url_for('super_admin_barbearias') }}" class="quick-action-card">
+                <div class="action-icon">🏢</div>
+                <div class="action-content">
+                    <div class="action-title">Gerenciar Barbearias</div>
+                    <div class="action-desc">Criar, editar e desativar barbearias</div>
+                </div>
+            </a>
+            
+            <a href="{{ url_for('super_admin_usuarios') }}" class="quick-action-card">
+                <div class="action-icon">👥</div>
+                <div class="action-content">
+                    <div class="action-title">Gerenciar Usuários</div>
+                    <div class="action-desc">Ver todos os usuários do sistema</div>
+                </div>
+            </a>
+            
+            <a href="{{ url_for('super_admin_relatorios') }}" class="quick-action-card">
+                <div class="action-icon">📊</div>
+                <div class="action-content">
+                    <div class="action-title">Relatórios Avançados</div>
+                    <div class="action-desc">Análises e métricas do sistema</div>
+                </div>
+            </a>
+            
+            <a href="/teste-isolamento" class="quick-action-card">
+                <div class="action-icon">🧪</div>
+                <div class="action-content">
+                    <div class="action-title">Testar Isolamento</div>
+                    <div class="action-desc">Validar multi-tenancy</div>
+                </div>
+            </a>
+        </div>
+    </div>
+</div>
+
+<style>
+.super-admin-dashboard {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: var(--spacing-xl);
+}
+
+/* Header */
+.dashboard-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: var(--spacing-2xl);
+    border-radius: var(--border-radius-xl);
+    margin-bottom: var(--spacing-2xl);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.super-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    background: rgba(255, 255, 255, 0.2);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border-radius: 9999px;
+    font-weight: 700;
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--spacing-md);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.dashboard-header h1 {
+    font-size: var(--font-size-3xl);
+    font-weight: 800;
+    margin-bottom: var(--spacing-sm);
+}
+
+.dashboard-header p {
+    font-size: var(--font-size-lg);
+    opacity: 0.9;
+}
+
+.header-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all var(--transition-normal);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.action-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.btn-logout {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: rgba(239, 68, 68, 0.5);
+}
+
+.btn-logout:hover {
+    background: rgba(239, 68, 68, 0.3);
+}
+
+/* Estatísticas */
+.section-title {
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    color: var(--gray-800);
+    margin-bottom: var(--spacing-xl);
+}
+
+.subsection-title {
+    font-size: var(--font-size-xl);
+    font-weight: 600;
+    color: var(--gray-800);
+    margin-bottom: var(--spacing-lg);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-2xl);
+}
+
+.stat-card {
+    background: white;
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius-xl);
+    box-shadow: var(--shadow-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    border: 3px solid transparent;
+    transition: all var(--transition-normal);
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-xl);
+}
+
+.stat-barbearias { border-color: #8b5cf6; }
+.stat-usuarios { border-color: #06b6d4; }
+.stat-servicos { border-color: #10b981; }
+.stat-reservas { border-color: #f59e0b; }
+
+.stat-icon {
+    font-size: 3rem;
+    width: 4rem;
+    height: 4rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--gray-100);
+    border-radius: 50%;
+}
+
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 800;
+    color: var(--gray-800);
+    margin-bottom: var(--spacing-xs);
+}
+
+.stat-label {
+    color: var(--gray-600);
+    font-weight: 600;
+}
+
+/* Tipos de Usuários */
+.users-breakdown {
+    margin-bottom: var(--spacing-2xl);
+}
+
+.users-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-2xl);
+}
+
+.user-type-card {
+    background: white;
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    border-left: 4px solid;
+}
+
+.type-super { border-left-color: #8b5cf6; }
+.type-admin { border-left-color: #ef4444; }
+.type-barbeiro { border-left-color: #f59e0b; }
+.type-cliente { border-left-color: #06b6d4; }
+
+.type-icon {
+    font-size: 1.5rem;
+}
+
+.type-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--gray-800);
+}
+
+.type-label {
+    color: var(--gray-600);
+    font-size: var(--font-size-sm);
+}
+
+/* Barbearias */
+.barbearias-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: var(--spacing-lg);
+    margin-bottom: var(--spacing-2xl);
+}
+
+.barbearia-card {
+    background: white;
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius-xl);
+    box-shadow: var(--shadow-lg);
+    border: 2px solid var(--gray-100);
+    transition: all var(--transition-normal);
+}
+
+.barbearia-card:hover {
+    border-color: #667eea;
+    box-shadow: var(--shadow-xl);
+}
+
+.barbearia-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+.barbearia-name {
+    font-weight: 700;
+    color: var(--gray-800);
+    font-size: var(--font-size-lg);
+}
+
+.barbearia-badge {
+    background: var(--gray-100);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius-md);
+}
+
+.badge-slug {
+    font-family: 'Courier New', monospace;
+    font-size: var(--font-size-sm);
+    color: var(--gray-600);
+}
+
+.barbearia-info {
+    margin-bottom: var(--spacing-lg);
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+    color: var(--gray-600);
+}
+
+.barbearia-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.mini-stat {
+    text-align: center;
+    padding: var(--spacing-md);
+    background: var(--gray-50);
+    border-radius: var(--border-radius-md);
+}
+
+.mini-stat-number {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: var(--gray-800);
+}
+
+.mini-stat-label {
+    font-size: var(--font-size-xs);
+    color: var(--gray-600);
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.barbearia-actions {
+    display: flex;
+    gap: var(--spacing-md);
+}
+
+.action-link {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+    color: #667eea;
+    text-decoration: none;
+    font-size: var(--font-size-sm);
+    font-weight: 600;
+    transition: all var(--transition-normal);
+}
+
+.action-link:hover {
+    color: #764ba2;
+}
+
+/* Ações Rápidas */
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.quick-action-card {
+    background: white;
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius-xl);
+    box-shadow: var(--shadow-md);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    text-decoration: none;
+    color: var(--gray-800);
+    border: 2px solid var(--gray-100);
+    transition: all var(--transition-normal);
+}
+
+.quick-action-card:hover {
+    border-color: #667eea;
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
+}
+
+.action-icon {
+    font-size: 2rem;
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--gray-100);
+    border-radius: 50%;
+}
+
+.action-title {
+    font-weight: 700;
+    color: var(--gray-800);
+    margin-bottom: var(--spacing-xs);
+}
+
+.action-desc {
+    color: var(--gray-600);
+    font-size: var(--font-size-sm);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .dashboard-header {
+        flex-direction: column;
+        text-align: center;
+        gap: var(--spacing-lg);
+    }
+    
+    .header-actions {
+        justify-content: center;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .users-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .barbearias-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}

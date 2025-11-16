@@ -1,0 +1,575 @@
+{% extends "base.html" %}
+{% block title %}Super Admin - Relatórios{% endblock %}
+
+{% block content %}
+<div class="super-admin-relatorios">
+    <!-- Header -->
+    <div class="page-header">
+        <div class="header-info">
+            <div class="super-badge">
+                <span class="badge-icon">⚡</span>
+                <span class="badge-text">SUPER ADMIN</span>
+            </div>
+            <h1>Relatórios Avançados</h1>
+            <p>Análises e métricas globais do sistema</p>
+        </div>
+        
+        <div class="header-actions">
+            <a href="{{ url_for('super_admin_dashboard') }}" class="action-btn btn-back">
+                <span class="btn-icon">🏠</span>
+                Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Relatório de Crescimento -->
+    <div class="report-section">
+        <div class="section-header">
+            <h2 class="section-title">📈 Crescimento por Barbearia (Novembro 2025)</h2>
+            <div class="section-subtitle">Novos usuários e reservas do mês atual</div>
+        </div>
+        
+        <div class="growth-grid">
+            {% for item in relatorio_crescimento %}
+            <div class="growth-card">
+                <div class="growth-header">
+                    <h4 class="barbearia-name">{{ item.barbearia.nome }}</h4>
+                    <div class="barbearia-slug">{{ item.barbearia.slug }}</div>
+                </div>
+                
+                <div class="growth-stats">
+                    <div class="growth-stat">
+                        <div class="stat-icon">👥</div>
+                        <div class="stat-content">
+                            <div class="stat-number">{{ item.novos_usuarios }}</div>
+                            <div class="stat-label">Novos Usuários</div>
+                        </div>
+                    </div>
+                    
+                    <div class="growth-stat">
+                        <div class="stat-icon">📅</div>
+                        <div class="stat-content">
+                            <div class="stat-number">{{ item.reservas_mes }}</div>
+                            <div class="stat-label">Reservas do Mês</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="growth-progress">
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: {{ (item.novos_usuarios * 10)|min(100) }}%"></div>
+                    </div>
+                    <div class="progress-label">Atividade</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Top Serviços -->
+    <div class="report-section">
+        <div class="section-header">
+            <h2 class="section-title">💰 Top 10 Serviços por Preço</h2>
+            <div class="section-subtitle">Serviços mais caros do sistema</div>
+        </div>
+        
+        <div class="services-ranking">
+            {% for servico in top_servicos %}
+            <div class="ranking-item">
+                <div class="ranking-position">
+                    <div class="position-number">{{ loop.index }}</div>
+                    {% if loop.index == 1 %}🥇
+                    {% elif loop.index == 2 %}🥈
+                    {% elif loop.index == 3 %}🥉
+                    {% else %}🏅{% endif %}
+                </div>
+                
+                <div class="service-info">
+                    <h4 class="service-name">{{ servico.nome }}</h4>
+                    <div class="service-barbearia">{{ servico.barbearia.nome }}</div>
+                </div>
+                
+                <div class="service-details">
+                    <div class="service-price">R$ {{ "%.2f"|format(servico.preco) }}</div>
+                    <div class="service-duration">⏱️ {{ servico.duracao }}min</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Métricas Gerais -->
+    <div class="report-section">
+        <div class="section-header">
+            <h2 class="section-title">📊 Métricas do Sistema</h2>
+            <div class="section-subtitle">Visão geral das atividades</div>
+        </div>
+        
+        <div class="metrics-grid">
+            <div class="metric-card">
+                <div class="metric-icon">🏢</div>
+                <div class="metric-content">
+                    <div class="metric-title">Barbearias Ativas</div>
+                    <div class="metric-value">{{ relatorio_crescimento|length }}</div>
+                    <div class="metric-trend">📈 100% operacionais</div>
+                </div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-icon">💼</div>
+                <div class="metric-content">
+                    <div class="metric-title">Total de Serviços</div>
+                    <div class="metric-value">{{ top_servicos|length }}+</div>
+                    <div class="metric-trend">🎯 Diversidade alta</div>
+                </div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-icon">💰</div>
+                <div class="metric-content">
+                    <div class="metric-title">Faixa de Preços</div>
+                    <div class="metric-value">
+                        {% if top_servicos %}
+                        R$ {{ "%.0f"|format(top_servicos[-1].preco) }} - {{ "%.0f"|format(top_servicos[0].preco) }}
+                        {% else %}N/A{% endif %}
+                    </div>
+                    <div class="metric-trend">📊 Variação ampla</div>
+                </div>
+            </div>
+            
+            <div class="metric-card">
+                <div class="metric-icon">⭐</div>
+                <div class="metric-content">
+                    <div class="metric-title">Sistema Status</div>
+                    <div class="metric-value">100%</div>
+                    <div class="metric-trend">✅ Operacional</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ações de Relatório -->
+    <div class="report-actions">
+        <div class="actions-header">
+            <h3 class="actions-title">🛠️ Ações de Relatório</h3>
+        </div>
+        
+        <div class="actions-grid">
+            <button class="report-action-btn" onclick="window.print()">
+                <span class="action-icon">🖨️</span>
+                <span class="action-text">Imprimir Relatório</span>
+            </button>
+            
+            <button class="report-action-btn" onclick="exportData()">
+                <span class="action-icon">📊</span>
+                <span class="action-text">Exportar Dados</span>
+            </button>
+            
+            <a href="{{ url_for('super_admin_dashboard') }}" class="report-action-btn">
+                <span class="action-icon">📈</span>
+                <span class="action-text">Dashboard</span>
+            </a>
+            
+            <button class="report-action-btn" onclick="refreshData()">
+                <span class="action-icon">🔄</span>
+                <span class="action-text">Atualizar</span>
+            </button>
+        </div>
+    </div>
+</div>
+
+<style>
+.super-admin-relatorios {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: var(--spacing-xl);
+}
+
+/* Header */
+.page-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: var(--spacing-2xl);
+    border-radius: var(--border-radius-xl);
+    margin-bottom: var(--spacing-2xl);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.super-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    background: rgba(255, 255, 255, 0.2);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border-radius: 9999px;
+    font-weight: 700;
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--spacing-md);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.page-header h1 {
+    font-size: var(--font-size-3xl);
+    font-weight: 800;
+    margin-bottom: var(--spacing-sm);
+}
+
+.page-header p {
+    font-size: var(--font-size-lg);
+    opacity: 0.9;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all var(--transition-normal);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.action-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+/* Seções de Relatório */
+.report-section {
+    background: white;
+    border-radius: var(--border-radius-xl);
+    box-shadow: var(--shadow-lg);
+    padding: var(--spacing-2xl);
+    margin-bottom: var(--spacing-2xl);
+    border: 2px solid var(--gray-100);
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: var(--spacing-2xl);
+}
+
+.section-title {
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    color: var(--gray-800);
+    margin-bottom: var(--spacing-sm);
+}
+
+.section-subtitle {
+    color: var(--gray-600);
+    font-size: var(--font-size-md);
+}
+
+/* Crescimento */
+.growth-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.growth-card {
+    background: var(--gray-50);
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius-lg);
+    border: 2px solid var(--gray-200);
+    transition: all var(--transition-normal);
+}
+
+.growth-card:hover {
+    border-color: #667eea;
+    box-shadow: var(--shadow-md);
+}
+
+.growth-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--spacing-lg);
+}
+
+.barbearia-name {
+    font-weight: 700;
+    color: var(--gray-800);
+    font-size: var(--font-size-lg);
+}
+
+.barbearia-slug {
+    background: var(--gray-200);
+    padding: var(--spacing-xs) var(--spacing-sm);
+    border-radius: var(--border-radius-sm);
+    font-family: 'Courier New', monospace;
+    font-size: var(--font-size-sm);
+    color: var(--gray-600);
+}
+
+.growth-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+}
+
+.growth-stat {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+}
+
+.stat-icon {
+    font-size: var(--font-size-xl);
+}
+
+.stat-number {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: var(--gray-800);
+}
+
+.stat-label {
+    font-size: var(--font-size-sm);
+    color: var(--gray-600);
+}
+
+.growth-progress {
+    text-align: center;
+}
+
+.progress-bar {
+    background: var(--gray-200);
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: var(--spacing-sm);
+}
+
+.progress-fill {
+    background: linear-gradient(90deg, #667eea, #764ba2);
+    height: 100%;
+    transition: width var(--transition-slow);
+}
+
+.progress-label {
+    font-size: var(--font-size-sm);
+    color: var(--gray-600);
+    font-weight: 600;
+}
+
+/* Ranking de Serviços */
+.services-ranking {
+    display: grid;
+    gap: var(--spacing-md);
+}
+
+.ranking-item {
+    background: var(--gray-50);
+    padding: var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-lg);
+    border: 2px solid var(--gray-200);
+    transition: all var(--transition-normal);
+}
+
+.ranking-item:hover {
+    border-color: #667eea;
+    background: white;
+}
+
+.ranking-position {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    font-size: var(--font-size-xl);
+}
+
+.position-number {
+    width: 2rem;
+    height: 2rem;
+    background: #667eea;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: var(--font-size-sm);
+}
+
+.service-info {
+    flex: 1;
+}
+
+.service-name {
+    font-weight: 700;
+    color: var(--gray-800);
+    margin-bottom: var(--spacing-xs);
+}
+
+.service-barbearia {
+    color: var(--gray-600);
+    font-size: var(--font-size-sm);
+}
+
+.service-details {
+    text-align: right;
+}
+
+.service-price {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: var(--success-color);
+    margin-bottom: var(--spacing-xs);
+}
+
+.service-duration {
+    color: var(--gray-600);
+    font-size: var(--font-size-sm);
+}
+
+/* Métricas */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.metric-card {
+    background: var(--gray-50);
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius-lg);
+    text-align: center;
+    border: 2px solid var(--gray-200);
+    transition: all var(--transition-normal);
+}
+
+.metric-card:hover {
+    border-color: #667eea;
+    background: white;
+    transform: translateY(-2px);
+}
+
+.metric-icon {
+    font-size: 3rem;
+    margin-bottom: var(--spacing-md);
+}
+
+.metric-title {
+    font-weight: 600;
+    color: var(--gray-700);
+    margin-bottom: var(--spacing-sm);
+}
+
+.metric-value {
+    font-size: var(--font-size-2xl);
+    font-weight: 800;
+    color: var(--gray-800);
+    margin-bottom: var(--spacing-sm);
+}
+
+.metric-trend {
+    color: var(--gray-600);
+    font-size: var(--font-size-sm);
+}
+
+/* Ações */
+.report-actions {
+    background: var(--gray-50);
+    padding: var(--spacing-2xl);
+    border-radius: var(--border-radius-xl);
+    border: 2px solid var(--gray-200);
+}
+
+.actions-header {
+    text-align: center;
+    margin-bottom: var(--spacing-xl);
+}
+
+.actions-title {
+    font-size: var(--font-size-xl);
+    font-weight: 700;
+    color: var(--gray-800);
+}
+
+.actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: var(--spacing-lg);
+}
+
+.report-action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm);
+    background: white;
+    color: var(--gray-800);
+    padding: var(--spacing-lg);
+    border: 2px solid var(--gray-200);
+    border-radius: var(--border-radius-lg);
+    text-decoration: none;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.report-action-btn:hover {
+    border-color: #667eea;
+    background: #667eea;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.action-icon {
+    font-size: var(--font-size-lg);
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        text-align: center;
+        gap: var(--spacing-lg);
+    }
+    
+    .growth-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .growth-stats {
+        grid-template-columns: 1fr;
+    }
+    
+    .ranking-item {
+        flex-direction: column;
+        text-align: center;
+        gap: var(--spacing-md);
+    }
+    
+    .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .actions-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+
+<script>
+function exportData() {
+    alert('🚧 Funcionalidade de exportação em desenvolvimento!');
+}
+
+function refreshData() {
+    window.location.reload();
+}
+</script>
+{% endblock %}

@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="col-centered">
+    <h1>🔐 Faça seu Login</h1>
+    <div class="card-form">
+        <form method="POST">
+            <div class="form-group">
+                <label for="email" class="form-label">📧 Email</label>
+                <input type="email" class="form-input" id="email" name="email" 
+                       placeholder="seu@email.com" required autocomplete="email">
+            </div>
+            <div class="form-group">
+                <label for="senha" class="form-label">🔒 Senha</label>
+                <input type="password" class="form-input" id="senha" name="senha" 
+                       placeholder="Digite sua senha" required autocomplete="current-password">
+            </div>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-full">
+                    Entrar
+                </button>
+            </div>
+        </form>
+        
+        <div class="text-center mt-4">
+            <p class="text-gray-600">Não tem uma conta?</p>
+            <a href="{{ url_for('cadastro', slug=barbearia.slug if barbearia else 'principal') }}" class="btn btn-secondary btn-full">
+                Criar Conta
+            </a>
+        </div>
+        
+        <div class="text-center mt-4">
+            <small class="text-gray-500">
+                Admin? Use: admin@admin.com / 2972
+            </small>
+        </div>
+    </div>
+</div>
+
+<style>
+.text-gray-600 {
+    color: var(--gray-600);
+    margin-bottom: var(--spacing-sm);
+}
+
+.text-gray-500 {
+    color: var(--gray-500);
+}
+
+@media (max-width: 480px) {
+    .col-centered {
+        padding: 0 var(--spacing-sm);
+    }
+}
+</style>
+{% endblock %}

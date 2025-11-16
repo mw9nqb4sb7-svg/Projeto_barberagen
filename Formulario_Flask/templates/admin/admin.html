@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Dashboard Administrativo</h1>
+
+<div class="row mb-4">
+    <div class="col-md-6 col-lg-4">
+        <div class="card text-bg-info mb-3">
+            <div class="card-header">Usuários Clientes</div>
+            <div class="card-body">
+                <h5 class="card-title">{{ usuarios|length }} clientes cadastrados</h5>
+                <p class="card-text">Gerencie a base de clientes do sistema.</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+        <div class="card text-bg-success mb-3">
+            <div class="card-header">Serviços</div>
+            <div class="card-body">
+                <h5 class="card-title">{{ servicos|length }} serviços ativos</h5>
+                <a href="{{ url_for('servicos') }}" class="btn btn-light">Gerenciar Serviços</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-6 col-lg-4">
+        <div class="card text-bg-primary mb-3">
+            <div class="card-header">Reservas Totais</div>
+            <div class="card-body">
+                <h5 class="card-title">{{ reservas|length }} agendamentos totais</h5>
+                <p class="card-text">Visão geral de todos os horários.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<h2 class="mt-4">Todas as Reservas</h2>
+{% if reservas %}
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>Cliente</th>
+                <th>Serviço</th>
+                <th>Data</th>
+                <th>Hora</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for reserva in reservas %}
+            <tr>
+                <td>{{ reserva.usuario.nome }}</td>
+                <td>{{ reserva.servico.nome }}</td>
+                <td>{{ reserva.data }}</td>
+                <td>{{ reserva.hora }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% else %}
+<div class="alert alert-warning">
+    Nenhuma reserva encontrada no sistema.
+</div>
+{% endif %}
+
+{% endblock %}

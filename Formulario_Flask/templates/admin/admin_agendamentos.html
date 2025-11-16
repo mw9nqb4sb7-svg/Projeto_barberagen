@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% block title %}Todos os Agendamentos{% endblock %}
+
+{% block content %}
+    <h1>Todos os Agendamentos</h1>
+    
+    <div class="card-form">
+        <table class="custom-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Cliente</th>
+                    <th>Serviço</th>
+                    <th>Data</th>
+                    <th>Hora</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for r in reservas %}
+                    <tr>
+                        <td>#{{ r.id }}</td>
+                        <td>{{ r.usuario.nome if r.usuario else 'Desconhecido' }}</td>
+                        <td>{{ r.servico.nome if r.servico else 'N/A' }}</td>
+                        <td>{{ r.data }}</td>
+                        <td>{{ r.hora }}</td>
+                        <td>
+                            <a href="{{ url_for('deletar_agendamento', agendamento_id=r.id) }}" 
+                               class="button-danger" 
+                               onclick="return confirm('Tem certeza que deseja deletar este agendamento?');">Deletar</a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6">Nenhum agendamento encontrado.</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}

@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Gerenciar Serviços{% endblock %}
+
+{% block content %}
+<h1>Gerenciar Serviços</h1>
+
+<div class="row">
+    <div class="col-half"> 
+        <h2 class="mb-3">Adicionar Novo Serviço</h2>
+        <div class="card-form mb-4">
+            <form method="POST">
+                <div class="form-group">
+                    <label for="nome">Nome do Serviço</label>
+                    <input type="text" class="form-control" id="nome" name="nome" required>
+                </div>
+                <div class="form-group">
+                    <label for="preco">Preço (R$)</label>
+                    <input type="number" step="0.01" class="form-control" id="preco" name="preco" required>
+                </div>
+                <button type="submit" class="btn btn-success" style="width: 100%;">Adicionar Serviço</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-half">
+        <h2 class="mb-3">Serviços Atuais</h2>
+        {% if servicos %}
+        <div class="table-responsive">
+            <table class="custom-table"> <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Preço</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for servico in servicos %}
+                    <tr>
+                        <td>{{ servico.nome }}</td>
+                        <td>R$ {{ "%.2f"|format(servico.preco) }}</td>
+                        <td>
+                            <a href="{{ url_for('deletar_servico', servico_id=servico.id) }}" 
+                               class="btn btn-danger"
+                               style="padding: 5px 10px; font-size: 0.9em;"
+                               onclick="return confirm('ATENÇÃO: Deletar um serviço não pode ser desfeito e só é possível se não houver reservas ativas.')">
+                                Deletar
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="custom-alert custom-alert-warning">
+            Nenhum serviço cadastrado.
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

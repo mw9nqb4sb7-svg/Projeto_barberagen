@@ -1,0 +1,398 @@
+{% extends "base.html" %}
+{% block title %}Super Admin - Nova Barbearia{% endblock %}
+
+{% block content %}
+<div class="super-admin-form">
+    <!-- Header -->
+    <div class="page-header">
+        <div class="header-info">
+            <div class="super-badge">
+                <span class="badge-icon">⚡</span>
+                <span class="badge-text">SUPER ADMIN</span>
+            </div>
+            <h1>➕ Nova Barbearia</h1>
+            <p>Adicione uma nova barbearia ao sistema</p>
+        </div>
+        
+        <div class="header-actions">
+            <a href="{{ url_for('super_admin_barbearias') }}" class="action-btn btn-back">
+                <span class="btn-icon">← </span>
+                Voltar
+            </a>
+        </div>
+    </div>
+
+    <!-- Formulário -->
+    <div class="form-container">
+        <form method="POST" class="barbearia-form">
+            <div class="form-grid">
+                <!-- Nome -->
+                <div class="form-group full-width">
+                    <label for="nome" class="form-label">
+                        <span class="label-icon">🏪</span>
+                        Nome da Barbearia *
+                    </label>
+                    <input type="text" id="nome" name="nome" 
+                           class="form-input" 
+                           placeholder="Ex: Barbearia do João" 
+                           required>
+                    <small class="form-help">Este é o nome que aparecerá para os clientes</small>
+                </div>
+
+                <!-- Slug -->
+                <div class="form-group">
+                    <label for="slug" class="form-label">
+                        <span class="label-icon">🔗</span>
+                        Slug (URL) *
+                    </label>
+                    <input type="text" id="slug" name="slug" 
+                           class="form-input" 
+                           placeholder="Ex: barbearia-joao" 
+                           pattern="[a-z0-9-]+"
+                           required>
+                    <small class="form-help">Apenas letras minúsculas, números e hífens</small>
+                </div>
+
+                <!-- CNPJ -->
+                <div class="form-group">
+                    <label for="cnpj" class="form-label">
+                        <span class="label-icon">🏢</span>
+                        CNPJ
+                    </label>
+                    <input type="text" id="cnpj" name="cnpj" 
+                           class="form-input" 
+                           placeholder="00.000.000/0000-00">
+                    <small class="form-help">Opcional - formato: 00.000.000/0000-00</small>
+                </div>
+
+                <!-- Telefone -->
+                <div class="form-group">
+                    <label for="telefone" class="form-label">
+                        <span class="label-icon">📞</span>
+                        Telefone
+                    </label>
+                    <input type="tel" id="telefone" name="telefone" 
+                           class="form-input" 
+                           placeholder="(11) 99999-9999">
+                    <small class="form-help">Telefone de contato da barbearia</small>
+                </div>
+
+                <!-- Endereço -->
+                <div class="form-group full-width">
+                    <label for="endereco" class="form-label">
+                        <span class="label-icon">📍</span>
+                        Endereço
+                    </label>
+                    <textarea id="endereco" name="endereco" 
+                              class="form-textarea" 
+                              rows="3" 
+                              placeholder="Rua, número, bairro, cidade - Estado"></textarea>
+                    <small class="form-help">Endereço completo da barbearia</small>
+                </div>
+            </div>
+
+            <!-- Ações -->
+            <div class="form-actions">
+                <button type="submit" class="btn btn-success">
+                    <span class="btn-icon">✨</span>
+                    Criar Barbearia
+                </button>
+                
+                <a href="{{ url_for('super_admin_barbearias') }}" class="btn btn-secondary">
+                    <span class="btn-icon">❌</span>
+                    Cancelar
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <!-- Dicas -->
+    <div class="tips-panel">
+        <h3>💡 Dicas Importantes</h3>
+        <div class="tips-list">
+            <div class="tip-item">
+                <span class="tip-icon">🔗</span>
+                <div class="tip-content">
+                    <strong>Slug:</strong> É usado na URL de acesso (ex: /?b=barbearia-joao). 
+                    Deve ser único e conter apenas letras minúsculas, números e hífens.
+                </div>
+            </div>
+            <div class="tip-item">
+                <span class="tip-icon">👤</span>
+                <div class="tip-content">
+                    <strong>Admin:</strong> Após criar a barbearia, você precisará criar um usuário admin 
+                    específico para ela ou promover um usuário existente.
+                </div>
+            </div>
+            <div class="tip-item">
+                <span class="tip-icon">⚙️</span>
+                <div class="tip-content">
+                    <strong>Configuração:</strong> A barbearia será criada ativa por padrão. 
+                    Você pode editá-la depois para configurar horários de funcionamento.
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Auto-gerar slug baseado no nome
+document.getElementById('nome').addEventListener('input', function() {
+    const nome = this.value;
+    const slug = nome
+        .toLowerCase()
+        .replace(/[^a-z0-9\s-]/g, '') // Remove caracteres especiais
+        .replace(/\s+/g, '-') // Substitui espaços por hífens
+        .replace(/-+/g, '-') // Remove hífens duplicados
+        .replace(/^-|-$/g, ''); // Remove hífens do início e fim
+    
+    document.getElementById('slug').value = slug;
+});
+
+// Máscara para CNPJ
+document.getElementById('cnpj').addEventListener('input', function() {
+    let value = this.value.replace(/\D/g, '');
+    if (value.length <= 14) {
+        value = value.replace(/^(\d{2})(\d)/, '$1.$2');
+        value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+        value = value.replace(/\.(\d{3})(\d)/, '.$1/$2');
+        value = value.replace(/(\d{4})(\d)/, '$1-$2');
+    }
+    this.value = value;
+});
+
+// Máscara para telefone
+document.getElementById('telefone').addEventListener('input', function() {
+    let value = this.value.replace(/\D/g, '');
+    if (value.length <= 11) {
+        if (value.length <= 10) {
+            value = value.replace(/^(\d{2})(\d)/, '($1) $2');
+            value = value.replace(/(\d{4})(\d)/, '$1-$2');
+        } else {
+            value = value.replace(/^(\d{2})(\d)/, '($1) $2');
+            value = value.replace(/(\d{5})(\d)/, '$1-$2');
+        }
+    }
+    this.value = value;
+});
+
+// Validação do slug em tempo real
+document.getElementById('slug').addEventListener('input', function() {
+    const slug = this.value;
+    const isValid = /^[a-z0-9-]*$/.test(slug);
+    
+    if (!isValid && slug.length > 0) {
+        this.setCustomValidity('Slug deve conter apenas letras minúsculas, números e hífens');
+    } else {
+        this.setCustomValidity('');
+    }
+});
+</script>
+
+<style>
+.super-admin-form {
+    max-width: 1000px;
+    margin: 0 auto;
+    padding: var(--spacing-xl);
+}
+
+.page-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: var(--spacing-2xl);
+    border-radius: var(--border-radius-xl);
+    margin-bottom: var(--spacing-2xl);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.super-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    background: rgba(255, 255, 255, 0.2);
+    padding: var(--spacing-sm) var(--spacing-lg);
+    border-radius: 9999px;
+    font-weight: 700;
+    font-size: var(--font-size-sm);
+    margin-bottom: var(--spacing-md);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.page-header h1 {
+    font-size: var(--font-size-2xl);
+    font-weight: 800;
+    margin-bottom: var(--spacing-sm);
+}
+
+.page-header p {
+    font-size: var(--font-size-base);
+    opacity: 0.9;
+}
+
+.action-btn {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all var(--transition-normal);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+}
+
+.action-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+}
+
+.form-container {
+    background: white;
+    padding: var(--spacing-2xl);
+    border-radius: var(--border-radius-xl);
+    box-shadow: var(--shadow-lg);
+    margin-bottom: var(--spacing-xl);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--spacing-lg);
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.form-label {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    margin-bottom: var(--spacing-sm);
+    font-weight: 600;
+    color: var(--gray-700);
+}
+
+.form-input, .form-textarea {
+    width: 100%;
+    padding: var(--spacing-md);
+    border: 2px solid var(--gray-200);
+    border-radius: var(--border-radius-lg);
+    font-size: var(--font-size-base);
+    transition: all var(--transition-normal);
+}
+
+.form-input:focus, .form-textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-help {
+    display: block;
+    margin-top: var(--spacing-xs);
+    font-size: var(--font-size-sm);
+    color: var(--gray-500);
+}
+
+.form-actions {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-top: var(--spacing-xl);
+    padding-top: var(--spacing-xl);
+    border-top: 2px solid var(--gray-100);
+}
+
+.btn {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-sm);
+    padding: var(--spacing-md) var(--spacing-lg);
+    border-radius: var(--border-radius-lg);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all var(--transition-normal);
+    border: none;
+    cursor: pointer;
+}
+
+.btn-success {
+    background: var(--success-color);
+    color: white;
+}
+
+.btn-success:hover {
+    background: var(--success-dark);
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background: var(--gray-200);
+    color: var(--gray-700);
+}
+
+.btn-secondary:hover {
+    background: var(--gray-300);
+}
+
+.tips-panel {
+    background: white;
+    padding: var(--spacing-xl);
+    border-radius: var(--border-radius-xl);
+    box-shadow: var(--shadow-lg);
+}
+
+.tips-panel h3 {
+    margin-bottom: var(--spacing-lg);
+    color: var(--gray-800);
+}
+
+.tips-list {
+    display: grid;
+    gap: var(--spacing-md);
+}
+
+.tip-item {
+    display: flex;
+    gap: var(--spacing-md);
+    padding: var(--spacing-md);
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+    border-radius: var(--border-radius-lg);
+    border-left: 4px solid #667eea;
+}
+
+.tip-icon {
+    font-size: var(--font-size-xl);
+    flex-shrink: 0;
+}
+
+.tip-content {
+    color: var(--gray-700);
+    line-height: 1.5;
+}
+
+.tip-content strong {
+    color: var(--gray-800);
+}
+
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        gap: var(--spacing-lg);
+        text-align: center;
+    }
+    
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+}
+</style>
+{% endblock %}

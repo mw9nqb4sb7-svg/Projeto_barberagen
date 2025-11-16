@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Dashboard Admin{% endblock %}
+
+{% block content %}
+    <h1>Painel Administrativo</h1>
+
+    <div class="card-form">
+        <h2>Visão Geral do Sistema</h2>
+        
+        <div class="row" style="margin-top: 20px;">
+            <div class="col-half">
+                <div class="custom-alert custom-alert-info">
+                    <strong>Total de Clientes:</strong> {{ usuarios|length if usuarios else 0 }}
+                    <p style="margin-top: 5px;"><a href="{{ url_for('clientes', slug=barbearia.slug) }}">Gerenciar clientes →</a></p>
+                </div>
+            </div>
+            <div class="col-half">
+                <div class="custom-alert custom-alert-success">
+                    <strong>Total de Serviços:</strong> {{ servicos|length if servicos else 0 }}
+                                        <p style="margin-top: 5px;"><a href="{{ url_for('admin_clientes', slug=barbearia.slug) }}">Gerenciar clientes →</a></p>
+                </div>
+            </div>
+            <div class="col-half">
+                <div class="custom-alert custom-alert-success">
+                    <strong>Total de Serviços:</strong> {{ servicos|length if servicos else 0 }}
+                    <p style="margin-top: 5px;"><a href="{{ url_for('admin_servicos', slug=barbearia.slug) }}">Gerenciar serviços →</a></p>
+                </div>
+            </div>
+            <div class="col-half">
+                <div class="custom-alert custom-alert-warning">
+                    <strong>Total de Agendamentos:</strong> {{ reservas|length if reservas else 0 }}
+                    <p style="margin-top: 5px;"><a href="{{ url_for('admin_agendamentos_slug', slug=barbearia.slug) }}">Ver todos →</a></p>
+                </div>
+            </div>
+            <div class="col-half">
+                <div class="custom-alert custom-alert-primary">
+                    <strong>Disponibilidade:</strong> Horários e Dias
+                    <p style="margin-top: 5px;"><a href="{{ url_for('admin_disponibilidade_slug', slug=barbearia.slug) }}">Configurar →</a></p>
+                </div>
+            </div>
+            <div class="col-half">
+                <div class="custom-alert custom-alert-warning">
+                    <strong>Total de Agendamentos:</strong> {{ reservas|length if reservas else 0 }}
+                    <p style="margin-top: 5px;"><a href="{{ url_for('admin_agendamentos', slug=barbearia.slug) }}">Ver todos →</a></p>
+                </div>
+            </div>
+            <div class="col-half">
+                <div class="custom-alert custom-alert-primary">
+                    <strong>Disponibilidade:</strong> Horários e Dias
+                    <p style="margin-top: 5px;"><a href="{{ url_for('admin_disponibilidade', slug=barbearia.slug) }}">Configurar →</a></p>
+                </div>
+            </div>
+        </div>
+
+        <h3 style="margin-top: 40px;">Últimos Agendamentos</h3>
+        {% if reservas %}
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Cliente</th>
+                        <th>Serviço</th>
+                        <th>Data</th>
+                        <th>Hora</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in reservas|slice(5) %}
+                        <tr>
+                            <td>#{{ r.id }}</td>
+                            <td>{{ r.usuario.nome if r.usuario else 'Desconhecido' }}</td>
+                            <td>{{ r.servico.nome if r.servico else 'N/A' }}</td>
+                            <td>{{ r.data }}</td>
+                            <td>{{ r.hora }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>Nenhum agendamento realizado.</p>
+        {% endif %}
+    </div>
+{% endblock %}

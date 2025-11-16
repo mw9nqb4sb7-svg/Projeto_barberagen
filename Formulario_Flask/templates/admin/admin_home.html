@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<h1 style="color: var(--color-danger);">Painel de Administração</h1>
+
+<div class="row">
+    <div class="col-half">
+        <div class="card-form" style="padding: 20px; text-align: center;">
+            <h2 style="border: none; margin-bottom: 5px;">Clientes</h2>
+            <p style="font-size: 2em; color: var(--color-primary); font-weight: bold;">{{ total_clientes }}</p>
+            <a href="{{ url_for('clientes') }}" class="btn btn-primary">
+                Gerenciar Clientes
+            </a>
+        </div>
+    </div>
+    
+    <div class="col-half">
+        <div class="card-form" style="padding: 20px; text-align: center;">
+            <h2 style="border: none; margin-bottom: 5px;">Agendamentos</h2>
+            <p style="font-size: 2em; color: var(--color-success); font-weight: bold;">{{ total_reservas }}</p>
+            <a href="{{ url_for('agendamentos') }}" class="btn btn-success">
+                Ver Agendamentos
+            </a>
+        </div>
+    </div>
+</div>
+
+<div class="row" style="margin-top: 20px;">
+    <div class="col-half">
+        <div class="card-form" style="padding: 20px; text-align: center;">
+            <h2 style="border: none; margin-bottom: 5px;">Serviços</h2>
+            <p style="font-size: 2em; color: var(--color-secondary); font-weight: bold;">{{ total_servicos }}</p>
+            <a href="{{ url_for('servicos') }}" class="btn btn-secondary">
+                Gerenciar Serviços
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}
