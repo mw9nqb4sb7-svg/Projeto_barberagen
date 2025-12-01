@@ -1,231 +1,129 @@
 {% extends "base.html" %}
-{% block title %}Meu Dashboard{% endblock %}
+{% block title %}Meu Dashboard - Cliente{% endblock %}
 
 {% block content %}
-    <h1>👋 Olá, {{ session['usuario_nome'] }}!</h1>
+<!-- Navegação -->
+<nav class="custom-nav">
+    <div class="nav-content">
+        <div class="nav-brand">{{ barbearia.nome|upper if barbearia else 'BARBEARIA' }}</div>
+        <ul class="nav-list">
+            <li><a href="{{ url_for('nova_reserva', slug=barbearia.slug if barbearia else 'principal') }}" class="nav-link">AGENDAR</a></li>
+            <li><a href="{{ url_for('logout') }}" class="nav-link">SAIR</a></li>
+        </ul>
+    </div>
+</nav>
 
-    <!-- Quick Actions -->
-    <div class="dashboard-actions mb-4">
-        <a href="{{ url_for('nova_reserva', slug=barbearia.slug if barbearia else 'principal') }}" class="btn btn-success btn-large btn-full">
-            ✨ Nova Reserva
+<!-- Header do Cliente -->
+<div style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: 3px solid var(--gold); border-radius: 4px; padding: 3rem 2rem; margin-bottom: 3rem;">
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem;">
+        <div>
+            <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(0, 0, 0, 0.3); padding: 0.5rem 1.5rem; border: 2px solid var(--gold); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 2px;">
+                <span style="font-size: 1.2rem;">👤</span>
+                <span style="color: var(--gold); font-weight: 700; font-size: 0.9rem;">CLIENTE</span>
+            </div>
+            <h1 style="margin: 0; font-size: 2.5rem; font-weight: 800; color: var(--text-color); text-transform: uppercase; letter-spacing: 2px;">👋 Olá, {{ session['usuario_nome'] }}!</h1>
+            <p style="color: rgba(245, 245, 220, 0.7); margin: 0.5rem 0 0 0; font-size: 1.1rem;">Bem-vindo ao seu painel</p>
+        </div>
+        <a href="{{ url_for('nova_reserva', slug=barbearia.slug if barbearia else 'principal') }}" style="display: inline-flex; align-items: center; gap: 0.75rem; background: var(--gold); color: var(--bg-dark); padding: 1.25rem 2.5rem; text-decoration: none; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease; border: 3px solid var(--gold); border-radius: 4px; font-size: 1.1rem;">
+            <span style="font-size: 1.3rem;">✨</span> NOVA RESERVA
         </a>
     </div>
+</div>
 
-    <!-- Agendamentos -->
-    <div class="card-form">
-        <h2>📅 Seus Agendamentos</h2>
+<!-- Agendamentos -->
+<div style="background: var(--bg-dark); border: 2px solid var(--gold-dark); border-radius: 4px; padding: 2.5rem; margin-bottom: 3rem;">
+    <h2 style="border-left: 5px solid var(--gold); padding-left: 1rem; margin-bottom: 2rem; color: var(--gold-light); font-size: 1.5rem; text-transform: uppercase; letter-spacing: 1px;">📅 MEUS AGENDAMENTOS</h2>
 
-        {% if reservas %}
-            <!-- Desktop Table -->
-            <div class="table-container desktop-only">
-                <table class="custom-table">
-                    <thead>
-                        <tr>
-                            <th>Serviço</th>
-                            <th>Data</th>
-                            <th>Hora</th>
-                            <th>Preço</th>
-                            <th>Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for r in reservas %}
-                            <tr>
-                                <td data-label="Serviço">{{ r.servico.nome if r.servico else 'N/A' }}</td>
-                                <td data-label="Data">{{ r.data }}</td>
-                                <td data-label="Hora">{{ r.hora }}</td>
-                                <td data-label="Preço">R$ {{ "%.2f"|format(r.servico.preco) if r.servico else 'N/A' }}</td>
-                                <td data-label="Ações">
-                                    <a href="{{ url_for('cancelar_reserva', reserva_id=r.id) }}" 
-                                       class="btn btn-danger-outline btn-small" 
-                                       onclick="return confirm('❌ Cancelar esta reserva?')">
-                                        Cancelar
-                                    </a>
-                                </td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
-            <!-- Mobile Cards -->
-            <div class="mobile-only">
-                {% for r in reservas %}
-                    <div class="mobile-card">
-                        <div class="mobile-card-header">
-                            {{ r.servico.nome if r.servico else 'N/A' }}
-                        </div>
-                        <div class="mobile-card-content">
-                            <div class="mobile-card-item">
-                                <span class="mobile-card-label">📅 Data:</span>
-                                <span class="mobile-card-value">{{ r.data }}</span>
-                            </div>
-                            <div class="mobile-card-item">
-                                <span class="mobile-card-label">⏰ Hora:</span>
-                                <span class="mobile-card-value">{{ r.hora }}</span>
-                            </div>
-                            <div class="mobile-card-item">
-                                <span class="mobile-card-label">💰 Preço:</span>
-                                <span class="mobile-card-value">R$ {{ "%.2f"|format(r.servico.preco) if r.servico else 'N/A' }}</span>
-                            </div>
-                            <div class="mobile-card-item">
+    {% if reservas %}
+        <!-- Desktop Table -->
+        <div class="table-container" style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background: rgba(74, 158, 255, 0.1); border-bottom: 3px solid var(--gold);">
+                        <th style="padding: 1.25rem; text-align: left; color: var(--gold); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem;">SERVIÇO</th>
+                        <th style="padding: 1.25rem; text-align: left; color: var(--gold); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem;">DATA</th>
+                        <th style="padding: 1.25rem; text-align: left; color: var(--gold); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem;">HORA</th>
+                        <th style="padding: 1.25rem; text-align: left; color: var(--gold); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem;">PREÇO</th>
+                        <th style="padding: 1.25rem; text-align: center; color: var(--gold); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem;">AÇÕES</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in reservas %}
+                        <tr style="border-bottom: 1px solid rgba(74, 158, 255, 0.2); transition: all 0.3s ease;" onmouseover="this.style.background='rgba(74, 158, 255, 0.05)'" onmouseout="this.style.background='transparent'">
+                            <td style="padding: 1.25rem; color: var(--text-color); font-weight: 600;">{{ r.servico.nome if r.servico else 'N/A' }}</td>
+                            <td style="padding: 1.25rem; color: var(--text-color);">{{ r.data }}</td>
+                            <td style="padding: 1.25rem; color: var(--text-color); font-weight: 600;">{{ r.hora }}</td>
+                            <td style="padding: 1.25rem; color: var(--gold); font-weight: 700; font-size: 1.1rem;">R$ {{ "%.2f"|format(r.servico.preco) if r.servico else 'N/A' }}</td>
+                            <td style="padding: 1.25rem; text-align: center;">
                                 <a href="{{ url_for('cancelar_reserva', reserva_id=r.id) }}" 
-                                   class="btn btn-danger-outline btn-small btn-full" 
-                                   onclick="return confirm('❌ Cancelar esta reserva?')">
-                                    Cancelar Reserva
+                                   onclick="return confirm('❌ Cancelar esta reserva?')"
+                                   style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.25rem; background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 2px solid #ef4444; text-decoration: none; font-weight: 600; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; border-radius: 4px;">
+                                    <span>🗑️</span> CANCELAR
                                 </a>
-                            </div>
-                        </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 3rem; background: rgba(74, 158, 255, 0.1); border-radius: 4px; border: 2px solid var(--gold-dark);">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">📋</div>
+            <strong style="display: block; font-size: 1.2rem; color: var(--gold); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px;">Nenhum agendamento ainda</strong>
+            <span style="color: rgba(245, 245, 220, 0.7); font-size: 1rem;">Que tal criar sua primeira reserva? É super fácil!</span>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Serviços Disponíveis -->
+<div style="background: var(--bg-dark); border: 2px solid var(--gold-dark); border-radius: 4px; padding: 2.5rem;">
+    <h2 style="border-left: 5px solid var(--gold); padding-left: 1rem; margin-bottom: 2rem; color: var(--gold-light); font-size: 1.5rem; text-transform: uppercase; letter-spacing: 1px;">🎯 SERVIÇOS DISPONÍVEIS</h2>
+
+    {% if servicos %}
+        <div class="grid grid-3" style="gap: 1.5rem;">
+            {% for s in servicos %}
+                <div style="background: var(--bg-card); border: 2px solid var(--gold-dark); border-radius: 4px; padding: 2.5rem; text-align: center; transition: all 0.3s ease;" onmouseover="this.style.borderColor='var(--gold)'; this.style.transform='translateY(-5px)'; this.style.boxShadow='0 10px 30px rgba(74, 158, 255, 0.3)'" onmouseout="this.style.borderColor='var(--gold-dark)'; this.style.transform='translateY(0)'; this.style.boxShadow='none'">
+                    <div style="font-size: 3.5rem; margin-bottom: 1.5rem; filter: grayscale(20%);">✂</div>
+                    <h3 style="color: var(--gold); font-size: 1.3rem; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 1px; font-weight: 700;">
+                        {{ s.nome }}
+                    </h3>
+                    <div style="color: var(--gold-light); font-weight: 700; font-size: 1.8rem; margin-bottom: 2rem;">
+                        R$ {{ "%.2f"|format(s.preco) }}
                     </div>
-                {% endfor %}
-            </div>
-        {% else %}
-            <div class="custom-alert custom-alert-info">
-                <div>
-                    <strong>📋 Nenhum agendamento ainda</strong>
-                    <p>Que tal criar sua primeira reserva? É super fácil!</p>
+                    <a href="{{ url_for('nova_reserva', slug=barbearia.slug if barbearia else 'principal') }}" 
+                       style="display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; width: 100%; padding: 1rem; background: var(--gold); color: var(--bg-dark); text-decoration: none; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease; border: 2px solid var(--gold); border-radius: 4px;" onmouseover="this.style.background='var(--gold-light)'; this.style.transform='scale(1.05)'" onmouseout="this.style.background='var(--gold)'; this.style.transform='scale(1)'">
+                        <span>📅</span> AGENDAR
+                    </a>
                 </div>
-            </div>
-        {% endif %}
-    </div>
-
-    <!-- Serviços Disponíveis -->
-    <div class="card-form">
-        <h2>🎯 Serviços Disponíveis</h2>
-
-        {% if servicos %}
-            <div class="services-grid">
-                {% for s in servicos %}
-                    <div class="service-card">
-                        <div class="service-card-body">
-                            <div class="service-info">
-                                <div class="service-title">{{ s.nome }}</div>
-                                <div class="service-price">💰 R$ {{ "%.2f"|format(s.preco) }}</div>
-                            </div>
-                            <div class="service-actions">
-                                <a href="{{ url_for('nova_reserva', slug=barbearia.slug if barbearia else 'principal') }}" 
-                                   class="btn btn-primary btn-full">
-                                    📅 Agendar Agora
-                                </a>
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
-            </div>
-        {% else %}
-            <div class="custom-alert custom-alert-warning">
-                <strong>⚠️ Nenhum serviço disponível</strong>
-                <p>Em breve teremos novos serviços para você!</p>
-            </div>
-        {% endif %}
-    </div>
-{% endblock %}
+            {% endfor %}
+        </div>
+    {% else %}
+        <div style="text-align: center; padding: 3rem; background: rgba(245, 158, 11, 0.1); border-radius: 4px; border: 2px solid rgba(245, 158, 11, 0.3);">
+            <div style="font-size: 4rem; margin-bottom: 1rem;">⚠️</div>
+            <strong style="display: block; font-size: 1.2rem; color: #f59e0b; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px;">Nenhum serviço disponível</strong>
+            <span style="color: rgba(245, 245, 220, 0.7); font-size: 1rem;">Em breve teremos novos serviços para você!</span>
+        </div>
+    {% endif %}
+</div>
 
 <style>
-/* Dashboard Actions */
-.dashboard-actions {
-    margin-bottom: var(--spacing-xl);
-}
-
-/* Services Grid */
-.services-grid {
-    display: grid;
-    gap: var(--spacing-lg);
-    grid-template-columns: 1fr;
-}
-
-.service-card {
-    background: white;
-    border: 2px solid var(--gray-200);
-    border-radius: var(--border-radius-xl);
-    overflow: hidden;
-    box-shadow: var(--shadow-md);
-    transition: all var(--transition-normal);
-    position: relative;
-}
-
-.service-card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 4px;
-    background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
-}
-
-.service-card:hover {
-    border-color: var(--primary-color);
-    box-shadow: var(--shadow-xl);
-    transform: translateY(-2px);
-}
-
-.service-card-body {
-    padding: var(--spacing-xl);
-}
-
-.service-info {
-    margin-bottom: var(--spacing-lg);
-}
-
-.service-title {
-    font-size: var(--font-size-xl);
-    font-weight: 700;
-    color: var(--gray-800);
-    margin-bottom: var(--spacing-sm);
-}
-
-.service-price {
-    font-size: var(--font-size-lg);
-    font-weight: 600;
-    color: var(--success-color);
-}
-
-/* Responsive Visibility */
-.desktop-only {
-    display: block;
-}
-
-.mobile-only {
-    display: none;
-}
-
 @media (max-width: 768px) {
-    .desktop-only {
-        display: none;
+    .table-container {
+        overflow-x: auto;
     }
     
-    .mobile-only {
-        display: block;
+    .grid-3 {
+        grid-template-columns: 1fr !important;
     }
     
-    .services-grid {
-        grid-template-columns: 1fr;
-        gap: var(--spacing-md);
+    .custom-table {
+        font-size: 0.85rem;
     }
     
-    .service-card-body {
-        padding: var(--spacing-lg);
-    }
-    
-    .service-title {
-        font-size: var(--font-size-lg);
-    }
-    
-    .service-price {
-        font-size: var(--font-size-base);
-    }
-}
-
-@media (min-width: 768px) {
-    .services-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-@media (min-width: 1024px) {
-    .services-grid {
-        grid-template-columns: repeat(3, 1fr);
+    .custom-table th,
+    .custom-table td {
+        padding: 0.8rem 0.5rem;
     }
 }
 </style>
+{% endblock %}

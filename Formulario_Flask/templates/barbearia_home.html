@@ -1,393 +1,234 @@
 {% extends "base.html" %}
-{% block title %}{{ barbearia.nome }}{% endblock %}
+{% block title %}{{ barbearia.nome }} - Barbearia Premium{% endblock %}
 
 {% block content %}
-<div class="barbearia-home">
-    <!-- Hero Section -->
-    <div class="hero-section">
-        <div class="hero-content">
-            <h1 class="hero-title">{{ barbearia.nome }}</h1>
-            {% if barbearia.endereco or barbearia.telefone %}
-            <div class="hero-info">
-                {% if barbearia.endereco %}
-                    <span class="info-item">📍 {{ barbearia.endereco }}</span>
-                {% endif %}
-                {% if barbearia.telefone %}
-                    <span class="info-item">📞 {{ barbearia.telefone }}</span>
-                {% endif %}
-            </div>
+<!-- Navegação -->
+<nav class="custom-nav">
+    <div class="nav-content">
+        <div class="nav-brand" style="display: flex; align-items: center; gap: 1rem;">
+            {% if barbearia.logo %}
+            <img src="{{ url_for('static', filename='uploads/logos/' + barbearia.logo) }}" 
+                 alt="{{ barbearia.nome }}" 
+                 style="height: 90px; width: auto; 
+                        filter: drop-shadow(0 0 15px rgba(0, 150, 255, 0.5)) drop-shadow(0 2px 10px rgba(0, 150, 255, 0.3)) brightness(1.1); 
+                        transition: all 0.3s ease;"
+                 onmouseover="this.style.transform='scale(1.1) rotate(5deg)'; this.style.filter='drop-shadow(0 0 25px rgba(0, 150, 255, 0.8)) drop-shadow(0 5px 20px rgba(0, 150, 255, 0.5)) brightness(1.2)'"
+                 onmouseout="this.style.transform='scale(1) rotate(0deg)'; this.style.filter='drop-shadow(0 0 15px rgba(0, 150, 255, 0.5)) drop-shadow(0 2px 10px rgba(0, 150, 255, 0.3)) brightness(1.1)'">
             {% endif %}
-            
-            <div class="hero-actions">
-                <a href="{{ url_for('login', slug=barbearia.slug) }}" class="hero-btn primary">
-                    <span class="btn-icon">🔐</span>
-                    Fazer Login
-                </a>
-                <a href="{{ url_for('cadastro', slug=barbearia.slug) }}" class="hero-btn secondary">
-                    <span class="btn-icon">✨</span>
-                    Criar Conta
-                </a>
-            </div>
+            <span>{{ barbearia.nome|upper }}</span>
         </div>
+        <ul class="nav-list">
+            <li><a href="/" class="nav-link">VOLTAR</a></li>
+            <li><a href="{{ url_for('login', slug=barbearia.slug) }}" class="nav-link">LOGIN</a></li>
+            <li><a href="{{ url_for('cadastro', slug=barbearia.slug) }}" class="nav-link">CADASTRO</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Hero Section Premium -->
+<div style="margin-top: 2rem; padding: 4rem 2rem; background: linear-gradient(135deg, var(--bg-card), var(--bg-dark)); border: 3px solid var(--gold); border-radius: 4px; text-align: center; position: relative; overflow: hidden;">
+    <!-- Decoração de fundo -->
+    <div style="position: absolute; top: -50px; left: -50px; font-size: 15rem; opacity: 0.05; color: var(--gold);">✂</div>
+    <div style="position: absolute; bottom: -50px; right: -50px; font-size: 15rem; opacity: 0.05; color: var(--gold);">✂</div>
+    
+    <div style="position: relative; z-index: 1;">
+        {% if barbearia.logo %}
+        <div style="margin-bottom: 2rem; display: flex; justify-content: center; align-items: center;">
+            <img src="{{ url_for('static', filename='uploads/logos/' + barbearia.logo) }}" 
+                 alt="{{ barbearia.nome }} Logo" 
+                 style="max-width: min(450px, 80vw); width: 100%; height: auto; 
+                        filter: drop-shadow(0 0 40px rgba(0, 150, 255, 0.6)) drop-shadow(0 5px 30px rgba(0, 150, 255, 0.4)) brightness(1.1) contrast(1.1); 
+                        animation: logoFloat 3s ease-in-out infinite;
+                        transition: all 0.4s ease;">
+        </div>
+        {% else %}
+        <div style="font-size: 5rem; margin-bottom: 1rem;">
+            {% if barbearia.slug == 'principal' %}🏛
+            {% elif barbearia.slug == 'elite' %}👑
+            {% else %}✂{% endif %}
+        </div>
+        {% endif %}
         
-        <div class="hero-image">
-            <div class="hero-icon">✂️</div>
-        </div>
-    </div>
-
-    <!-- Serviços -->
-    {% if servicos %}
-    <div class="services-section">
-        <div class="section-header">
-            <h2>💼 Nossos Serviços</h2>
-            <p>Conheça os serviços que oferecemos com qualidade e profissionalismo</p>
-        </div>
+        <h1 style="font-size: 3rem; margin-bottom: 1rem;">
+            {{ barbearia.nome|upper }}
+        </h1>
         
-        <div class="services-grid">
-            {% for servico in servicos %}
-            <div class="service-card">
-                <div class="service-icon">✂️</div>
-                <h3 class="service-name">{{ servico.nome }}</h3>
-                {% if servico.descricao %}
-                <p class="service-description">{{ servico.descricao }}</p>
-                {% endif %}
-                <div class="service-details">
-                    <span class="service-duration">⏱️ {{ servico.duracao }}min</span>
-                    <span class="service-price">R$ {{ "%.2f"|format(servico.preco) }}</span>
-                </div>
-            </div>
-            {% endfor %}
+        {% if barbearia.endereco or barbearia.telefone %}
+        <div style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap; margin-top: 1.5rem; color: rgba(245, 245, 220, 0.8);">
+            {% if barbearia.endereco %}
+            <span style="font-size: 1.1rem;">📍 {{ barbearia.endereco }}</span>
+            {% endif %}
+            {% if barbearia.telefone %}
+            <span style="font-size: 1.1rem;">📞 {{ barbearia.telefone }}</span>
+            {% endif %}
         </div>
-    </div>
-    {% endif %}
-
-    <!-- Call to Action -->
-    <div class="cta-section">
-        <div class="cta-content">
-            <h2>Pronto para agendar?</h2>
-            <p>Faça seu login ou crie uma conta para agendar seus horários de forma rápida e fácil!</p>
-            
-            <div class="cta-actions">
-                <a href="{{ url_for('login', slug=barbearia.slug) }}" class="cta-btn primary">
-                    Já tenho conta - Fazer Login
-                </a>
-                <a href="{{ url_for('cadastro', slug=barbearia.slug) }}" class="cta-btn secondary">
-                    Sou novo aqui - Criar Conta
-                </a>
-            </div>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <div class="page-footer">
-        <div class="footer-content">
-            <a href="/" class="footer-link">
-                <span class="link-icon">🏠</span>
-                Ver todas as barbearias
+        {% endif %}
+        
+        <!-- Botões de Ação -->
+        <div style="margin-top: 3rem; display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap;">
+            <a href="{{ url_for('login', slug=barbearia.slug) }}" class="btn btn-primary" style="font-size: 1.1rem; padding: 1.2rem 3rem;">
+                🔐 FAZER LOGIN
             </a>
-            
-            {% if barbearia.cnpj %}
-            <span class="footer-info">CNPJ: {{ barbearia.cnpj }}</span>
-            {% endif %}
+            <a href="{{ url_for('cadastro', slug=barbearia.slug) }}" class="btn btn-secondary" style="font-size: 1.1rem; padding: 1.2rem 3rem;">
+                ✨ CRIAR CONTA
+            </a>
         </div>
     </div>
 </div>
 
+<!-- Serviços Section -->
+{% if servicos %}
+<div style="margin-top: 4rem;">
+    <h2 style="text-align: center; font-size: 2.5rem; color: var(--gold); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 3px;">
+        NOSSOS SERVIÇOS
+    </h2>
+    <p style="text-align: center; color: rgba(245, 245, 220, 0.7); margin-bottom: 3rem; font-size: 1.1rem;">
+        Qualidade e profissionalismo em cada atendimento
+    </p>
+    
+    <div class="grid grid-3">
+        {% for servico in servicos %}
+        <div style="background: var(--bg-card); border: 2px solid var(--gold-dark); border-radius: 4px; padding: 2.5rem; text-align: center; transition: all 0.3s ease;">
+            <div style="font-size: 3.5rem; margin-bottom: 1.5rem; filter: grayscale(20%);">✂</div>
+            
+            <h3 style="color: var(--gold); font-size: 1.5rem; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 1px;">
+                {{ servico.nome }}
+            </h3>
+            
+            {% if servico.descricao %}
+            <p style="color: rgba(245, 245, 220, 0.7); margin-bottom: 1.5rem; line-height: 1.6;">
+                {{ servico.descricao }}
+            </p>
+            {% endif %}
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1.5rem; border-top: 2px solid rgba(212, 175, 55, 0.2);">
+                <span style="color: rgba(245, 245, 220, 0.6); font-size: 0.95rem;">
+                    ⏱ {{ servico.duracao }} min
+                </span>
+                <span style="color: var(--gold); font-weight: 700; font-size: 1.3rem;">
+                    R$ {{ "%.2f"|format(servico.preco) }}
+                </span>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<!-- Call to Action Premium -->
+<div style="margin-top: 5rem; padding: 3rem; background: linear-gradient(135deg, var(--gold-dark), var(--gold)); border-radius: 4px; text-align: center; box-shadow: 0 10px 40px rgba(212, 175, 55, 0.3);">
+    <h2 style="font-size: 2rem; color: var(--bg-dark); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 2px; font-weight: 900;">
+        PRONTO PARA AGENDAR?
+    </h2>
+    <p style="color: rgba(10, 10, 10, 0.8); margin-bottom: 2rem; font-size: 1.1rem;">
+        Entre agora e garanta seu horário com os melhores profissionais
+    </p>
+    
+    <div style="display: flex; justify-content: center; gap: 1.5rem; flex-wrap: wrap;">
+        <a href="{{ url_for('login', slug=barbearia.slug) }}" 
+           style="display: inline-block; padding: 1rem 2.5rem; background: var(--bg-dark); color: var(--gold); border: 3px solid var(--bg-dark); border-radius: 2px; text-decoration: none; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease;">
+            JÁ TENHO CONTA
+        </a>
+        <a href="{{ url_for('cadastro', slug=barbearia.slug) }}" 
+           style="display: inline-block; padding: 1rem 2.5rem; background: transparent; color: var(--bg-dark); border: 3px solid var(--bg-dark); border-radius: 2px; text-decoration: none; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; transition: all 0.3s ease;">
+            SOU NOVO AQUI
+        </a>
+    </div>
+</div>
+
+<!-- Diferenciais -->
+<div style="margin-top: 4rem;">
+    <h2 style="text-align: center; font-size: 2rem; color: var(--gold-light); margin-bottom: 3rem; text-transform: uppercase; letter-spacing: 2px;">
+        POR QUE NOS ESCOLHER?
+    </h2>
+    
+    <div class="grid grid-4">
+        <div style="text-align: center; padding: 2rem;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">👨‍🔧</div>
+            <h3 style="color: var(--gold); margin-bottom: 0.5rem; font-size: 1.1rem;">PROFISSIONAIS</h3>
+            <p style="color: rgba(245, 245, 220, 0.6); font-size: 0.9rem;">Barbeiros experientes e qualificados</p>
+        </div>
+        
+        <div style="text-align: center; padding: 2rem;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">⭐</div>
+            <h3 style="color: var(--gold); margin-bottom: 0.5rem; font-size: 1.1rem;">QUALIDADE</h3>
+            <p style="color: rgba(245, 245, 220, 0.6); font-size: 0.9rem;">Produtos premium e equipamentos modernos</p>
+        </div>
+        
+        <div style="text-align: center; padding: 2rem;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">📱</div>
+            <h3 style="color: var(--gold); margin-bottom: 0.5rem; font-size: 1.1rem;">AGENDAMENTO</h3>
+            <p style="color: rgba(245, 245, 220, 0.6); font-size: 0.9rem;">Sistema online prático e rápido</p>
+        </div>
+        
+        <div style="text-align: center; padding: 2rem;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🏆</div>
+            <h3 style="color: var(--gold); margin-bottom: 0.5rem; font-size: 1.1rem;">EXCELÊNCIA</h3>
+            <p style="color: rgba(245, 245, 220, 0.6); font-size: 0.9rem;">Atendimento de primeira classe</p>
+        </div>
+    </div>
+</div>
+
+<!-- Footer -->
+<div style="margin-top: 4rem; padding-top: 2rem; border-top: 2px solid var(--gold-dark); text-align: center;">
+    <a href="/" style="display: inline-flex; align-items: center; gap: 0.5rem; color: var(--gold); text-decoration: none; font-weight: 600; transition: all 0.3s ease; margin-bottom: 1rem;">
+        <span>🏠</span> VER TODAS AS BARBEARIAS
+    </a>
+    
+    {% if barbearia.cnpj %}
+    <p style="color: rgba(245, 245, 220, 0.5); font-size: 0.85rem; margin-top: 1rem;">
+        CNPJ: {{ barbearia.cnpj }}
+    </p>
+    {% endif %}
+</div>
+
 <style>
-.barbearia-home {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: var(--spacing-lg);
-}
-
-.hero-section {
-    display: grid;
-    grid-template-columns: 2fr 1fr;
-    gap: var(--spacing-2xl);
-    align-items: center;
-    padding: var(--spacing-2xl) 0;
-    margin-bottom: var(--spacing-2xl);
-}
-
-.hero-title {
-    font-size: var(--font-size-4xl);
-    font-weight: 800;
-    color: var(--gray-800);
-    margin-bottom: var(--spacing-lg);
-    line-height: 1.1;
-}
-
-.hero-info {
-    display: flex;
-    flex-direction: column;
-    gap: var(--spacing-sm);
-    margin-bottom: var(--spacing-xl);
-}
-
-.info-item {
-    color: var(--gray-600);
-    font-size: var(--font-size-lg);
-}
-
-.hero-actions {
-    display: flex;
-    gap: var(--spacing-md);
-    flex-wrap: wrap;
-}
-
-.hero-btn {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
-    padding: var(--spacing-lg) var(--spacing-xl);
-    border-radius: var(--border-radius-xl);
-    text-decoration: none;
-    font-weight: 700;
-    font-size: var(--font-size-lg);
-    transition: all var(--transition-normal);
-    border: none;
-}
-
-.hero-btn.primary {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-    color: white;
-    box-shadow: var(--shadow-lg);
-}
-
-.hero-btn.secondary {
-    background: white;
-    color: var(--primary-color);
-    border: 3px solid var(--primary-color);
-}
-
-.hero-btn:hover {
-    transform: translateY(-3px);
-    box-shadow: var(--shadow-xl);
-}
-
-.hero-image {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.hero-icon {
-    font-size: 8rem;
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
-}
-
-.services-section {
-    margin-bottom: var(--spacing-2xl);
-}
-
-.section-header {
-    text-align: center;
-    margin-bottom: var(--spacing-2xl);
-}
-
-.section-header h2 {
-    font-size: var(--font-size-3xl);
-    color: var(--gray-800);
-    margin-bottom: var(--spacing-md);
-}
-
-.section-header p {
-    font-size: var(--font-size-lg);
-    color: var(--gray-600);
-    max-width: 600px;
-    margin: 0 auto;
-}
-
-.services-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: var(--spacing-lg);
-}
-
-.service-card {
-    background: white;
-    padding: var(--spacing-xl);
-    border-radius: var(--border-radius-xl);
-    box-shadow: var(--shadow-md);
-    text-align: center;
-    transition: all var(--transition-normal);
-    border: 2px solid transparent;
-}
-
-.service-card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--shadow-xl);
-    border-color: var(--primary-light);
-}
-
-.service-icon {
-    font-size: var(--font-size-3xl);
-    margin-bottom: var(--spacing-md);
-    color: var(--primary-color);
-}
-
-.service-name {
-    font-size: var(--font-size-xl);
-    font-weight: 700;
-    color: var(--gray-800);
-    margin-bottom: var(--spacing-md);
-}
-
-.service-description {
-    color: var(--gray-600);
-    margin-bottom: var(--spacing-lg);
-    line-height: 1.5;
-}
-
-.service-details {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding-top: var(--spacing-md);
-    border-top: 2px solid var(--gray-100);
-}
-
-.service-duration {
-    color: var(--gray-500);
-    font-size: var(--font-size-sm);
-}
-
-.service-price {
-    font-weight: 700;
-    font-size: var(--font-size-lg);
-    color: var(--success-color);
-}
-
-.cta-section {
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-    color: white;
-    padding: var(--spacing-2xl);
-    border-radius: var(--border-radius-xl);
-    text-align: center;
-    margin-bottom: var(--spacing-2xl);
-}
-
-.cta-content h2 {
-    font-size: var(--font-size-2xl);
-    margin-bottom: var(--spacing-md);
-}
-
-.cta-content p {
-    font-size: var(--font-size-lg);
-    opacity: 0.9;
-    margin-bottom: var(--spacing-xl);
-    max-width: 600px;
-    margin-left: auto;
-    margin-right: auto;
-}
-
-.cta-actions {
-    display: flex;
-    gap: var(--spacing-md);
-    justify-content: center;
-    flex-wrap: wrap;
-}
-
-.cta-btn {
-    display: inline-block;
-    padding: var(--spacing-md) var(--spacing-xl);
-    border-radius: var(--border-radius-lg);
-    text-decoration: none;
-    font-weight: 600;
-    transition: all var(--transition-normal);
-}
-
-.cta-btn.primary {
-    background: white;
-    color: var(--primary-color);
-}
-
-.cta-btn.secondary {
-    background: transparent;
-    color: white;
-    border: 2px solid white;
-}
-
-.cta-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-lg);
-}
-
-.page-footer {
-    text-align: center;
-    padding: var(--spacing-xl) 0;
-    border-top: 2px solid var(--gray-100);
-}
-
-.footer-content {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: var(--spacing-md);
-}
-
-.footer-link {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
-    color: var(--primary-color);
-    text-decoration: none;
-    font-weight: 600;
-    transition: all var(--transition-normal);
-}
-
-.footer-link:hover {
-    color: var(--secondary-color);
-}
-
-.footer-info {
-    color: var(--gray-500);
-    font-size: var(--font-size-sm);
-}
-
-@media (max-width: 768px) {
-    .hero-section {
-        grid-template-columns: 1fr;
-        text-align: center;
-        gap: var(--spacing-lg);
+    /* Animação da logo */
+    @keyframes logoFloat {
+        0%, 100% { 
+            transform: translateY(0px) scale(1); 
+            filter: drop-shadow(0 0 40px rgba(0, 150, 255, 0.6)) drop-shadow(0 5px 30px rgba(0, 150, 255, 0.4)) brightness(1.1) contrast(1.1);
+        }
+        50% { 
+            transform: translateY(-20px) scale(1.05); 
+            filter: drop-shadow(0 0 60px rgba(0, 150, 255, 0.9)) drop-shadow(0 10px 50px rgba(0, 150, 255, 0.6)) brightness(1.15) contrast(1.15);
+        }
     }
     
-    .hero-title {
-        font-size: var(--font-size-3xl);
+    /* Efeitos hover personalizados */
+    .grid > div:hover {
+        transform: translateY(-5px);
+        border-color: var(--gold) !important;
+        box-shadow: 0 10px 30px rgba(212, 175, 55, 0.2);
     }
     
-    .hero-actions {
-        justify-content: center;
+    /* Responsivo mobile */
+    @media (max-width: 768px) {
+        .grid {
+            grid-template-columns: 1fr !important;
+        }
+        
+        h1 {
+            font-size: 2rem !important;
+        }
+        
+        .btn {
+            width: 100%;
+            text-align: center;
+        }
     }
-    
-    .hero-icon {
-        font-size: 6rem;
-    }
-    
-    .services-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .cta-actions {
-        flex-direction: column;
-        align-items: center;
-    }
-    
-    .cta-btn {
-        width: 100%;
-        max-width: 300px;
-        text-align: center;
-    }
-    
-    .footer-content {
-        flex-direction: column;
-        text-align: center;
-    }
-}
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('✅ Barbearia {{ barbearia.nome }} carregada com tema premium');
+        
+        // Adiciona animação suave nos cards de serviço
+        const serviceCards = document.querySelectorAll('.grid > div');
+        serviceCards.forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+            card.style.animation = 'fadeIn 0.5s ease-out forwards';
+        });
+    });
+</script>
 {% endblock %}

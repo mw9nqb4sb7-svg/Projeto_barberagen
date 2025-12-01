@@ -131,15 +131,27 @@ dmypy.json
 # Arquivos específicos do projeto
 meubanco.db
 *.db
+*.db-journal
+*.sqlite
+*.sqlite3
 instance/
-debug_*.py
-test_*.py
-test_*.html
-*.md~
 .DS_Store
 Thumbs.db
 
-# Arquivos de desenvolvimento
+# NOTA: As pastas abaixo são mantidas no controle de versão para referência:
+# .scripts-obsoletos/ - Scripts antigos (referência histórica)
+# .docs-historico/ - Documentação de correções anteriores
+
+# Arquivos temporários de documentação
+*.md~
+*.md.backup
+
+# Arquivos de desenvolvimento/teste
+debug_*.py
+test_*.py
+test_*.html
 response_*.html
 final_*.html
 real_*.html
+temp_*.py
+temp_*.html

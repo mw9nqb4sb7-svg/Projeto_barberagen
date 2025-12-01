@@ -1,83 +1,1030 @@
 {% extends "base.html" %}
-{% block title %}Dashboard Admin{% endblock %}
+{% block title %}Dashboard Admin - {{ barbearia.nome }}{% endblock %}
 
 {% block content %}
-    <h1>Painel Administrativo</h1>
-
-    <div class="card-form">
-        <h2>Visão Geral do Sistema</h2>
-        
-        <div class="row" style="margin-top: 20px;">
-            <div class="col-half">
-                <div class="custom-alert custom-alert-info">
-                    <strong>Total de Clientes:</strong> {{ usuarios|length if usuarios else 0 }}
-                    <p style="margin-top: 5px;"><a href="{{ url_for('clientes', slug=barbearia.slug) }}">Gerenciar clientes →</a></p>
-                </div>
-            </div>
-            <div class="col-half">
-                <div class="custom-alert custom-alert-success">
-                    <strong>Total de Serviços:</strong> {{ servicos|length if servicos else 0 }}
-                                        <p style="margin-top: 5px;"><a href="{{ url_for('admin_clientes', slug=barbearia.slug) }}">Gerenciar clientes →</a></p>
-                </div>
-            </div>
-            <div class="col-half">
-                <div class="custom-alert custom-alert-success">
-                    <strong>Total de Serviços:</strong> {{ servicos|length if servicos else 0 }}
-                    <p style="margin-top: 5px;"><a href="{{ url_for('admin_servicos', slug=barbearia.slug) }}">Gerenciar serviços →</a></p>
-                </div>
-            </div>
-            <div class="col-half">
-                <div class="custom-alert custom-alert-warning">
-                    <strong>Total de Agendamentos:</strong> {{ reservas|length if reservas else 0 }}
-                    <p style="margin-top: 5px;"><a href="{{ url_for('admin_agendamentos_slug', slug=barbearia.slug) }}">Ver todos →</a></p>
-                </div>
-            </div>
-            <div class="col-half">
-                <div class="custom-alert custom-alert-primary">
-                    <strong>Disponibilidade:</strong> Horários e Dias
-                    <p style="margin-top: 5px;"><a href="{{ url_for('admin_disponibilidade_slug', slug=barbearia.slug) }}">Configurar →</a></p>
-                </div>
-            </div>
-            <div class="col-half">
-                <div class="custom-alert custom-alert-warning">
-                    <strong>Total de Agendamentos:</strong> {{ reservas|length if reservas else 0 }}
-                    <p style="margin-top: 5px;"><a href="{{ url_for('admin_agendamentos', slug=barbearia.slug) }}">Ver todos →</a></p>
-                </div>
-            </div>
-            <div class="col-half">
-                <div class="custom-alert custom-alert-primary">
-                    <strong>Disponibilidade:</strong> Horários e Dias
-                    <p style="margin-top: 5px;"><a href="{{ url_for('admin_disponibilidade', slug=barbearia.slug) }}">Configurar →</a></p>
-                </div>
+<!-- Navbar Admin -->
+<nav style="background: var(--bg-dark); border-bottom: 2px solid var(--gold-dark); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); backdrop-filter: blur(10px);">
+    <div style="max-width: 1400px; margin: 0 auto; padding: 1.25rem 2rem; display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 1.5rem;">
+            <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                <span style="font-size: 1.3rem; font-weight: 700; color: var(--gold); font-family: system-ui, -apple-system, sans-serif; letter-spacing: 0.5px;">{{ barbearia.nome }}</span>
+                <span style="font-size: 0.7rem; color: rgba(245, 245, 220, 0.5); font-family: system-ui, -apple-system, sans-serif; text-transform: uppercase; letter-spacing: 1px;">
+                    🔑 Administrador
+                </span>
             </div>
         </div>
-
-        <h3 style="margin-top: 40px;">Últimos Agendamentos</h3>
-        {% if reservas %}
-            <table class="custom-table">
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Cliente</th>
-                        <th>Serviço</th>
-                        <th>Data</th>
-                        <th>Hora</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for r in reservas|slice(5) %}
-                        <tr>
-                            <td>#{{ r.id }}</td>
-                            <td>{{ r.usuario.nome if r.usuario else 'Desconhecido' }}</td>
-                            <td>{{ r.servico.nome if r.servico else 'N/A' }}</td>
-                            <td>{{ r.data }}</td>
-                            <td>{{ r.hora }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p>Nenhum agendamento realizado.</p>
-        {% endif %}
+        
+        <div style="display: flex; align-items: center; gap: 1rem;">
+            <a href="{{ url_for('clientes', slug=barbearia.slug) }}" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: transparent; color: var(--text-color); text-decoration: none; font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; border-radius: 4px; transition: all 0.3s ease; font-family: system-ui, -apple-system, sans-serif; border: 2px solid var(--gold-dark);" onmouseover="this.style.borderColor='var(--gold)'; this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--gold-dark)'; this.style.color='var(--text-color)'">
+                <span>👥</span> <span style="white-space: nowrap;">Clientes</span>
+            </a>
+            
+            <a href="{{ url_for('servicos', slug=barbearia.slug) }}" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: transparent; color: var(--text-color); text-decoration: none; font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; border-radius: 4px; transition: all 0.3s ease; font-family: system-ui, -apple-system, sans-serif; border: 2px solid var(--gold-dark);" onmouseover="this.style.borderColor='var(--gold)'; this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--gold-dark)'; this.style.color='var(--text-color)'">
+                <span>✂️</span> <span style="white-space: nowrap;">Serviços</span>
+            </a>
+            
+            <div class="notification-bell" onclick="toggleNotifications()" style="position: relative; cursor: pointer; padding: 0.75rem; background: rgba(74, 158, 255, 0.1); border-radius: 50%; transition: all 0.3s ease; border: 2px solid var(--gold-dark);" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--gold-dark)'">
+                <span style="font-size: 1.3rem;">🔔</span>
+                <span class="badge-notification" id="notifBadge" style="display: none; position: absolute; top: 0; right: 0; background: #ef4444; color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 0.7em; display: none; align-items: center; justify-content: center; font-weight: bold; animation: pulse 2s infinite; font-family: system-ui, -apple-system, sans-serif;">0</span>
+            </div>
+            
+            <a href="{{ url_for('logout', slug=barbearia.slug) }}" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.25rem; background: transparent; color: #ef4444; text-decoration: none; font-weight: 600; font-size: 0.85rem; text-transform: uppercase; border-radius: 4px; transition: all 0.3s ease; border: 2px solid rgba(239, 68, 68, 0.3); font-family: system-ui, -apple-system, sans-serif;" onmouseover="this.style.background='rgba(239, 68, 68, 0.1)'; this.style.borderColor='#ef4444'" onmouseout="this.style.background='transparent'; this.style.borderColor='rgba(239, 68, 68, 0.3)'">
+                <span>🚪</span> <span style="white-space: nowrap;">Sair</span>
+            </a>
+        </div>
     </div>
+</nav>
+
+<div style="margin-top: 2.5rem;"></div>
+
+<!-- v2.0 - Atualizado em 28/11/2025 -->
+<style>
+    * {
+        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+    /* Estilos responsivos para o dashboard */
+    .admin-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        gap: 15px;
+    }
+    
+    .notification-bell {
+        position: relative;
+        cursor: pointer;
+        padding: 10px;
+        background: rgba(59, 130, 246, 0.1);
+        border-radius: 50%;
+        transition: all 0.3s ease;
+    }
+    
+    .notification-bell:hover {
+        background: rgba(59, 130, 246, 0.2);
+        transform: scale(1.1);
+    }
+    
+    .badge-notification {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background: #ef4444;
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        font-size: 0.7em;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+        animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.1); }
+    }
+    
+    /* Estilos para filtros */
+    .filtro-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+    }
+    
+    .filtro-btn.ativo {
+        background: #3b82f6 !important;
+        color: white !important;
+        border-color: #3b82f6 !important;
+    }
+    
+    #buscaCliente:focus {
+        outline: none;
+        border-color: #3b82f6;
+        box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    
+    #filtroStatus:focus {
+        outline: none;
+        border-color: #3b82f6;
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+        margin-bottom: 30px;
+        max-width: 1100px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    
+    .stat-card {
+        padding: 20px;
+        border-radius: 12px;
+        color: white;
+        position: relative;
+        overflow: hidden;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        min-height: 150px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0,0,0,0.2) !important;
+    }
+    
+    .stat-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: rgba(255,255,255,0.1);
+        transform: rotate(45deg);
+        transition: all 0.5s ease;
+    }
+    
+    .stat-card:hover::before {
+        right: -100%;
+    }
+    
+    .stat-card a {
+        color: white !important;
+        opacity: 0.9;
+        text-decoration: none;
+        font-size: 0.85em;
+        transition: opacity 0.3s;
+        position: relative;
+        z-index: 1;
+        margin-top: auto;
+    }
+    
+    .stat-card a:hover {
+        opacity: 1;
+        text-decoration: underline;
+    }
+    
+    .stat-card > div:first-child {
+        font-size: 0.85em;
+        opacity: 0.9;
+        margin-bottom: 8px;
+    }
+    
+    .stat-card > div:nth-child(2) {
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 8px;
+        position: relative;
+        z-index: 1;
+    }
+    
+    #notificationPanel {
+        position: fixed;
+        top: 80px;
+        right: 20px;
+        width: 350px;
+        max-width: calc(100vw - 40px);
+        max-height: 400px;
+        overflow-y: auto;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        z-index: 1000;
+        padding: 20px;
+        animation: slideIn 0.3s ease;
+    }
+    
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .agendamento-card {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px;
+        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+        border-radius: 12px;
+        margin-bottom: 15px;
+        transition: all 0.3s ease;
+    }
+    
+    .agendamento-card:hover {
+        transform: translateX(5px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+    }
+    
+    /* Responsivo para cards inline */
+    @media (max-width: 968px) {
+        body > div > div[style*="grid-template-columns: repeat(3, 1fr)"] {
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 12px !important;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        body > div > div[style*="grid-template-columns"] {
+            grid-template-columns: 1fr !important;
+            gap: 12px !important;
+            max-width: 100% !important;
+        }
+        
+        body > div > div[style*="grid-template-columns"] > div {
+            min-height: 120px !important;
+            padding: 15px !important;
+        }
+        
+        body > div > div[style*="grid-template-columns"] > div > div:nth-child(2) {
+            font-size: 1.6em !important;
+        }
+        .admin-header h1 {
+            font-size: 1.5em !important;
+        }
+        
+        #notificationPanel {
+            width: calc(100vw - 40px);
+            right: 20px;
+        }
+        
+        .agendamento-card {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        
+        .agendamento-card > div:last-child {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .row {
+            flex-direction: column;
+        }
+        
+        .col-half {
+            width: 100% !important;
+            margin-bottom: 20px;
+        }
+        
+        canvas {
+            width: 100% !important;
+            height: auto !important;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        .admin-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .notification-bell {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+    }
+</style>
+
+<!-- Painel de Notificações -->
+<div id="notificationPanel" style="display: none; position: fixed; top: 80px; right: 20px; width: 350px; max-width: calc(100vw - 40px); max-height: 400px; overflow-y: auto; background: white; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); z-index: 1000; padding: 20px; animation: slideIn 0.3s ease;">
+    <h3 style="margin-top: 0; color: #1e293b; font-family: system-ui, -apple-system, sans-serif;">🔔 Notificações</h3>
+    <div id="notificationList">
+        <p style="color: #94a3b8; text-align: center; font-family: system-ui, -apple-system, sans-serif;">Nenhuma notificação no momento</p>
+    </div>
+</div>
+
+<!-- Cards de Estatísticas -->
+<div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px; max-width: 1400px; margin-left: auto; margin-right: auto; padding: 0 2rem;">
+    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); padding: 1.5rem; border-radius: 8px; color: white; position: relative; overflow: hidden; transition: transform 0.3s ease; min-height: 120px; display: flex; flex-direction: column; justify-content: space-between; border: 2px solid rgba(255,255,255,0.1);" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+        <div style="font-size: 0.8rem; opacity: 0.9; line-height: 1.3; font-family: system-ui, -apple-system, sans-serif;">👥 Total de Clientes</div>
+        <div style="font-size: 2rem; font-weight: bold; position: relative; z-index: 1; line-height: 1; font-family: system-ui, -apple-system, sans-serif;">{{ usuarios|length }}</div>
+        <a href="{{ url_for('clientes', slug=barbearia.slug) }}" style="color: white !important; opacity: 0.9; text-decoration: none; font-size: 0.8rem; position: relative; z-index: 1; font-family: system-ui, -apple-system, sans-serif;">Gerenciar →</a>
+    </div>
+
+    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3); padding: 1.5rem; border-radius: 8px; color: white; position: relative; overflow: hidden; transition: transform 0.3s ease; min-height: 120px; display: flex; flex-direction: column; justify-content: space-between; border: 2px solid rgba(255,255,255,0.1);" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+        <div style="font-size: 0.8rem; opacity: 0.9; line-height: 1.3; font-family: system-ui, -apple-system, sans-serif;">✂️ Serviços Ativos</div>
+        <div style="font-size: 2rem; font-weight: bold; position: relative; z-index: 1; line-height: 1; font-family: system-ui, -apple-system, sans-serif;">{{ servicos|length }}</div>
+        <a href="{{ url_for('servicos', slug=barbearia.slug) }}" style="color: white !important; opacity: 0.9; text-decoration: none; font-size: 0.8rem; position: relative; z-index: 1; font-family: system-ui, -apple-system, sans-serif;">Gerenciar →</a>
+    </div>
+
+    <div style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); box-shadow: 0 4px 15px rgba(250, 112, 154, 0.3); padding: 1.5rem; border-radius: 8px; color: white; position: relative; overflow: hidden; transition: transform 0.3s ease; min-height: 120px; display: flex; flex-direction: column; justify-content: space-between; border: 2px solid rgba(255,255,255,0.1);" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+        <div style="font-size: 0.8rem; opacity: 0.9; line-height: 1.3; font-family: system-ui, -apple-system, sans-serif;">💰 Faturamento Hoje</div>
+        <div style="font-size: 2rem; font-weight: bold; position: relative; z-index: 1; line-height: 1; font-family: system-ui, -apple-system, sans-serif;" id="faturamentoHoje">R$ 0</div>
+        <span style="opacity: 0.9; font-size: 0.75rem; position: relative; z-index: 1; font-family: system-ui, -apple-system, sans-serif;">Estimado</span>
+    </div>
+    
+    <div style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); box-shadow: 0 4px 15px rgba(48, 207, 208, 0.3); padding: 1.5rem; border-radius: 8px; color: white; position: relative; overflow: hidden; transition: transform 0.3s ease; min-height: 120px; display: flex; flex-direction: column; justify-content: space-between; border: 2px solid rgba(255,255,255,0.1);" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
+        <div style="font-size: 0.8rem; opacity: 0.9; line-height: 1.3; font-family: system-ui, -apple-system, sans-serif;">⏰ Disponibilidade</div>
+        <div style="font-size: 1.3rem; font-weight: bold; position: relative; z-index: 1; line-height: 1; font-family: system-ui, -apple-system, sans-serif;">Horários</div>
+        <a href="{{ url_for('admin_disponibilidade', slug=barbearia.slug) }}" style="color: white !important; opacity: 0.9; text-decoration: none; font-size: 0.8rem; position: relative; z-index: 1; font-family: system-ui, -apple-system, sans-serif;">Configurar →</a>
+    </div>
+</div>
+
+<!-- Agendamentos -->
+<div class="card-form" style="margin-bottom: 30px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+        <h2 style="margin: 0; color: #1e293b;">📋 Agendamentos</h2>
+        <span id="dataHoje" style="color: #64748b; font-size: 0.95em;"></span>
+    </div>
+    
+    <!-- Filtros Modernos -->
+    <div style="background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);">
+        <!-- Linha 1: Filtros rápidos -->
+        <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
+            <button onclick="aplicarFiltroRapido('hoje')" id="filtroHoje" class="filtro-btn" style="padding: 8px 16px; background: white; border: 2px solid #3b82f6; color: #3b82f6; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; font-size: 0.9em;">
+                📅 Hoje
+            </button>
+            <button onclick="aplicarFiltroRapido('amanha')" id="filtroAmanha" class="filtro-btn" style="padding: 8px 16px; background: white; border: 2px solid #e2e8f0; color: #64748b; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; font-size: 0.9em;">
+                🌅 Amanhã
+            </button>
+            <button onclick="aplicarFiltroRapido('semana')" id="filtroSemana" class="filtro-btn" style="padding: 8px 16px; background: white; border: 2px solid #e2e8f0; color: #64748b; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; font-size: 0.9em;">
+                📆 Esta Semana
+            </button>
+            <button onclick="aplicarFiltroRapido('mes')" id="filtroMes" class="filtro-btn" style="padding: 8px 16px; background: white; border: 2px solid #e2e8f0; color: #64748b; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; font-size: 0.9em;">
+                🗓️ Este Mês
+            </button>
+            <button onclick="aplicarFiltroRapido('todos')" id="filtroTodos" class="filtro-btn" style="padding: 8px 16px; background: white; border: 2px solid #e2e8f0; color: #64748b; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; font-size: 0.9em;">
+                🌐 Todos
+            </button>
+        </div>
+        
+        <!-- Linha 2: Busca e Status -->
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <input type="text" id="buscaCliente" placeholder="🔍 Buscar por nome do cliente..." onkeyup="aplicarFiltros()" style="flex: 1; min-width: 250px; padding: 10px 15px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 0.9em; transition: all 0.3s ease;">
+            
+            <select id="filtroStatus" onchange="aplicarFiltros()" style="padding: 10px 15px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; font-size: 0.9em; font-weight: 600; color: #64748b; background: white;">
+                <option value="todos">Todos os Status</option>
+                <option value="confirmada">✅ Confirmadas</option>
+                <option value="pendente">🕒 Pendentes</option>
+            </select>
+            
+            <button onclick="limparFiltros()" style="padding: 10px 15px; background: #ef4444; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; font-size: 0.9em;">
+                🗑️ Limpar
+            </button>
+        </div>
+    </div>
+    
+    <!-- Estatísticas do Filtro -->
+    <div id="estatisticasFiltro" style="display: flex; gap: 15px; margin-bottom: 15px; flex-wrap: wrap;">
+        <!-- Preenchido dinamicamente -->
+    </div>
+    
+    <!-- Container Todos -->
+    <div id="agendamentosTodosContainer">
+        <div id="agendamentosTodos">
+            <div style="text-align: center; padding: 40px; color: #94a3b8;">
+                <div style="font-size: 3em; margin-bottom: 10px;">📋</div>
+                <p>Carregando agendamentos...</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Paginação -->
+    <div id="paginacao" style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 20px;">
+        <!-- Preenchido dinamicamente -->
+    </div>
+</div>
+
+<!-- Gráfico de Agendamentos da Semana -->
+<div class="row" style="gap: 20px;">
+    <div class="col-half">
+        <div class="card-form">
+            <h3>📊 Agendamentos da Semana</h3>
+            <canvas id="chartSemana" style="max-height: 300px;"></canvas>
+        </div>
+    </div>
+
+    <div class="col-half">
+        <div class="card-form">
+            <h3 style="color: #1e293b;">🏆 Top Serviços</h3>
+            <div id="topServicos">
+                {% if servicos %}
+                    {% for servico in servicos[:5] %}
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #f8fafc; border-radius: 10px; margin-bottom: 10px; transition: all 0.3s ease;">
+                        <div>
+                            <div style="font-weight: 600; color: #1e293b;">{{ servico.nome }}</div>
+                            <div style="color: #64748b; font-size: 0.85em;">{{ servico.duracao }}min</div>
+                        </div>
+                        <div style="font-weight: bold; color: #3b82f6; font-size: 1.2em;">R$ {{ "%.2f"|format(servico.preco) }}</div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <p style="text-align: center; color: #94a3b8; padding: 30px;">Nenhum serviço cadastrado</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Data de hoje
+document.getElementById('dataHoje').textContent = new Date().toLocaleDateString('pt-BR', { 
+    weekday: 'long', 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric' 
+});
+
+// Notificações
+let notifications = [];
+
+// Função para tocar som de notificação (funciona em todos os navegadores)
+function tocarSomNotificacao() {
+    try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        const audioContext = new AudioContext();
+        
+        // Criar oscilador para o som
+        const oscillator = audioContext.createOscillator();
+        const gainNode = audioContext.createGain();
+        
+        oscillator.connect(gainNode);
+        gainNode.connect(audioContext.destination);
+        
+        // Configurar o som (tipo sino agradável)
+        oscillator.type = 'sine';
+        oscillator.frequency.setValueAtTime(800, audioContext.currentTime); // Frequência alta (ding)
+        oscillator.frequency.exponentialRampToValueAtTime(400, audioContext.currentTime + 0.1);
+        
+        // Configurar volume com fade out
+        gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
+        
+        // Tocar o som
+        oscillator.start(audioContext.currentTime);
+        oscillator.stop(audioContext.currentTime + 0.3);
+        
+        console.log('🔊 Som de notificação tocado!');
+    } catch (e) {
+        console.log('❌ Erro ao tocar som:', e);
+        // Fallback: tentar com áudio HTML5
+        try {
+            const audio = new Audio('data:audio/wav;base64,UklGRhQAAABXQVZFZm10IBAAAAABAAEARKwAAIhYAQACABAAZGF0YQAAAAA=');
+            audio.play().catch(() => console.log('Som não suportado'));
+        } catch (e2) {
+            console.log('Fallback de som também falhou');
+        }
+    }
+}
+
+function toggleNotifications() {
+    const panel = document.getElementById('notificationPanel');
+    panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+}
+
+function addNotification(message, type = 'info') {
+    console.log('🔔 Adicionando notificação:', message, type);
+    notifications.unshift({ message, type, time: new Date() });
+    updateNotifications();
+    
+    // Tocar som
+    tocarSomNotificacao();
+    
+    // Mostrar painel automaticamente para novas notificações
+    const panel = document.getElementById('notificationPanel');
+    panel.style.display = 'block';
+    
+    // Auto-hide após 8 segundos
+    setTimeout(() => {
+        if (panel.style.display === 'block') {
+            panel.style.display = 'none';
+        }
+    }, 8000);
+}
+
+function updateNotifications() {
+    const badge = document.getElementById('notifBadge');
+    const list = document.getElementById('notificationList');
+    
+    console.log('📊 Atualizando notificações. Total:', notifications.length);
+    console.log('🔍 Badge element encontrado:', badge);
+    console.log('🔍 Badge current display:', badge ? badge.style.display : 'badge não encontrado');
+    
+    if (notifications.length > 0) {
+        // Forçar display com setProperty
+        badge.style.setProperty('display', 'flex', 'important');
+        badge.textContent = notifications.length;
+        
+        // Verificar se realmente está visível
+        console.log('✅ Badge configurado - display:', badge.style.display);
+        console.log('✅ Badge textContent:', badge.textContent);
+        console.log('✅ Badge computed display:', window.getComputedStyle(badge).display);
+        
+        // Remover display: none inline se existir
+        badge.removeAttribute('style');
+        badge.style.display = 'flex';
+        badge.textContent = notifications.length;
+        
+        console.log('✅ Badge após reset - display:', badge.style.display);
+        
+        list.innerHTML = notifications.map((n, i) => {
+            const icon = n.type === 'success' ? '✅' : n.type === 'warning' ? '⚠️' : 'ℹ️';
+            const time = n.time.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+            return `
+                <div style="padding: 12px; background: #f8fafc; border-radius: 8px; margin-bottom: 10px; border-left: 3px solid ${n.type === 'success' ? '#10b981' : n.type === 'warning' ? '#f59e0b' : '#3b82f6'};">
+                    <div style="display: flex; align-items: start; gap: 10px;">
+                        <span style="font-size: 1.2em;">${icon}</span>
+                        <div style="flex: 1;">
+                            <div style="color: #1e293b; font-size: 0.9em;">${n.message}</div>
+                            <div style="color: #94a3b8; font-size: 0.75em; margin-top: 5px;">${time}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    } else {
+        badge.style.display = 'none';
+        list.innerHTML = '<p style="color: #94a3b8; text-align: center;">Nenhuma notificação</p>';
+    }
+}
+
+// Variável global para controlar último número de agendamentos
+let ultimoNumeroAgendamentos = 0;
+let idsAgendamentosVistos = new Set();
+let primeiraVerificacao = true;
+
+// Variáveis para filtros e paginação
+let todosAgendamentos = [];
+let agendamentosFiltrados = [];
+let paginaAtual = 1;
+const itensPorPagina = 10;
+let filtroAtivo = 'hoje'; // Padrão: hoje
+
+// Função para aplicar filtro rápido
+function aplicarFiltroRapido(tipo) {
+    filtroAtivo = tipo;
+    
+    // Atualizar botões visuais
+    document.querySelectorAll('.filtro-btn').forEach(btn => {
+        btn.classList.remove('ativo');
+        btn.style.background = 'white';
+        btn.style.color = '#64748b';
+        btn.style.borderColor = '#e2e8f0';
+    });
+    
+    const btnAtivo = document.getElementById(`filtro${tipo.charAt(0).toUpperCase() + tipo.slice(1)}`);
+    if (btnAtivo) {
+        btnAtivo.classList.add('ativo');
+    }
+    
+    paginaAtual = 1;
+    aplicarFiltros();
+}
+
+// Função principal de filtros
+function aplicarFiltros() {
+    const busca = document.getElementById('buscaCliente').value.toLowerCase();
+    const status = document.getElementById('filtroStatus').value;
+    
+    const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+    
+    const amanha = new Date(hoje);
+    amanha.setDate(amanha.getDate() + 1);
+    
+    const fimSemana = new Date(hoje);
+    fimSemana.setDate(hoje.getDate() + (7 - hoje.getDay()));
+    
+    const fimMes = new Date(hoje.getFullYear(), hoje.getMonth() + 1, 0);
+    
+    // Aplicar filtros
+    agendamentosFiltrados = todosAgendamentos.filter(r => {
+        // Filtro de busca
+        if (busca && !r.cliente_nome.toLowerCase().includes(busca)) {
+            return false;
+        }
+        
+        // Filtro de status
+        if (status !== 'todos' && r.status !== status) {
+            return false;
+        }
+        
+        // Filtro de data
+        const dataAgendamento = new Date(r.data + 'T00:00:00');
+        dataAgendamento.setHours(0, 0, 0, 0);
+        
+        switch(filtroAtivo) {
+            case 'hoje':
+                return dataAgendamento.getTime() === hoje.getTime();
+            case 'amanha':
+                return dataAgendamento.getTime() === amanha.getTime();
+            case 'semana':
+                return dataAgendamento >= hoje && dataAgendamento <= fimSemana;
+            case 'mes':
+                return dataAgendamento >= hoje && dataAgendamento <= fimMes;
+            case 'todos':
+                return true;
+            default:
+                return true;
+        }
+    });
+    
+    exibirEstatisticas();
+    renderizarPaginacao();
+    exibirAgendamentosPaginados();
+}
+
+// Exibir estatísticas do filtro
+function exibirEstatisticas() {
+    const stats = document.getElementById('estatisticasFiltro');
+    const total = agendamentosFiltrados.length;
+    const confirmadas = agendamentosFiltrados.filter(r => r.status === 'confirmada').length;
+    const pendentes = agendamentosFiltrados.filter(r => r.status === 'pendente').length;
+    
+    stats.innerHTML = `
+        <div style="padding: 10px 15px; background: white; border-radius: 8px; border-left: 3px solid #3b82f6; display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 1.2em;">📊</span>
+            <div>
+                <div style="font-size: 0.75em; color: #64748b;">Total</div>
+                <div style="font-weight: bold; color: #1e293b;">${total}</div>
+            </div>
+        </div>
+        <div style="padding: 10px 15px; background: white; border-radius: 8px; border-left: 3px solid #10b981; display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 1.2em;">✅</span>
+            <div>
+                <div style="font-size: 0.75em; color: #64748b;">Confirmadas</div>
+                <div style="font-weight: bold; color: #10b981;">${confirmadas}</div>
+            </div>
+        </div>
+        <div style="padding: 10px 15px; background: white; border-radius: 8px; border-left: 3px solid #f59e0b; display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 1.2em;">🕒</span>
+            <div>
+                <div style="font-size: 0.75em; color: #64748b;">Pendentes</div>
+                <div style="font-weight: bold; color: #f59e0b;">${pendentes}</div>
+            </div>
+        </div>
+    `;
+}
+
+// Renderizar paginação
+function renderizarPaginacao() {
+    const totalPaginas = Math.ceil(agendamentosFiltrados.length / itensPorPagina);
+    const paginacao = document.getElementById('paginacao');
+    
+    if (totalPaginas <= 1) {
+        paginacao.innerHTML = '';
+        return;
+    }
+    
+    let html = '';
+    
+    // Botão anterior
+    if (paginaAtual > 1) {
+        html += `<button onclick="mudarPagina(${paginaAtual - 1})" style="padding: 8px 12px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">← Anterior</button>`;
+    }
+    
+    // Números de página
+    for (let i = 1; i <= totalPaginas; i++) {
+        if (i === 1 || i === totalPaginas || (i >= paginaAtual - 1 && i <= paginaAtual + 1)) {
+            const ativo = i === paginaAtual;
+            html += `<button onclick="mudarPagina(${i})" style="padding: 8px 12px; background: ${ativo ? '#3b82f6' : 'white'}; color: ${ativo ? 'white' : '#64748b'}; border: 2px solid ${ativo ? '#3b82f6' : '#e2e8f0'}; border-radius: 6px; cursor: pointer; font-weight: 600;">${i}</button>`;
+        } else if (i === paginaAtual - 2 || i === paginaAtual + 2) {
+            html += '<span style="color: #94a3b8;">...</span>';
+        }
+    }
+    
+    // Botão próximo
+    if (paginaAtual < totalPaginas) {
+        html += `<button onclick="mudarPagina(${paginaAtual + 1})" style="padding: 8px 12px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Próximo →</button>`;
+    }
+    
+    paginacao.innerHTML = html;
+}
+
+// Mudar página
+function mudarPagina(pagina) {
+    paginaAtual = pagina;
+    exibirAgendamentosPaginados();
+    renderizarPaginacao();
+    
+    // Scroll suave para o topo dos agendamentos
+    document.getElementById('agendamentosTodosContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+// Exibir agendamentos paginados
+function exibirAgendamentosPaginados() {
+    const inicio = (paginaAtual - 1) * itensPorPagina;
+    const fim = inicio + itensPorPagina;
+    const agendamentosPagina = agendamentosFiltrados.slice(inicio, fim);
+    
+    const container = document.getElementById('agendamentosTodos');
+    
+    if (agendamentosPagina.length === 0) {
+        container.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: #94a3b8;">
+                <div style="font-size: 3em; margin-bottom: 10px;">🔍</div>
+                <p>Nenhum agendamento encontrado com os filtros aplicados</p>
+            </div>
+        `;
+        return;
+    }
+    
+    container.innerHTML = renderizarAgendamentos(agendamentosPagina);
+}
+
+// Limpar todos os filtros
+function limparFiltros() {
+    document.getElementById('buscaCliente').value = '';
+    document.getElementById('filtroStatus').value = 'todos';
+    aplicarFiltroRapido('hoje');
+}
+
+// Renderizar cards de agendamentos
+function renderizarAgendamentos(agendamentos) {
+    return agendamentos.sort((a, b) => {
+        const dataCompare = b.data.localeCompare(a.data);
+        if (dataCompare !== 0) return dataCompare;
+        return b.hora_inicio.localeCompare(a.hora_inicio);
+    }).map(r => {
+        const statusColor = r.status === 'confirmada' ? '#10b981' : r.status === 'cancelada' ? '#ef4444' : '#f59e0b';
+        const statusIcon = r.status === 'confirmada' ? '✅' : r.status === 'cancelada' ? '❌' : '🕒';
+        
+        // Formatar data
+        const dataObj = new Date(r.data + 'T00:00:00');
+        const dataFormatada = dataObj.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        
+        return `
+            <div class="agendamento-card" style="border-left: 4px solid ${statusColor};">
+                <div style="flex: 1;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                        <span style="font-size: 1.5em;">${statusIcon}</span>
+                        <div>
+                            <div style="font-weight: 600; color: #1e293b; font-size: 1.1em;">👤 ${r.cliente_nome}</div>
+                            <div style="color: #64748b; font-size: 0.85em;">📞 ${r.cliente_telefone}</div>
+                            <div style="color: #64748b; font-size: 0.85em; margin-top: 4px;">${r.servico_nome || 'Serviço N/A'}</div>
+                            <div style="color: #3b82f6; font-size: 0.85em; margin-top: 4px;">📅 ${dataFormatada}</div>
+                        </div>
+                    </div>
+                </div>
+                <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
+                    <div>
+                        <div style="font-size: 1.3em; font-weight: bold; color: #3b82f6;">${r.hora_inicio}</div>
+                        <div style="color: #64748b; font-size: 0.85em;">${r.servico_duracao || 30}min</div>
+                        <div style="margin-top: 5px; padding: 4px 12px; background: ${statusColor}; color: white; border-radius: 20px; font-size: 0.75em; display: inline-block;">${r.status}</div>
+                    </div>
+                    <button onclick="cancelarAgendamento(${r.id}, '${r.cliente_nome}')" 
+                            style="padding: 6px 12px; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85em; font-weight: 600; transition: all 0.3s ease; display: flex; align-items: center; gap: 5px;"
+                            onmouseover="this.style.background='#dc2626'; this.style.transform='scale(1.05)'" 
+                            onmouseout="this.style.background='#ef4444'; this.style.transform='scale(1)'">
+                        🚫 Cancelar
+                    </button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// Carregar todos os agendamentos
+async function carregarTodosAgendamentos() {
+    try {
+        const response = await fetch('{{ url_for("api_agendamentos_todos", slug=barbearia.slug) }}');
+        if (!response.ok) {
+            throw new Error('Erro ao buscar agendamentos');
+        }
+        
+        const agendamentos = await response.json();
+        console.log('📥 Agendamentos recebidos:', agendamentos.length);
+        console.log('📊 IDs atuais no servidor:', agendamentos.map(a => a.id));
+        console.log('💾 IDs já vistos:', Array.from(idsAgendamentosVistos));
+        
+        // Detectar novos agendamentos após primeira carga
+        if (!primeiraVerificacao) {
+            console.log('🔍 Verificando novos agendamentos...');
+            let novosDetectados = 0;
+            
+            agendamentos.forEach(agendamento => {
+                const id = agendamento.id;
+                const jaVisto = idsAgendamentosVistos.has(id);
+                console.log(`  ID ${id} - ${agendamento.cliente_nome}: ${jaVisto ? '✅ já visto' : '🆕 NOVO!'}`);
+                
+                if (!jaVisto) {
+                    // Novo agendamento detectado!
+                    novosDetectados++;
+                    console.log('🎉 NOVO AGENDAMENTO DETECTADO:', agendamento);
+                    const mensagem = `🎉 Novo agendamento: ${agendamento.cliente_nome} às ${agendamento.hora_inicio}`;
+                    console.log('📢 Chamando addNotification com:', mensagem);
+                    addNotification(mensagem, 'success');
+                    idsAgendamentosVistos.add(id);
+                    
+                    // Tocar som de notificação usando Web Audio API
+                    tocarSomNotificacao();
+                }
+            });
+            
+            console.log(`✅ Verificação completa: ${novosDetectados} novo(s) agendamento(s)`);
+        } else {
+            // Primeira carga - apenas marcar os IDs existentes
+            console.log('📋 Primeira carga - marcando', agendamentos.length, 'agendamentos existentes');
+            agendamentos.forEach(agendamento => {
+                idsAgendamentosVistos.add(agendamento.id);
+            });
+            primeiraVerificacao = false;
+            console.log('✅ IDs iniciais marcados:', Array.from(idsAgendamentosVistos));
+        }
+        
+        // Atualizar array global e aplicar filtros
+        todosAgendamentos = agendamentos;
+        aplicarFiltros();
+        
+    } catch (error) {
+        console.error('Erro ao carregar todos agendamentos:', error);
+        const container = document.getElementById('agendamentosTodos');
+        container.innerHTML = `
+            <div style="text-align: center; padding: 40px; color: #ef4444;">
+                <div style="font-size: 3em; margin-bottom: 10px;">⚠️</div>
+                <p>Erro ao carregar agendamentos</p>
+            </div>
+        `;
+    }
+}
+
+// Carregar agendamentos de hoje (apenas para atualizar o faturamento)
+async function carregarAgendamentosHoje() {
+    try {
+        const response = await fetch('{{ url_for("api_agendamentos_hoje", slug=barbearia.slug) }}');
+        if (!response.ok) {
+            console.error('Erro na resposta da API:', response.status);
+            throw new Error('Erro ao buscar agendamentos');
+        }
+        
+        const agendamentosHoje = await response.json();
+        console.log('Agendamentos de hoje recebidos:', agendamentosHoje.length, agendamentosHoje);
+        
+        // Verificar se há novos agendamentos
+        if (ultimoNumeroAgendamentos > 0 && agendamentosHoje.length > ultimoNumeroAgendamentos) {
+            const novos = agendamentosHoje.length - ultimoNumeroAgendamentos;
+            addNotification(`🎉 ${novos} novo(s) agendamento(s)!`, 'success');
+        }
+        ultimoNumeroAgendamentos = agendamentosHoje.length;
+        
+        // Calcular faturamento
+        let faturamento = 0;
+        agendamentosHoje.forEach(r => {
+            faturamento += r.servico_preco || 0;
+        });
+        document.getElementById('faturamentoHoje').textContent = `R$ ${faturamento.toFixed(2)}`;
+    } catch (error) {
+        console.error('Erro ao carregar agendamentos de hoje:', error);
+    }
+}
+
+// Gráfico da semana com dados reais
+function criarGraficoSemana() {
+    const canvas = document.getElementById('chartSemana');
+    const ctx = canvas.getContext('2d');
+    
+    // Pegar dados reais das reservas
+    const reservas = [
+        {% for r in reservas %}
+        {
+            data: "{{ r.data }}",
+            status: "{{ r.status }}"
+        }{% if not loop.last %},{% endif %}
+        {% endfor %}
+    ];
+    
+    // Calcular agendamentos por dia da semana (últimos 7 dias)
+    const hoje = new Date();
+    const dias = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+    const dadosSemana = [0, 0, 0, 0, 0, 0, 0];
+    
+    // Contar agendamentos dos últimos 7 dias
+    for (let i = 6; i >= 0; i--) {
+        const data = new Date(hoje);
+        data.setDate(data.getDate() - i);
+        const dataStr = data.toISOString().split('T')[0];
+        const diaSemana = data.getDay();
+        
+        const count = reservas.filter(r => r.data === dataStr && r.status !== 'cancelada').length;
+        dadosSemana[diaSemana] += count;
+    }
+    
+    // Redesenhar canvas
+    canvas.width = canvas.offsetWidth;
+    canvas.height = 300;
+    
+    const maxValue = Math.max(...dadosSemana, 1);
+    const barWidth = (canvas.width / 7) - 20;
+    const barSpacing = 10;
+    
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    
+    dadosSemana.forEach((valor, i) => {
+        const barHeight = (valor / maxValue) * (canvas.height - 60);
+        const x = i * (barWidth + barSpacing) + barSpacing;
+        const y = canvas.height - barHeight - 40;
+        
+        // Barra com gradiente
+        const gradient = ctx.createLinearGradient(0, y, 0, canvas.height);
+        gradient.addColorStop(0, '#3b82f6');
+        gradient.addColorStop(1, '#06b6d4');
+        ctx.fillStyle = gradient;
+        ctx.roundRect = function(x, y, w, h, r) {
+            if (w < 2 * r) r = w / 2;
+            if (h < 2 * r) r = h / 2;
+            this.beginPath();
+            this.moveTo(x+r, y);
+            this.arcTo(x+w, y, x+w, y+h, r);
+            this.arcTo(x+w, y+h, x, y+h, r);
+            this.arcTo(x, y+h, x, y, r);
+            this.arcTo(x, y, x+w, y, r);
+            this.closePath();
+            return this;
+        };
+        ctx.roundRect(x, y, barWidth, barHeight, 8);
+        ctx.fill();
+        
+        // Valor no topo
+        ctx.fillStyle = '#1e293b';
+        ctx.font = 'bold 16px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText(valor, x + barWidth / 2, y - 10);
+        
+        // Dia da semana
+        ctx.fillStyle = '#64748b';
+        ctx.font = '13px Arial';
+        ctx.fillText(dias[i], x + barWidth / 2, canvas.height - 15);
+    });
+    
+    // Título do gráfico
+    ctx.fillStyle = '#1e293b';
+    ctx.font = 'bold 14px Arial';
+    ctx.textAlign = 'left';
+    ctx.fillText('Agendamentos por dia da semana (últimos 7 dias)', 10, 20);
+}
+
+// Inicializar
+document.addEventListener('DOMContentLoaded', () => {
+    carregarAgendamentosHoje();
+    carregarTodosAgendamentos(); // Carregar todos os agendamentos na inicialização
+    criarGraficoSemana();
+    
+    // Simular notificação de boas-vindas
+    setTimeout(() => {
+        addNotification('Bem-vindo ao painel administrativo! 👋', 'success');
+    }, 1000);
+    
+    // Recarregar a cada 10 segundos para notificações em tempo real
+    setInterval(() => {
+        carregarAgendamentosHoje();
+        carregarTodosAgendamentos();
+    }, 5000); // Reduzido para 5 segundos para detecção mais rápida
+});
+
+// Função para cancelar agendamento
+async function cancelarAgendamento(reservaId, clienteNome) {
+    if (!confirm(`Tem certeza que deseja cancelar o agendamento de ${clienteNome}?`)) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`{{ url_for('admin_cancelar_agendamento', slug=barbearia.slug, reserva_id=0) }}`.replace('/0', `/${reservaId}`), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            addNotification(`✅ ${data.message}`, 'success');
+            // Recarregar agendamentos imediatamente
+            await carregarTodosAgendamentos();
+        } else {
+            addNotification(`❌ Erro: ${data.message}`, 'warning');
+        }
+    } catch (error) {
+        console.error('Erro ao cancelar agendamento:', error);
+        addNotification('❌ Erro ao cancelar agendamento', 'warning');
+    }
+}
+
+// Fechar notificações ao clicar fora
+document.addEventListener('click', (e) => {
+    const panel = document.getElementById('notificationPanel');
+    const bell = document.querySelector('.notification-bell');
+    if (panel.style.display === 'block' && !panel.contains(e.target) && !bell.contains(e.target)) {
+        panel.style.display = 'none';
+    }
+});
+</script>
+
 {% endblock %}

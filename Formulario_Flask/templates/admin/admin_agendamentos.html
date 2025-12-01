@@ -2,40 +2,70 @@
 {% block title %}Todos os Agendamentos{% endblock %}
 
 {% block content %}
-    <h1>Todos os Agendamentos</h1>
-    
-    <div class="card-form">
-        <table class="custom-table">
+<!-- Header -->
+<div style="background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%); padding: 3rem 2rem; margin-bottom: 3rem; border: 3px solid var(--gold); border-radius: 4px;">
+    <div style="max-width: 1200px; margin: 0 auto;">
+        <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(0, 0, 0, 0.3); padding: 0.5rem 1.5rem; border: 2px solid var(--gold); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 2px;">
+            <span style="font-size: 1.2rem;">🔐</span>
+            <span style="color: var(--gold); font-weight: 700; font-size: 0.9rem;">ADMIN</span>
+        </div>
+        <h1 style="font-size: 2.5rem; font-weight: 800; color: var(--text-color); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 2px;">📋 Todos os Agendamentos</h1>
+        <p style="color: rgba(245, 245, 220, 0.7); font-size: 1.1rem;">Gerencie todos os agendamentos da barbearia</p>
+    </div>
+</div>
+
+<!-- Tabela de Agendamentos -->
+<div style="max-width: 1200px; margin: 0 auto; padding: 0 2rem 3rem;">
+    <div style="background: var(--bg-dark); border: 2px solid var(--gold-dark); border-radius: 4px; overflow: hidden;">
+        <table style="width: 100%; border-collapse: collapse;">
             <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Cliente</th>
-                    <th>Serviço</th>
-                    <th>Data</th>
-                    <th>Hora</th>
-                    <th>Ações</th>
+                <tr style="background: rgba(74, 158, 255, 0.1); border-bottom: 3px solid var(--gold);">
+                    <th style="padding: 1.25rem; text-align: left; color: var(--gold); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem;">ID</th>
+                    <th style="padding: 1.25rem; text-align: left; color: var(--gold); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem;">Cliente</th>
+                    <th style="padding: 1.25rem; text-align: left; color: var(--gold); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem;">Serviço</th>
+                    <th style="padding: 1.25rem; text-align: left; color: var(--gold); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem;">Data</th>
+                    <th style="padding: 1.25rem; text-align: left; color: var(--gold); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem;">Hora</th>
+                    <th style="padding: 1.25rem; text-align: center; color: var(--gold); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; font-size: 0.9rem;">Ações</th>
                 </tr>
             </thead>
             <tbody>
                 {% for r in reservas %}
-                    <tr>
-                        <td>#{{ r.id }}</td>
-                        <td>{{ r.usuario.nome if r.usuario else 'Desconhecido' }}</td>
-                        <td>{{ r.servico.nome if r.servico else 'N/A' }}</td>
-                        <td>{{ r.data }}</td>
-                        <td>{{ r.hora }}</td>
-                        <td>
+                    <tr style="border-bottom: 1px solid rgba(74, 158, 255, 0.2); transition: all 0.3s ease;">
+                        <td style="padding: 1.25rem; color: var(--gold-light); font-weight: 600;">#{{ r.id }}</td>
+                        <td style="padding: 1.25rem; color: var(--text-color);">{{ r.usuario.nome if r.usuario else 'Desconhecido' }}</td>
+                        <td style="padding: 1.25rem; color: var(--text-color);">{{ r.servico.nome if r.servico else 'N/A' }}</td>
+                        <td style="padding: 1.25rem; color: var(--text-color);">{{ r.data }}</td>
+                        <td style="padding: 1.25rem; color: var(--text-color);">{{ r.hora }}</td>
+                        <td style="padding: 1.25rem; text-align: center;">
                             <a href="{{ url_for('deletar_agendamento', agendamento_id=r.id) }}" 
-                               class="button-danger" 
-                               onclick="return confirm('Tem certeza que deseja deletar este agendamento?');">Deletar</a>
+                               onclick="return confirm('Tem certeza que deseja deletar este agendamento?');"
+                               style="display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.25rem; background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 2px solid #ef4444; text-decoration: none; font-weight: 600; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem;">
+                                <span>🗑️</span> Deletar
+                            </a>
                         </td>
                     </tr>
                 {% else %}
                     <tr>
-                        <td colspan="6">Nenhum agendamento encontrado.</td>
+                        <td colspan="6" style="padding: 3rem; text-align: center; color: rgba(245, 245, 220, 0.5); font-size: 1.1rem;">
+                            <div style="font-size: 3rem; margin-bottom: 1rem;">📭</div>
+                            <div>Nenhum agendamento encontrado.</div>
+                        </td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
+</div>
+
+<style>
+tbody tr:hover {
+    background: rgba(74, 158, 255, 0.05) !important;
+}
+
+a[onclick]:hover {
+    background: rgba(239, 68, 68, 0.3) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+}
+</style>
 {% endblock %}

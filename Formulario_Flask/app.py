@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify, g, abort
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify, g, abort, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.utils import secure_filename
 import os
 import sys
 import json
@@ -27,6 +28,18 @@ app.jinja_loader = ChoiceLoader([
 
 app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{DB_PATH}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# Configuração de upload de imagens
+UPLOAD_FOLDER = os.path.join(BASE_DIR, 'static', 'uploads', 'logos')
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif', 'webp'}
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # 5MB max
+
+# Criar pasta de uploads se não existir
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 db = SQLAlchemy(app)
 
@@ -61,6 +74,7 @@ class Barbearia(db.Model):
     cnpj = db.Column(db.String(18), unique=True, nullable=True)
     telefone = db.Column(db.String(20), nullable=True)
     endereco = db.Column(db.Text, nullable=True)
+    logo = db.Column(db.String(200), nullable=True)  # caminho da logo
     ativa = db.Column(db.Boolean, default=True, nullable=False)
     data_criacao = db.Column(db.DateTime, default=db.func.current_timestamp())
     
@@ -89,6 +103,7 @@ class Usuario(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     nome = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(100), unique=True, nullable=False)
+    username = db.Column(db.String(50), unique=True, nullable=True)  # Para admins
     senha = db.Column(db.String(200), nullable=False)
     telefone = db.Column(db.String(20), nullable=True)
     ativo = db.Column(db.Boolean, default=True, nullable=False)
@@ -423,11 +438,16 @@ def login(slug):
     if 'usuario_id' in session:
         return redirect(url_for('dashboard', slug=slug))
     if request.method == 'POST':
-        email = request.form.get('email','').strip()
+        login_input = request.form.get('email','').strip()  # Pode ser username ou email
         senha = request.form.get('senha','')
         
-        # Buscar usuário e verificar se tem acesso à barbearia atual
-        usuario = Usuario.query.filter_by(email=email, ativo=True).first()
+        # Para admins, buscar por username ou email
+        # Para clientes, buscar apenas por email
+        usuario = Usuario.query.filter(
+            ((Usuario.username == login_input) | (Usuario.email == login_input)),
+            Usuario.ativo == True
+        ).first()
+        
         if usuario and check_password_hash(usuario.senha, senha):
             # Super admin tem acesso a qualquer barbearia
             if usuario.tipo_conta == 'super_admin':
@@ -656,7 +676,7 @@ def nova_reserva(slug):
             hora_inicio=hora,
             hora_fim=hora_fim
         )
-        db.session.add(reserva); db.session.commit(); flash('Reserva criada!', 'success'); return redirect(url_for('meus_agendamentos', slug=slug))
+        db.session.add(reserva); db.session.commit(); flash('Reserva criada com sucesso!', 'success'); return redirect(url_for('dashboard', slug=slug))
     return render_template('cliente/nova_reserva.html', servicos=servicos, barbearia=barbearia)
 
 # ---------- ROTAS ADMINISTRATIVAS POR BARBEARIA ----------
@@ -737,10 +757,52 @@ def admin_disponibilidade_slug(slug):
 
 @app.route('/cancelar_reserva/<int:reserva_id>')
 def cancelar_reserva(reserva_id):
-    if 'usuario_id' not in session: flash('Faça login.', 'warning'); return redirect(url_for('login', slug=get_current_barbearia_slug()))
+    if 'usuario_id' not in session:
+        flash('Faça login.', 'warning')
+        return redirect(url_for('login', slug=get_current_barbearia_slug()))
+    
     reserva = Reserva.query.get_or_404(reserva_id)
-    if reserva.usuario_id != session['usuario_id']: flash('Só pode cancelar suas reservas.', 'danger'); return redirect(url_for('meus_agendamentos', slug=get_current_barbearia_slug()))
-    db.session.delete(reserva); db.session.commit(); flash('Reserva cancelada.', 'info'); return redirect(url_for('meus_agendamentos', slug=get_current_barbearia_slug()))
+    
+    # Pega a barbearia da reserva para redirecionar corretamente
+    barbearia = Barbearia.query.get(reserva.barbearia_id)
+    slug = barbearia.slug if barbearia else get_current_barbearia_slug()
+    
+    if reserva.cliente_id != session['usuario_id']:
+        flash('Só pode cancelar suas reservas.', 'danger')
+        return redirect(url_for('meus_agendamentos', slug=slug))
+    
+    db.session.delete(reserva)
+    db.session.commit()
+    flash('Reserva cancelada com sucesso!', 'success')
+    return redirect(url_for('meus_agendamentos', slug=slug))
+
+@app.route('/<slug>/admin/cancelar_agendamento/<int:reserva_id>', methods=['POST'])
+def admin_cancelar_agendamento(slug, reserva_id):
+    """Rota para admin cancelar qualquer agendamento"""
+    if 'usuario_id' not in session:
+        return jsonify({'success': False, 'message': 'Não autenticado'}), 401
+    
+    if not hasattr(g, 'tenant') or not g.tenant or not g.tenant.is_admin():
+        return jsonify({'success': False, 'message': 'Acesso negado - apenas administradores'}), 403
+    
+    reserva = Reserva.query.get(reserva_id)
+    if not reserva:
+        return jsonify({'success': False, 'message': 'Agendamento não encontrado'}), 404
+    
+    # Verificar se o agendamento pertence à barbearia do admin
+    barbearia_id = get_current_barbearia_id()
+    if reserva.barbearia_id != barbearia_id:
+        return jsonify({'success': False, 'message': 'Agendamento não pertence a esta barbearia'}), 403
+    
+    # Deletar o agendamento
+    db.session.delete(reserva)
+    db.session.commit()
+    
+    return jsonify({
+        'success': True, 
+        'message': 'Agendamento cancelado com sucesso!',
+        'reserva_id': reserva_id
+    })
 
 @app.route('/admin/agendamentos')
 def admin_agendamentos():
@@ -879,7 +941,7 @@ def clientes():
         UsuarioBarbearia.barbearia_id == barbearia_id,
         UsuarioBarbearia.role == 'cliente'
     ).all()
-    return render_template('cliente/clientes.html', clientes=clientes_list)
+    return render_template('cliente/clientes.html', usuarios=clientes_list)
 
 @app.route('/servicos', methods=['GET','POST'])
 def servicos():
@@ -890,11 +952,14 @@ def servicos():
         return redirect(url_for('dashboard', slug=get_current_barbearia_slug()))
     if request.method == 'POST':
         nome = request.form.get('nome','').strip(); preco_str = request.form.get('preco','').strip()
+        duracao_str = request.form.get('duracao', '30').strip()
         if not nome or not preco_str: flash('Preencha campos!', 'warning'); return redirect(url_for('servicos'))
-        try: preco = float(preco_str)
-        except ValueError: flash('Preço inválido!', 'danger'); return redirect(url_for('servicos'))
-        novo = Servico(nome=nome, preco=preco); db.session.add(novo); db.session.commit(); flash('Serviço adicionado!', 'success'); return redirect(url_for('servicos'))
-    servicos_list = Servico.query.all()
+        try: preco = float(preco_str); duracao = int(duracao_str)
+        except ValueError: flash('Preço ou duração inválidos!', 'danger'); return redirect(url_for('servicos'))
+        barbearia_id = get_current_barbearia_id()
+        novo = Servico(nome=nome, preco=preco, duracao=duracao, barbearia_id=barbearia_id); db.session.add(novo); db.session.commit(); flash('Serviço adicionado!', 'success'); return redirect(url_for('servicos'))
+    barbearia_id = get_current_barbearia_id()
+    servicos_list = Servico.query.filter_by(barbearia_id=barbearia_id, ativo=True).all()
     return render_template('cliente/servicos.html', servicos=servicos_list)
 
 @app.route('/deletar_cliente/<int:cliente_id>')
@@ -928,6 +993,98 @@ def deletar_servico(servico_id):
     db.session.delete(servico); db.session.commit()
     flash(f'Serviço "{servico.nome}" deletado!', 'success')
     return redirect(url_for('servicos'))
+
+@app.route('/<slug>/api/agendamentos_hoje')
+def api_agendamentos_hoje(slug):
+    """API para buscar agendamentos de hoje em tempo real"""
+    try:
+        if 'usuario_id' not in session:
+            print("⚠️ API: Usuário não autenticado")
+            return jsonify({'error': 'Não autorizado'}), 401
+        
+        barbearia = Barbearia.query.filter_by(slug=slug).first()
+        if not barbearia:
+            print(f"⚠️ API: Barbearia não encontrada - slug: {slug}")
+            return jsonify({'error': 'Barbearia não encontrada'}), 404
+        
+        from datetime import datetime
+        hoje = datetime.now().strftime('%Y-%m-%d')
+        
+        # BUSCAR TODAS AS RESERVAS PRIMEIRO PARA DEBUG
+        todas_reservas = Reserva.query.filter_by(barbearia_id=barbearia.id).all()
+        print(f"📊 DEBUG: Total de reservas na barbearia: {len(todas_reservas)}")
+        for r in todas_reservas:
+            print(f"   - Reserva ID {r.id}: data={r.data}, hora={r.hora_inicio}, cliente={r.cliente.nome if r.cliente else 'N/A'}")
+        
+        reservas = Reserva.query.filter_by(
+            barbearia_id=barbearia.id,
+            data=hoje
+        ).all()
+        
+        print(f"✅ API: Encontradas {len(reservas)} reservas para hoje ({hoje}) na barbearia {barbearia.nome}")
+        
+        result = []
+        for r in reservas:
+            result.append({
+                'id': r.id,
+                'cliente_id': r.cliente_id,
+                'cliente_nome': r.cliente.nome if r.cliente else 'Cliente Desconhecido',
+                'cliente_telefone': r.cliente.telefone if r.cliente and r.cliente.telefone else 'Não informado',
+                'servico_id': r.servico_id,
+                'servico_nome': r.servico.nome if r.servico else 'Serviço N/A',
+                'servico_duracao': r.servico.duracao if r.servico else 30,
+                'servico_preco': r.servico.preco if r.servico else 0,
+                'data': r.data,
+                'hora_inicio': r.hora_inicio,
+                'hora_fim': r.hora_fim,
+                'status': r.status
+            })
+        
+        return jsonify(result)
+    except Exception as e:
+        print(f"❌ API Erro: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/<slug>/api/agendamentos_todos')
+def api_agendamentos_todos(slug):
+    """API para buscar todos os agendamentos"""
+    try:
+        if 'usuario_id' not in session:
+            return jsonify({'error': 'Não autorizado'}), 401
+        
+        barbearia = Barbearia.query.filter_by(slug=slug).first()
+        if not barbearia:
+            return jsonify({'error': 'Barbearia não encontrada'}), 404
+        
+        reservas = Reserva.query.filter_by(barbearia_id=barbearia.id).order_by(Reserva.data.desc(), Reserva.hora_inicio.desc()).all()
+        
+        print(f"✅ API: Encontradas {len(reservas)} reservas totais na barbearia {barbearia.nome}")
+        
+        result = []
+        for r in reservas:
+            result.append({
+                'id': r.id,
+                'cliente_id': r.cliente_id,
+                'cliente_nome': r.cliente.nome if r.cliente else 'Cliente Desconhecido',
+                'cliente_telefone': r.cliente.telefone if r.cliente and r.cliente.telefone else 'Não informado',
+                'servico_id': r.servico_id,
+                'servico_nome': r.servico.nome if r.servico else 'Serviço N/A',
+                'servico_duracao': r.servico.duracao if r.servico else 30,
+                'servico_preco': r.servico.preco if r.servico else 0,
+                'data': r.data,
+                'hora_inicio': r.hora_inicio,
+                'hora_fim': r.hora_fim,
+                'status': r.status
+            })
+        
+        return jsonify(result)
+    except Exception as e:
+        print(f"❌ API Erro: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
 
 @app.route('/deletar_agendamento/<int:agendamento_id>')
 def deletar_agendamento(agendamento_id):
@@ -1001,11 +1158,16 @@ def super_admin_redirect():
 def super_admin_login():
     """Login específico para super admin"""
     if request.method == 'POST':
-        email = request.form.get('email', '').strip()
+        login_input = request.form.get('email', '').strip()  # Pode ser username ou email
         senha = request.form.get('senha', '')
         
-        # Buscar apenas usuários super admin
-        usuario = Usuario.query.filter_by(email=email, tipo_conta='super_admin', ativo=True).first()
+        # Buscar super admin por username ou email
+        usuario = Usuario.query.filter(
+            ((Usuario.username == login_input) | (Usuario.email == login_input)),
+            Usuario.tipo_conta == 'super_admin',
+            Usuario.ativo == True
+        ).first()
+        
         if usuario and check_password_hash(usuario.senha, senha):
             session['usuario_id'] = usuario.id
             session['user_id'] = usuario.id
@@ -1155,6 +1317,29 @@ def super_admin_editar_barbearia(barbearia_id):
         endereco = request.form.get('endereco', '').strip()
         ativa = request.form.get('ativa') == 'on'
         
+        # Upload de logo
+        if 'logo' in request.files:
+            file = request.files['logo']
+            if file and file.filename != '' and allowed_file(file.filename):
+                # Gerar nome seguro para o arquivo
+                filename = secure_filename(file.filename)
+                # Adicionar slug da barbearia ao nome para evitar conflitos
+                nome_arquivo = f"{slug}_{filename}"
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], nome_arquivo)
+                
+                # Remover logo anterior se existir
+                if barbearia.logo:
+                    logo_antiga = os.path.join(app.config['UPLOAD_FOLDER'], barbearia.logo)
+                    if os.path.exists(logo_antiga):
+                        try:
+                            os.remove(logo_antiga)
+                        except:
+                            pass
+                
+                # Salvar nova logo
+                file.save(filepath)
+                barbearia.logo = nome_arquivo
+        
         # Validações básicas
         if not nome:
             flash('Nome é obrigatório!', 'error')
@@ -1186,12 +1371,14 @@ def super_admin_editar_barbearia(barbearia_id):
                 return redirect(request.url)
         
         # Atualizar os dados
+        # IMPORTANTE: Não sobrescrever o campo configuracoes para preservar logo e outras configs
         barbearia.nome = nome
         barbearia.slug = slug
         barbearia.cnpj = cnpj if cnpj else None
         barbearia.telefone = telefone if telefone else None
         barbearia.endereco = endereco if endereco else None
         barbearia.ativa = ativa
+        # O campo configuracoes é PRESERVADO (não é alterado aqui)
         
         try:
             db.session.commit()
@@ -1233,6 +1420,17 @@ def super_admin_nova_barbearia():
             flash('Este CNPJ já está sendo usado!', 'error')
             return redirect(request.url)
         
+        # Upload de logo
+        logo_filename = None
+        if 'logo' in request.files:
+            file = request.files['logo']
+            if file and file.filename != '' and allowed_file(file.filename):
+                filename = secure_filename(file.filename)
+                # Adicionar slug ao nome para evitar conflitos
+                logo_filename = f"{slug}_{filename}"
+                filepath = os.path.join(app.config['UPLOAD_FOLDER'], logo_filename)
+                file.save(filepath)
+        
         # Criar nova barbearia
         nova_barbearia = Barbearia(
             nome=nome,
@@ -1240,6 +1438,7 @@ def super_admin_nova_barbearia():
             cnpj=cnpj if cnpj else None,
             telefone=telefone if telefone else None,
             endereco=endereco if endereco else None,
+            logo=logo_filename,
             ativa=True
         )
         
@@ -1342,4 +1541,4 @@ if __name__ == '__main__':
     if missing:
         print("\nAcesse http://localhost:5000/_templates_debug para ver a lista completa de templates carregáveis.", file=sys.stderr)
 
-    app.run(debug=True)
+    app.run(host='0.0.0.0', port=5000, debug=True)

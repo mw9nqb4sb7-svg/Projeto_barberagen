@@ -2,570 +2,213 @@
 {% block title %}Super Admin - Dashboard Global{% endblock %}
 
 {% block content %}
-<div class="super-admin-dashboard">
-    <!-- Header -->
-    <div class="dashboard-header">
-        <div class="header-info">
-            <div class="super-badge">
-                <span class="badge-icon">⚡</span>
-                <span class="badge-text">SUPER ADMIN</span>
-            </div>
-            <h1>Dashboard Global do Sistema</h1>
-            <p>Visão completa de todas as barbearias e dados do sistema</p>
+<!-- Navegação -->
+<nav class="custom-nav">
+    <div class="nav-content">
+        <div class="nav-brand">⚡ SUPER ADMIN</div>
+        <ul class="nav-list">
+            <li><a href="{{ url_for('super_admin_barbearias') }}" class="nav-link">BARBEARIAS</a></li>
+            <li><a href="{{ url_for('super_admin_usuarios') }}" class="nav-link">USUÁRIOS</a></li>
+            <li><a href="{{ url_for('super_admin_relatorios') }}" class="nav-link">RELATÓRIOS</a></li>
+            <li><a href="/super_admin/logout" class="nav-link">SAIR</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Header Super Admin -->
+<div style="text-align: center; padding: 3rem 2rem; background: linear-gradient(135deg, #8b5cf6, #6366f1); border: 3px solid #8b5cf6; border-radius: 4px; margin-bottom: 3rem; position: relative; overflow: hidden;">
+    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(0, 0, 0, 0.1) 20px, rgba(0, 0, 0, 0.1) 40px);"></div>
+    
+    <div style="position: relative; z-index: 1;">
+        <div style="display: inline-block; padding: 0.5rem 1.5rem; background: rgba(0, 0, 0, 0.3); border-radius: 50px; margin-bottom: 1rem;">
+            <span style="font-size: 1rem; color: white; font-weight: 700; text-transform: uppercase; letter-spacing: 2px;">⚡ SUPER ADMINISTRADOR</span>
+        </div>
+        <h1 style="font-size: 2.5rem; color: white; margin: 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); text-transform: uppercase; letter-spacing: 3px;">
+            DASHBOARD GLOBAL DO SISTEMA
+        </h1>
+        <p style="color: rgba(255, 255, 255, 0.9); margin-top: 0.5rem; font-size: 1.1rem;">
+            Visão completa de todas as barbearias e dados
+        </p>
+    </div>
+</div>
+
+<!-- Estatísticas Globais -->
+<div style="margin-bottom: 3rem;">
+    <h2 style="text-align: center; font-size: 2rem; color: var(--gold); margin-bottom: 2rem; text-transform: uppercase; letter-spacing: 2px;">
+        📈 ESTATÍSTICAS GLOBAIS
+    </h2>
+    
+    <div class="grid grid-4" style="gap: 2rem;">
+        <div class="dashboard-card" style="border-left-color: #8b5cf6;">
+            <div style="font-size: 3rem; margin-bottom: 1rem; text-align: center;">🏢</div>
+            <div class="dashboard-card-title" style="text-align: center;">BARBEARIAS</div>
+            <div class="dashboard-card-value" style="text-align: center;">{{ total_barbearias }}</div>
         </div>
         
-        <div class="header-actions">
-            <a href="{{ url_for('super_admin_barbearias') }}" class="action-btn btn-barbearias">
-                <span class="btn-icon">🏢</span>
-                Barbearias
-            </a>
-            <a href="{{ url_for('super_admin_usuarios') }}" class="action-btn btn-usuarios">
-                <span class="btn-icon">👥</span>
-                Usuários
-            </a>
-            <a href="{{ url_for('super_admin_relatorios') }}" class="action-btn btn-relatorios">
-                <span class="btn-icon">📊</span>
-                Relatórios
-            </a>
-            <a href="/super_admin/logout" class="action-btn btn-logout">
-                <span class="btn-icon">🚪</span>
-                Sair
-            </a>
+        <div class="dashboard-card" style="border-left-color: var(--gold);">
+            <div style="font-size: 3rem; margin-bottom: 1rem; text-align: center;">👥</div>
+            <div class="dashboard-card-title" style="text-align: center;">USUÁRIOS</div>
+            <div class="dashboard-card-value" style="text-align: center;">{{ total_usuarios }}</div>
         </div>
-    </div>
-
-    <!-- Estatísticas Globais -->
-    <div class="global-stats">
-        <h2 class="section-title">📈 Estatísticas Globais</h2>
-        <div class="stats-grid">
-            <div class="stat-card stat-barbearias">
-                <div class="stat-icon">🏢</div>
-                <div class="stat-content">
-                    <div class="stat-number">{{ total_barbearias }}</div>
-                    <div class="stat-label">Barbearias Ativas</div>
-                </div>
-            </div>
-            
-            <div class="stat-card stat-usuarios">
-                <div class="stat-icon">👥</div>
-                <div class="stat-content">
-                    <div class="stat-number">{{ total_usuarios }}</div>
-                    <div class="stat-label">Usuários Totais</div>
-                </div>
-            </div>
-            
-            <div class="stat-card stat-servicos">
-                <div class="stat-icon">💼</div>
-                <div class="stat-content">
-                    <div class="stat-number">{{ total_servicos }}</div>
-                    <div class="stat-label">Serviços Ativos</div>
-                </div>
-            </div>
-            
-            <div class="stat-card stat-reservas">
-                <div class="stat-icon">📅</div>
-                <div class="stat-content">
-                    <div class="stat-number">{{ total_reservas }}</div>
-                    <div class="stat-label">Reservas Totais</div>
-                </div>
-            </div>
+        
+        <div class="dashboard-card" style="border-left-color: #10b981;">
+            <div style="font-size: 3rem; margin-bottom: 1rem; text-align: center;">💼</div>
+            <div class="dashboard-card-title" style="text-align: center;">SERVIÇOS</div>
+            <div class="dashboard-card-value" style="text-align: center;">{{ total_servicos }}</div>
         </div>
-    </div>
-
-    <!-- Tipos de Usuários -->
-    <div class="users-breakdown">
-        <h3 class="subsection-title">👤 Distribuição de Usuários</h3>
-        <div class="users-grid">
-            <div class="user-type-card type-super">
-                <div class="type-icon">⚡</div>
-                <div class="type-info">
-                    <div class="type-number">{{ usuarios_stats.super_admin }}</div>
-                    <div class="type-label">Super Admins</div>
-                </div>
-            </div>
-            
-            <div class="user-type-card type-admin">
-                <div class="type-icon">🛡️</div>
-                <div class="type-info">
-                    <div class="type-number">{{ usuarios_stats.admin_barbearia }}</div>
-                    <div class="type-label">Admins de Barbearia</div>
-                </div>
-            </div>
-            
-            <div class="user-type-card type-barbeiro">
-                <div class="type-icon">✂️</div>
-                <div class="type-info">
-                    <div class="type-number">{{ usuarios_stats.barbeiro }}</div>
-                    <div class="type-label">Barbeiros</div>
-                </div>
-            </div>
-            
-            <div class="user-type-card type-cliente">
-                <div class="type-icon">👤</div>
-                <div class="type-info">
-                    <div class="type-number">{{ usuarios_stats.cliente }}</div>
-                    <div class="type-label">Clientes</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Detalhes das Barbearias -->
-    <div class="barbearias-section">
-        <h3 class="subsection-title">🏪 Visão Geral das Barbearias</h3>
-        <div class="barbearias-grid">
-            {% for stats in barbearias_stats %}
-            <div class="barbearia-card">
-                <div class="barbearia-header">
-                    <h4 class="barbearia-name">{{ stats.barbearia.nome }}</h4>
-                    <div class="barbearia-badge">
-                        <span class="badge-slug">{{ stats.barbearia.slug }}</span>
-                    </div>
-                </div>
-                
-                <div class="barbearia-info">
-                    <div class="info-item">
-                        <span class="info-icon">🆔</span>
-                        <span class="info-text">ID: {{ stats.barbearia.id }}</span>
-                    </div>
-                    <div class="info-item">
-                        <span class="info-icon">📞</span>
-                        <span class="info-text">{{ stats.barbearia.telefone or 'N/A' }}</span>
-                    </div>
-                </div>
-                
-                <div class="barbearia-stats">
-                    <div class="mini-stat">
-                        <div class="mini-stat-number">{{ stats.usuarios }}</div>
-                        <div class="mini-stat-label">Usuários</div>
-                    </div>
-                    <div class="mini-stat">
-                        <div class="mini-stat-number">{{ stats.servicos }}</div>
-                        <div class="mini-stat-label">Serviços</div>
-                    </div>
-                    <div class="mini-stat">
-                        <div class="mini-stat-number">{{ stats.reservas }}</div>
-                        <div class="mini-stat-label">Reservas</div>
-                    </div>
-                </div>
-                
-                <div class="barbearia-actions">
-                    <a href="/teste-isolamento?b={{ stats.barbearia.slug }}" class="action-link">
-                        <span class="link-icon">🔍</span>
-                        Ver Detalhes
-                    </a>
-                    <a href="/?b={{ stats.barbearia.slug }}" class="action-link">
-                        <span class="link-icon">🏠</span>
-                        Visitar
-                    </a>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-
-    <!-- Ações Rápidas -->
-    <div class="quick-actions">
-        <h3 class="subsection-title">⚡ Ações Rápidas</h3>
-        <div class="actions-grid">
-            <a href="{{ url_for('super_admin_barbearias') }}" class="quick-action-card">
-                <div class="action-icon">🏢</div>
-                <div class="action-content">
-                    <div class="action-title">Gerenciar Barbearias</div>
-                    <div class="action-desc">Criar, editar e desativar barbearias</div>
-                </div>
-            </a>
-            
-            <a href="{{ url_for('super_admin_usuarios') }}" class="quick-action-card">
-                <div class="action-icon">👥</div>
-                <div class="action-content">
-                    <div class="action-title">Gerenciar Usuários</div>
-                    <div class="action-desc">Ver todos os usuários do sistema</div>
-                </div>
-            </a>
-            
-            <a href="{{ url_for('super_admin_relatorios') }}" class="quick-action-card">
-                <div class="action-icon">📊</div>
-                <div class="action-content">
-                    <div class="action-title">Relatórios Avançados</div>
-                    <div class="action-desc">Análises e métricas do sistema</div>
-                </div>
-            </a>
-            
-            <a href="/teste-isolamento" class="quick-action-card">
-                <div class="action-icon">🧪</div>
-                <div class="action-content">
-                    <div class="action-title">Testar Isolamento</div>
-                    <div class="action-desc">Validar multi-tenancy</div>
-                </div>
-            </a>
+        
+        <div class="dashboard-card" style="border-left-color: #f59e0b;">
+            <div style="font-size: 3rem; margin-bottom: 1rem; text-align: center;">📅</div>
+            <div class="dashboard-card-title" style="text-align: center;">RESERVAS</div>
+            <div class="dashboard-card-value" style="text-align: center;">{{ total_reservas }}</div>
         </div>
     </div>
 </div>
 
+<!-- Tipos de Usuários -->
+<div style="margin-bottom: 3rem;">
+    <h3 style="font-size: 1.5rem; color: var(--gold-light); margin-bottom: 2rem; border-left: 5px solid var(--gold); padding-left: 1rem; text-transform: uppercase; letter-spacing: 1px;">
+        👤 DISTRIBUIÇÃO DE USUÁRIOS
+    </h3>
+    
+    <div class="grid grid-4" style="gap: 1.5rem;">
+        <div style="background: var(--bg-dark); border: 2px solid #8b5cf6; border-radius: 4px; padding: 1.5rem; text-align: center;">
+            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">⚡</div>
+            <div style="font-size: 2rem; color: #a78bfa; font-weight: 700; margin-bottom: 0.5rem;">{{ usuarios_stats.super_admin }}</div>
+            <div style="color: rgba(245, 245, 220, 0.7); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px;">Super Admins</div>
+        </div>
+        
+        <div style="background: var(--bg-dark); border: 2px solid var(--accent-red); border-radius: 4px; padding: 1.5rem; text-align: center;">
+            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">🛡️</div>
+            <div style="font-size: 2rem; color: #fca5a5; font-weight: 700; margin-bottom: 0.5rem;">{{ usuarios_stats.admin_barbearia }}</div>
+            <div style="color: rgba(245, 245, 220, 0.7); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px;">Admins Barbearia</div>
+        </div>
+        
+        <div style="background: var(--bg-dark); border: 2px solid var(--gold); border-radius: 4px; padding: 1.5rem; text-align: center;">
+            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">✂️</div>
+            <div style="font-size: 2rem; color: var(--gold-light); font-weight: 700; margin-bottom: 0.5rem;">{{ usuarios_stats.barbeiro }}</div>
+            <div style="color: rgba(245, 245, 220, 0.7); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px;">Barbeiros</div>
+        </div>
+        
+        <div style="background: var(--bg-dark); border: 2px solid #10b981; border-radius: 4px; padding: 1.5rem; text-align: center;">
+            <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">👤</div>
+            <div style="font-size: 2rem; color: #6ee7b7; font-weight: 700; margin-bottom: 0.5rem;">{{ usuarios_stats.cliente }}</div>
+            <div style="color: rgba(245, 245, 220, 0.7); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 1px;">Clientes</div>
+        </div>
+    </div>
+</div>
+
+<!-- Detalhes das Barbearias -->
+<div style="margin-bottom: 3rem;">
+    <h3 style="font-size: 1.5rem; color: var(--gold-light); margin-bottom: 2rem; border-left: 5px solid var(--gold); padding-left: 1rem; text-transform: uppercase; letter-spacing: 1px;">
+        🏪 VISÃO GERAL DAS BARBEARIAS
+    </h3>
+    
+    <div class="grid grid-3" style="gap: 2rem;">
+        {% for stats in barbearias_stats %}
+        <div style="background: var(--bg-card); border: 2px solid var(--gold-dark); border-radius: 4px; padding: 2rem; transition: all 0.3s ease;">
+            <div style="margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid rgba(74, 158, 255, 0.2);">
+                <h4 style="color: var(--gold); font-size: 1.3rem; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 1px;">
+                    {{ stats.barbearia.nome }}
+                </h4>
+                <div style="display: inline-block; background: var(--bg-dark); padding: 0.3rem 1rem; border-radius: 20px; border: 1px solid var(--gold-dark);">
+                    <span style="color: var(--gold-light); font-family: 'Courier New', monospace; font-size: 0.85rem;">@{{ stats.barbearia.slug }}</span>
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 1.5rem;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem; color: rgba(245, 245, 220, 0.8); font-size: 0.9rem;">
+                    <span>🆔</span>
+                    <span>ID: {{ stats.barbearia.id }}</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem; color: rgba(245, 245, 220, 0.8); font-size: 0.9rem;">
+                    <span>📞</span>
+                    <span>{{ stats.barbearia.telefone or 'N/A' }}</span>
+                </div>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
+                <div style="text-align: center; padding: 1rem; background: rgba(74, 158, 255, 0.1); border-radius: 4px; border: 1px solid rgba(74, 158, 255, 0.2);">
+                    <div style="font-size: 1.8rem; color: var(--gold); font-weight: 700;">{{ stats.usuarios }}</div>
+                    <div style="font-size: 0.75rem; color: rgba(245, 245, 220, 0.6); text-transform: uppercase;">Usuários</div>
+                </div>
+                <div style="text-align: center; padding: 1rem; background: rgba(74, 158, 255, 0.1); border-radius: 4px; border: 1px solid rgba(74, 158, 255, 0.2);">
+                    <div style="font-size: 1.8rem; color: var(--gold); font-weight: 700;">{{ stats.servicos }}</div>
+                    <div style="font-size: 0.75rem; color: rgba(245, 245, 220, 0.6); text-transform: uppercase;">Serviços</div>
+                </div>
+                <div style="text-align: center; padding: 1rem; background: rgba(74, 158, 255, 0.1); border-radius: 4px; border: 1px solid rgba(74, 158, 255, 0.2);">
+                    <div style="font-size: 1.8rem; color: var(--gold); font-weight: 700;">{{ stats.reservas }}</div>
+                    <div style="font-size: 0.75rem; color: rgba(245, 245, 220, 0.6); text-transform: uppercase;">Reservas</div>
+                </div>
+            </div>
+            
+            <div style="display: flex; gap: 1rem;">
+                <a href="/teste-isolamento?b={{ stats.barbearia.slug }}" class="btn btn-primary btn-small" style="flex: 1; text-align: center;">
+                    🔍 DETALHES
+                </a>
+                <a href="/?b={{ stats.barbearia.slug }}" class="btn btn-secondary btn-small" style="flex: 1; text-align: center;">
+                    🏠 VISITAR
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Ações Rápidas -->
+<div style="margin-bottom: 3rem;">
+    <h3 style="font-size: 1.5rem; color: var(--gold-light); margin-bottom: 2rem; border-left: 5px solid var(--gold); padding-left: 1rem; text-transform: uppercase; letter-spacing: 1px;">
+        ⚡ AÇÕES RÁPIDAS
+    </h3>
+    
+    <div class="grid grid-4" style="gap: 1.5rem;">
+        <a href="{{ url_for('super_admin_barbearias') }}" style="display: block; padding: 2rem; background: var(--bg-dark); border: 2px solid var(--gold-dark); border-radius: 4px; text-decoration: none; text-align: center; transition: all 0.3s ease;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🏢</div>
+            <div style="color: var(--gold); font-weight: 700; font-size: 1rem; text-transform: uppercase; margin-bottom: 0.5rem;">Gerenciar Barbearias</div>
+            <div style="color: rgba(245, 245, 220, 0.6); font-size: 0.85rem;">Criar, editar e desativar</div>
+        </a>
+        
+        <a href="{{ url_for('super_admin_usuarios') }}" style="display: block; padding: 2rem; background: var(--bg-dark); border: 2px solid var(--gold-dark); border-radius: 4px; text-decoration: none; text-align: center; transition: all 0.3s ease;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">👥</div>
+            <div style="color: var(--gold); font-weight: 700; font-size: 1rem; text-transform: uppercase; margin-bottom: 0.5rem;">Gerenciar Usuários</div>
+            <div style="color: rgba(245, 245, 220, 0.6); font-size: 0.85rem;">Ver todos os usuários</div>
+        </a>
+        
+        <a href="{{ url_for('super_admin_relatorios') }}" style="display: block; padding: 2rem; background: var(--bg-dark); border: 2px solid var(--gold-dark); border-radius: 4px; text-decoration: none; text-align: center; transition: all 0.3s ease;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
+            <div style="color: var(--gold); font-weight: 700; font-size: 1rem; text-transform: uppercase; margin-bottom: 0.5rem;">Relatórios Avançados</div>
+            <div style="color: rgba(245, 245, 220, 0.6); font-size: 0.85rem;">Análises e métricas</div>
+        </a>
+        
+        <a href="/teste-isolamento" style="display: block; padding: 2rem; background: var(--bg-dark); border: 2px solid var(--gold-dark); border-radius: 4px; text-decoration: none; text-align: center; transition: all 0.3s ease;">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">🧪</div>
+            <div style="color: var(--gold); font-weight: 700; font-size: 1rem; text-transform: uppercase; margin-bottom: 0.5rem;">Testar Isolamento</div>
+            <div style="color: rgba(245, 245, 220, 0.6); font-size: 0.85rem;">Validar multi-tenancy</div>
+        </a>
+    </div>
+</div>
+
 <style>
-.super-admin-dashboard {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: var(--spacing-xl);
+.grid > div:hover,
+a[href]:hover {
+    border-color: var(--gold) !important;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(74, 158, 255, 0.3);
 }
 
-/* Header */
-.dashboard-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: var(--spacing-2xl);
-    border-radius: var(--border-radius-xl);
-    margin-bottom: var(--spacing-2xl);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.super-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--spacing-sm);
-    background: rgba(255, 255, 255, 0.2);
-    padding: var(--spacing-sm) var(--spacing-lg);
-    border-radius: 9999px;
-    font-weight: 700;
-    font-size: var(--font-size-sm);
-    margin-bottom: var(--spacing-md);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-}
-
-.dashboard-header h1 {
-    font-size: var(--font-size-3xl);
-    font-weight: 800;
-    margin-bottom: var(--spacing-sm);
-}
-
-.dashboard-header p {
-    font-size: var(--font-size-lg);
-    opacity: 0.9;
-}
-
-.header-actions {
-    display: flex;
-    gap: var(--spacing-md);
-    flex-wrap: wrap;
-}
-
-.action-btn {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    padding: var(--spacing-md) var(--spacing-lg);
-    border-radius: var(--border-radius-lg);
-    text-decoration: none;
-    font-weight: 600;
-    transition: all var(--transition-normal);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-}
-
-.action-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
-    transform: translateY(-2px);
-}
-
-.btn-logout {
-    background: rgba(239, 68, 68, 0.2);
-    border-color: rgba(239, 68, 68, 0.5);
-}
-
-.btn-logout:hover {
-    background: rgba(239, 68, 68, 0.3);
-}
-
-/* Estatísticas */
-.section-title {
-    font-size: var(--font-size-2xl);
-    font-weight: 700;
-    color: var(--gray-800);
-    margin-bottom: var(--spacing-xl);
-}
-
-.subsection-title {
-    font-size: var(--font-size-xl);
-    font-weight: 600;
-    color: var(--gray-800);
-    margin-bottom: var(--spacing-lg);
-}
-
-.stats-grid {
+.grid-4 {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: var(--spacing-lg);
-    margin-bottom: var(--spacing-2xl);
+    grid-template-columns: repeat(4, 1fr);
 }
 
-.stat-card {
-    background: white;
-    padding: var(--spacing-xl);
-    border-radius: var(--border-radius-xl);
-    box-shadow: var(--shadow-lg);
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-lg);
-    border: 3px solid transparent;
-    transition: all var(--transition-normal);
-}
-
-.stat-card:hover {
-    transform: translateY(-4px);
-    box-shadow: var(--shadow-xl);
-}
-
-.stat-barbearias { border-color: #8b5cf6; }
-.stat-usuarios { border-color: #06b6d4; }
-.stat-servicos { border-color: #10b981; }
-.stat-reservas { border-color: #f59e0b; }
-
-.stat-icon {
-    font-size: 3rem;
-    width: 4rem;
-    height: 4rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--gray-100);
-    border-radius: 50%;
-}
-
-.stat-number {
-    font-size: 2.5rem;
-    font-weight: 800;
-    color: var(--gray-800);
-    margin-bottom: var(--spacing-xs);
-}
-
-.stat-label {
-    color: var(--gray-600);
-    font-weight: 600;
-}
-
-/* Tipos de Usuários */
-.users-breakdown {
-    margin-bottom: var(--spacing-2xl);
-}
-
-.users-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: var(--spacing-lg);
-    margin-bottom: var(--spacing-2xl);
-}
-
-.user-type-card {
-    background: white;
-    padding: var(--spacing-lg);
-    border-radius: var(--border-radius-lg);
-    box-shadow: var(--shadow-md);
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-md);
-    border-left: 4px solid;
-}
-
-.type-super { border-left-color: #8b5cf6; }
-.type-admin { border-left-color: #ef4444; }
-.type-barbeiro { border-left-color: #f59e0b; }
-.type-cliente { border-left-color: #06b6d4; }
-
-.type-icon {
-    font-size: 1.5rem;
-}
-
-.type-number {
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: var(--gray-800);
-}
-
-.type-label {
-    color: var(--gray-600);
-    font-size: var(--font-size-sm);
-}
-
-/* Barbearias */
-.barbearias-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: var(--spacing-lg);
-    margin-bottom: var(--spacing-2xl);
-}
-
-.barbearia-card {
-    background: white;
-    padding: var(--spacing-xl);
-    border-radius: var(--border-radius-xl);
-    box-shadow: var(--shadow-lg);
-    border: 2px solid var(--gray-100);
-    transition: all var(--transition-normal);
-}
-
-.barbearia-card:hover {
-    border-color: #667eea;
-    box-shadow: var(--shadow-xl);
-}
-
-.barbearia-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--spacing-lg);
-}
-
-.barbearia-name {
-    font-weight: 700;
-    color: var(--gray-800);
-    font-size: var(--font-size-lg);
-}
-
-.barbearia-badge {
-    background: var(--gray-100);
-    padding: var(--spacing-xs) var(--spacing-sm);
-    border-radius: var(--border-radius-md);
-}
-
-.badge-slug {
-    font-family: 'Courier New', monospace;
-    font-size: var(--font-size-sm);
-    color: var(--gray-600);
-}
-
-.barbearia-info {
-    margin-bottom: var(--spacing-lg);
-}
-
-.info-item {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
-    margin-bottom: var(--spacing-sm);
-    color: var(--gray-600);
-}
-
-.barbearia-stats {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: var(--spacing-md);
-    margin-bottom: var(--spacing-lg);
-}
-
-.mini-stat {
-    text-align: center;
-    padding: var(--spacing-md);
-    background: var(--gray-50);
-    border-radius: var(--border-radius-md);
-}
-
-.mini-stat-number {
-    font-size: var(--font-size-xl);
-    font-weight: 700;
-    color: var(--gray-800);
-}
-
-.mini-stat-label {
-    font-size: var(--font-size-xs);
-    color: var(--gray-600);
-    text-transform: uppercase;
-    font-weight: 600;
-}
-
-.barbearia-actions {
-    display: flex;
-    gap: var(--spacing-md);
-}
-
-.action-link {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-xs);
-    color: #667eea;
-    text-decoration: none;
-    font-size: var(--font-size-sm);
-    font-weight: 600;
-    transition: all var(--transition-normal);
-}
-
-.action-link:hover {
-    color: #764ba2;
-}
-
-/* Ações Rápidas */
-.actions-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: var(--spacing-lg);
-}
-
-.quick-action-card {
-    background: white;
-    padding: var(--spacing-xl);
-    border-radius: var(--border-radius-xl);
-    box-shadow: var(--shadow-md);
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-lg);
-    text-decoration: none;
-    color: var(--gray-800);
-    border: 2px solid var(--gray-100);
-    transition: all var(--transition-normal);
-}
-
-.quick-action-card:hover {
-    border-color: #667eea;
-    box-shadow: var(--shadow-lg);
-    transform: translateY(-2px);
-}
-
-.action-icon {
-    font-size: 2rem;
-    width: 3rem;
-    height: 3rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: var(--gray-100);
-    border-radius: 50%;
-}
-
-.action-title {
-    font-weight: 700;
-    color: var(--gray-800);
-    margin-bottom: var(--spacing-xs);
-}
-
-.action-desc {
-    color: var(--gray-600);
-    font-size: var(--font-size-sm);
-}
-
-/* Mobile */
-@media (max-width: 768px) {
-    .dashboard-header {
-        flex-direction: column;
-        text-align: center;
-        gap: var(--spacing-lg);
-    }
-    
-    .header-actions {
-        justify-content: center;
-    }
-    
-    .stats-grid {
+@media (max-width: 1024px) {
+    .grid-4 {
         grid-template-columns: repeat(2, 1fr);
     }
-    
-    .users-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-    
-    .barbearias-grid {
+}
+
+@media (max-width: 640px) {
+    .grid-4 {
         grid-template-columns: 1fr;
     }
 }

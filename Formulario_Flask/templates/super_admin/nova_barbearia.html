@@ -24,8 +24,20 @@
 
     <!-- Formulário -->
     <div class="form-container">
-        <form method="POST" class="barbearia-form">
+        <form method="POST" enctype="multipart/form-data" class="barbearia-form">
             <div class="form-grid">
+                <!-- Logo -->
+                <div class="form-group full-width">
+                    <label for="logo" class="form-label">
+                        <span class="label-icon">🖼️</span>
+                        Logo da Barbearia
+                    </label>
+                    <input type="file" id="logo" name="logo" 
+                           class="form-input" 
+                           accept="image/png,image/jpeg,image/jpg,image/gif,image/webp">
+                    <small class="form-help">Formatos aceitos: PNG, JPG, GIF, WEBP (máx. 5MB)</small>
+                </div>
+
                 <!-- Nome -->
                 <div class="form-group full-width">
                     <label for="nome" class="form-label">

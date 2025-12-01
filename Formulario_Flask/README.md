@@ -1,185 +1,123 @@
-# Sistema de Gestão para Barbearias
+# 💈 Sistema de Gestão de Barbearias
 
-Sistema web completo para gerenciamento de barbearias com arquitetura multi-tenant, desenvolvido em Flask.
+Sistema completo para gerenciamento de múltiplas barbearias com agendamentos, serviços e administração.
 
-## 🚀 Funcionalidades
+## 📋 Sobre o Projeto
 
-### 👥 **Multi-Tenant**
-- Isolamento completo de dados por barbearia
-- URLs únicas para cada estabelecimento (`/slug-da-barbearia/`)
-- Gestão independente de usuários, serviços e agendamentos
+Sistema multi-tenant desenvolvido em Flask que permite gerenciar várias barbearias independentes em uma única plataforma. Cada barbearia possui seu próprio subdomínio, administradores, serviços e clientes.
 
-### 🔐 **Sistema de Autenticação**
-- **Super Admin**: Gestão global do sistema
-- **Admin de Barbearia**: Gestão completa da barbearia específica
-- **Barbeiro**: Visualização de agendamentos próprios
-- **Cliente**: Agendamentos e histórico pessoal
+## ✨ Funcionalidades Principais
 
-### 📅 **Gestão de Agendamentos**
+### 🏢 Multi-Tenant
+- Sistema com múltiplas barbearias isoladas
+- Cada barbearia tem sua própria identidade visual
+- Logos personalizadas por estabelecimento
+- URLs amigáveis por slug
+
+### 👥 Gestão de Usuários
+- **Super Admin:** Controle total do sistema
+- **Admins de Barbearia:** Gerenciam sua própria unidade
+- **Clientes:** Fazem agendamentos e gerenciam perfil
+- Sistema de autenticação com username (admins) e email (clientes)
+
+### 📅 Agendamentos
 - Sistema completo de reservas
-- Controle de disponibilidade por barbearia
-- Histórico de agendamentos
-- Cancelamento de reservas
+- Controle de disponibilidade por horário
+- Gestão de serviços e preços
+- Dashboard com visão geral dos agendamentos
 
-### 🛠️ **Área Administrativa**
-- Dashboard com métricas
-- Gestão de clientes e serviços
-- Configuração de disponibilidade
-- Relatórios e controles
+### 🎨 Personalização
+- Logo customizada por barbearia
+- Identidade visual própria
+- Configurações independentes
 
-## 🛠️ Tecnologias
+## 🗂️ Estrutura do Projeto
 
-- **Backend**: Flask (Python)
-- **Banco de Dados**: SQLAlchemy + SQLite
-- **Frontend**: HTML5, CSS3, JavaScript
-- **Autenticação**: Werkzeug Security
-- **Template Engine**: Jinja2
-
-## 📦 Instalação
-
-### Pré-requisitos
-- Python 3.8+
-- pip
-
-### Configuração do Ambiente
-
-1. **Clone o repositório:**
-```bash
-git clone https://github.com/seu-usuario/sistema-barbearia.git
-cd sistema-barbearia
+```
+Formulario_Flask/
+├── app.py                      # Aplicação principal Flask
+├── requirements.txt            # Dependências do projeto
+├── meubanco.db                 # Banco de dados SQLite
+│
+├── scripts/                    # Scripts administrativos
+│   ├── criar_admin_interativo.py
+│   ├── configurar_super_admin.py
+│   └── README.md
+│
+├── static/                     # Arquivos estáticos
+│   ├── css/                   # Estilos
+│   ├── js/                    # JavaScript
+│   ├── images/                # Imagens fixas
+│   └── uploads/               # Uploads dinâmicos
+│       └── logos/             # Logos das barbearias
+│
+├── templates/                  # Templates HTML
+│   ├── base.html
+│   ├── cliente/               # Templates de clientes
+│   ├── admin/                 # Templates de admins
+│   └── super_admin/           # Templates de super admin
+│
+├── docs/                       # Documentação
+│   ├── CHANGELOG.md
+│   ├── CONTRIBUTING.md
+│   ├── DOCS.md
+│   └── QUICKSTART.md
+│
+└── backups/                    # Backups do banco de dados
 ```
 
-2. **Crie um ambiente virtual:**
-```bash
-python -m venv venv
-```
+## 🚀 Como Iniciar
 
-3. **Ative o ambiente virtual:**
-```bash
-# Windows
-venv\Scripts\activate
-
-# Linux/Mac
-source venv/bin/activate
-```
-
-4. **Instale as dependências:**
+### 1. Instalar Dependências
 ```bash
 pip install -r requirements.txt
 ```
 
-5. **Configure o banco de dados:**
-```bash
-python criar_super_admin.py
-python criar_barbearia_man.py
-```
-
-6. **Execute a aplicação:**
+### 2. Executar a Aplicação
 ```bash
 python app.py
 ```
 
-## 🎯 Uso
+### 3. Acessar o Sistema
+- **Aplicação:** http://localhost:5000
+- **Super Admin:** http://localhost:5000/super_admin/login
 
-### Acesso ao Sistema
+### 4. Credenciais Padrão
+```
+Super Admin:
+  Username: lualmeida
+  Senha: 562402
+```
 
-#### Super Administrador
-- **URL**: `http://localhost:5000/super_admin/login`
-- **Email**: `superadmin@sistema.com`
-- **Senha**: `admin123`
+## 🛠️ Scripts Administrativos
 
-#### Barbearias de Exemplo
-Após configurar, você pode acessar:
-
-**Barbearia Man**
-- **URL**: `http://localhost:5000/man/`
-- **Admin**: `admin@man.com` / `admin123`
-- **Barbeiro**: `barbeiro@man.com` / `barbeiro123`
-
-### Scripts de Gestão
-
-#### Criação de Usuários Individual
+Para gerenciar administradores das barbearias:
 ```bash
-python criar_usuarios.py
+python scripts/criar_admin_interativo.py
 ```
 
-#### Criação de Usuários em Lote
-```bash
-python criar_usuarios_lote.py
-```
+Veja mais detalhes em `scripts/README.md`
 
-## 🏗️ Estrutura do Projeto
+## 📦 Tecnologias
 
-```
-sistema-barbearia/
-├── app.py                 # Aplicação principal Flask
-├── tenant.py              # Sistema multi-tenant
-├── criar_super_admin.py   # Script para criar super admin
-├── criar_barbearia_man.py # Script para criar barbearia exemplo
-├── criar_usuarios.py      # Gestão individual de usuários
-├── criar_usuarios_lote.py # Gestão em lote de usuários
-├── requirements.txt       # Dependências Python
-├── static/               # Arquivos estáticos (CSS, JS)
-│   ├── css/
-│   └── js/
-└── templates/            # Templates HTML
-    ├── admin/
-    ├── cliente/
-    ├── super_admin/
-    └── base.html
-```
+- **Backend:** Flask (Python)
+- **Banco de Dados:** SQLite
+- **Frontend:** HTML5, CSS3, JavaScript
+- **Autenticação:** Werkzeug Security
+- **Upload de Arquivos:** Sistema próprio
 
-## 🔧 Configuração
+## 📝 Licença
 
-### Variáveis de Ambiente
-```bash
-FLASK_SECRET=sua_chave_secreta_aqui
-FLASK_ENV=development  # ou production
-```
+Ver arquivo `LICENSE`
 
-### Banco de Dados
-O sistema usa SQLite por padrão. Para produção, altere a configuração em `app.py`:
+## 🤝 Contribuindo
 
-```python
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://user:pass@localhost/dbname'
-```
+Ver arquivo `docs/CONTRIBUTING.md`
 
-## 🚀 Deploy
+## 📚 Documentação Completa
 
-### Railway
-1. Conecte seu repositório ao Railway
-2. Configure as variáveis de ambiente
-3. O deploy será automático
-
-### Heroku
-```bash
-git add .
-git commit -m "Deploy para Heroku"
-git push heroku main
-```
-
-## 🤝 Contribuição
-
-1. Fork o projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
-
-## 📄 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para detalhes.
-
-## 👨‍💻 Autor
-
-**Lucas Almeida**
-- GitHub: [@seu-usuario](https://github.com/seu-usuario)
-- Email: seu-email@exemplo.com
-
-## 📞 Suporte
-
-Se você tiver alguma dúvida ou problema, abra uma [issue](https://github.com/seu-usuario/sistema-barbearia/issues) no GitHub.
+Ver arquivo `docs/DOCS.md`
 
 ---
 
-⭐ **Se este projeto foi útil para você, considere dar uma estrela!**
+**Desenvolvido com ❤️ para barbearias modernas**

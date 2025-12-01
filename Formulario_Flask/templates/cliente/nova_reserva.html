@@ -2,10 +2,17 @@
 {% block title %}Nova Reserva{% endblock %}
 
 {% block content %}
-<div class="col-centered">
-    <h1>📅 Nova Reserva</h1>
-    
-    <div class="card-form">
+<!-- Header -->
+<div class="page-header" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); padding: 2.5rem 2rem; margin-bottom: 3rem; border: 3px solid var(--gold); border-radius: 4px; text-align: center;">
+    <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(0, 0, 0, 0.3); padding: 0.5rem 1.5rem; border: 2px solid var(--gold); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 2px;">
+        <span style="font-size: 1.2rem;">👤</span>
+        <span style="color: var(--gold); font-weight: 700; font-size: 0.9rem; font-family: system-ui, -apple-system, sans-serif;">CLIENTE</span>
+    </div>
+    <h1 class="page-title" style="font-size: 2.5rem; font-weight: 800; color: var(--text-color); margin: 0; text-transform: uppercase; letter-spacing: 2px; font-family: system-ui, -apple-system, sans-serif;">📅 NOVA RESERVA</h1>
+</div>
+
+<div class="page-container" style="max-width: 800px; margin: 0 auto; padding: 0 2rem 3rem;">
+    <div class="form-container" style="background: var(--bg-dark); border: 2px solid var(--gold-dark); border-radius: 4px; padding: 3rem;">
         <form method="POST" id="reservaForm">
             <!-- Passo 1: Serviço -->
             <div class="form-step">
@@ -91,7 +98,7 @@
                     ✨ Confirmar Reserva
                 </button>
                 <a href="{{ url_for('barbearia_publica', slug=barbearia.slug if barbearia else 'principal') }}" class="btn btn-secondary btn-full">
-                    ← Voltar ao Dashboard
+                    ← Voltar
                 </a>
             </div>
         </form>
@@ -205,26 +212,26 @@ document.addEventListener('DOMContentLoaded', function() {
 </script>
 
 <style>
-/* Estilos específicos para Nova Reserva */
+/* Form Steps Dark Theme */
 .form-step {
-    margin-bottom: var(--spacing-2xl);
-    padding: var(--spacing-xl);
-    background: linear-gradient(135deg, var(--gray-50) 0%, white 100%);
-    border-radius: var(--border-radius-xl);
-    border: 2px solid var(--gray-200);
-    transition: all var(--transition-normal);
+    margin-bottom: 2rem;
+    padding: 2rem;
+    background: var(--bg-card);
+    border-radius: 4px;
+    border: 2px solid var(--gold-dark);
+    transition: all 0.3s ease;
 }
 
 .form-step:hover {
-    border-color: var(--primary-light);
-    box-shadow: var(--shadow-md);
+    border-color: var(--gold);
+    box-shadow: 0 4px 15px rgba(74, 158, 255, 0.2);
 }
 
 .step-header {
     display: flex;
     align-items: center;
-    gap: var(--spacing-md);
-    margin-bottom: var(--spacing-lg);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
 }
 
 .step-number {
@@ -233,212 +240,326 @@ document.addEventListener('DOMContentLoaded', function() {
     justify-content: center;
     width: 2.5rem;
     height: 2.5rem;
-    background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-    color: white;
+    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+    color: var(--bg-dark);
     border-radius: 50%;
     font-weight: 700;
-    font-size: var(--font-size-lg);
-    box-shadow: var(--shadow-md);
+    font-size: 1.2rem;
 }
 
 .step-header h3 {
     margin: 0;
-    color: var(--gray-800);
-    font-size: var(--font-size-xl);
+    color: var(--gold-light);
+    font-size: 1.3rem;
     font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.75rem;
+    font-weight: 600;
+    color: var(--text-color);
+    font-size: 1.05rem;
+}
+
+.form-help {
+    display: block;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: rgba(245, 245, 220, 0.6);
 }
 
 /* Loading State */
 .loading-state {
     display: flex;
     align-items: center;
-    gap: var(--spacing-md);
-    padding: var(--spacing-lg);
-    background: linear-gradient(135deg, rgba(66, 153, 225, 0.1) 0%, rgba(102, 126, 234, 0.1) 100%);
-    border-radius: var(--border-radius-lg);
-    margin-top: var(--spacing-md);
-    color: var(--primary-color);
+    gap: 1rem;
+    padding: 1.5rem;
+    background: rgba(74, 158, 255, 0.1);
+    border-radius: 4px;
+    margin-top: 1rem;
+    color: var(--gold);
     font-weight: 500;
+    border: 1px solid var(--gold-dark);
 }
 
 .loading-spinner {
     width: 1.5rem;
     height: 1.5rem;
-    border: 2px solid var(--primary-light);
-    border-top: 2px solid var(--primary-color);
+    border: 2px solid var(--gold-dark);
+    border-top: 2px solid var(--gold);
     border-radius: 50%;
     animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
 /* Empty State */
 .empty-state {
     text-align: center;
-    padding: var(--spacing-xl);
-    background: linear-gradient(135deg, rgba(237, 137, 54, 0.1) 0%, rgba(245, 158, 11, 0.1) 100%);
-    border-radius: var(--border-radius-lg);
-    margin-top: var(--spacing-md);
+    padding: 2rem;
+    background: rgba(239, 68, 68, 0.1);
+    border-radius: 4px;
+    margin-top: 1rem;
+    border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
 .empty-icon {
     font-size: 3rem;
-    margin-bottom: var(--spacing-md);
+    margin-bottom: 1rem;
 }
 
 .empty-state p {
-    color: var(--gray-700);
+    color: var(--text-color);
     font-weight: 600;
-    margin-bottom: var(--spacing-sm);
+    margin-bottom: 0.5rem;
 }
 
 .empty-state small {
-    color: var(--gray-500);
+    color: rgba(245, 245, 220, 0.6);
 }
 
 /* Reservation Summary */
 .reservation-summary {
-    background: linear-gradient(135deg, rgba(72, 187, 120, 0.1) 0%, rgba(56, 161, 105, 0.1) 100%);
-    border: 2px solid var(--success-color);
-    border-radius: var(--border-radius-xl);
-    padding: var(--spacing-xl);
-    margin: var(--spacing-xl) 0;
+    background: rgba(16, 185, 129, 0.1);
+    border: 2px solid #10b981;
+    border-radius: 4px;
+    padding: 2rem;
+    margin: 2rem 0;
 }
 
 .reservation-summary h3 {
-    color: var(--success-color);
-    margin-bottom: var(--spacing-lg);
+    color: #10b981;
+    margin-bottom: 1.5rem;
     text-align: center;
+    font-size: 1.3rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .summary-content {
     display: grid;
-    gap: var(--spacing-md);
+    gap: 1rem;
 }
 
 .summary-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: var(--spacing-md);
-    background: white;
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow-sm);
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 4px;
+    border: 1px solid var(--gold-dark);
 }
 
 .summary-label {
     font-weight: 600;
-    color: var(--gray-600);
+    color: rgba(245, 245, 220, 0.7);
+    text-transform: uppercase;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
 }
 
 .summary-value {
     font-weight: 700;
-    color: var(--gray-800);
+    color: var(--gold);
 }
 
 .summary-total {
-    border: 2px solid var(--success-color);
-    background: linear-gradient(135deg, rgba(72, 187, 120, 0.05) 0%, rgba(56, 161, 105, 0.05) 100%);
+    border: 2px solid #10b981;
+    background: rgba(16, 185, 129, 0.15);
 }
 
 .summary-total .summary-value {
-    color: var(--success-color);
-    font-size: var(--font-size-lg);
+    color: #10b981;
+    font-size: 1.3rem;
 }
 
-/* Mobile Optimizations */
+/* Form Actions */
+.form-actions {
+    margin-top: 2rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.btn-full {
+    flex: 1;
+    min-width: 200px;
+}
+
+.form-input:disabled {
+    background-color: rgba(0, 0, 0, 0.4);
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+/* Mobile */
 @media (max-width: 768px) {
+    .page-header {
+        padding: 1.5rem 1rem !important;
+        margin-bottom: 2rem !important;
+        border-width: 2px !important;
+    }
+    
+    .page-title {
+        font-size: 1.5rem !important;
+        letter-spacing: 1px !important;
+    }
+    
+    .page-container {
+        padding: 0 1rem 2rem !important;
+    }
+    
+    .form-container {
+        padding: 1.5rem !important;
+    }
+    
     .form-step {
-        padding: var(--spacing-lg);
-        margin-bottom: var(--spacing-lg);
+        padding: 1rem;
+        margin-bottom: 1rem;
     }
     
     .step-header {
-        flex-direction: column;
-        text-align: center;
-        gap: var(--spacing-sm);
+        flex-direction: row;
+        text-align: left;
+        gap: 0.75rem;
     }
     
     .step-number {
         width: 2rem;
         height: 2rem;
-        font-size: var(--font-size-base);
+        font-size: 1rem;
+        flex-shrink: 0;
     }
     
     .step-header h3 {
-        font-size: var(--font-size-lg);
+        font-size: 1rem;
+        letter-spacing: 0.5px;
+    }
+    
+    .form-label {
+        font-size: 0.95rem;
+    }
+    
+    .form-input, .form-input select {
+        font-size: 16px !important; /* Evita zoom no iOS */
+        padding: 0.75rem !important;
     }
     
     .reservation-summary {
-        padding: var(--spacing-lg);
+        padding: 1rem;
+        margin: 1.5rem 0;
+    }
+    
+    .reservation-summary h3 {
+        font-size: 1.1rem;
+        letter-spacing: 0.5px;
     }
     
     .summary-item {
         flex-direction: column;
         align-items: flex-start;
-        gap: var(--spacing-xs);
+        gap: 0.5rem;
+        padding: 0.75rem;
+    }
+    
+    .summary-label {
+        font-size: 0.8rem;
     }
     
     .summary-value {
-        font-size: var(--font-size-lg);
+        font-size: 0.95rem;
     }
-}
-.form-group {
-    margin-bottom: 20px;
-}
-
-.form-label {
-    display: block;
-    margin-bottom: 5px;
-    font-weight: 500;
-    color: #333;
-}
-
-.form-help {
-    display: block;
-    margin-top: 5px;
-    font-size: 12px;
-    color: #666;
-}
-
-.loading-message {
-    margin-top: 10px;
-    padding: 8px 12px;
-    background: #e3f2fd;
-    border: 1px solid #90caf9;
-    border-radius: 4px;
-    color: #0d47a1;
-    font-size: 14px;
-}
-
-.alert-message {
-    margin-top: 10px;
-    padding: 8px 12px;
-    background: #fff3cd;
-    border: 1px solid #ffeaa7;
-    border-radius: 4px;
-    color: #856404;
-    font-size: 14px;
-}
-
-.form-actions {
-    margin-top: 30px;
-    display: flex;
-    gap: 10px;
-}
-
-.btn-primary:disabled {
-    background-color: #ccc;
-    cursor: not-allowed;
-    opacity: 0.6;
-}
-
-.form-input:disabled {
-    background-color: #f5f5f5;
-    cursor: not-allowed;
-}
-
-@media (max-width: 768px) {
+    
+    .summary-total .summary-value {
+        font-size: 1.1rem;
+    }
+    
     .form-actions {
         flex-direction: column;
+        gap: 0.75rem;
+        margin-top: 1.5rem;
+    }
+    
+    .btn-full {
+        width: 100%;
+        min-width: unset;
+        padding: 1rem !important;
+        font-size: 0.9rem !important;
+    }
+    
+    .loading-state {
+        padding: 1rem;
+        font-size: 0.9rem;
+    }
+    
+    .empty-state {
+        padding: 1.5rem;
+    }
+    
+    .empty-icon {
+        font-size: 2.5rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-header {
+        padding: 1rem 0.75rem !important;
+        margin-bottom: 1.5rem !important;
+    }
+    
+    .page-title {
+        font-size: 1.2rem !important;
+    }
+    
+    .page-container {
+        padding: 0 0.5rem 1.5rem !important;
+    }
+    
+    .form-container {
+        padding: 1rem !important;
+    }
+    
+    .form-step {
+        padding: 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .step-header h3 {
+        font-size: 0.9rem;
+    }
+    
+    .step-number {
+        width: 1.75rem;
+        height: 1.75rem;
+        font-size: 0.9rem;
+    }
+    
+    .form-label {
+        font-size: 0.9rem;
+    }
+    
+    .reservation-summary {
+        padding: 0.75rem;
+    }
+    
+    .summary-item {
+        padding: 0.5rem;
+    }
+    
+    .btn-full {
+        padding: 0.85rem !important;
+        font-size: 0.85rem !important;
     }
 }
 </style>

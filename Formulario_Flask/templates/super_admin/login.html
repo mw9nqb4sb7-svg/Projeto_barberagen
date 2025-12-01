@@ -16,11 +16,11 @@
         <form method="POST" class="login-form">
             <div class="form-group">
                 <label for="email">
-                    <span class="label-icon">📧</span>
-                    Email do Super Admin
+                    <span class="label-icon">👤</span>
+                    Usuário
                 </label>
-                <input type="email" id="email" name="email" required 
-                       placeholder="superadmin@sistema.com"
+                <input type="text" id="email" name="email" required 
+                       placeholder="Digite seu nome de usuário"
                        class="form-input">
             </div>
             
@@ -59,121 +59,141 @@
 <style>
 .super-admin-login {
     min-height: 100vh;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: var(--bg-dark);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: var(--spacing-lg);
+    padding: 2rem;
 }
 
 .login-container {
-    background: white;
-    padding: var(--spacing-2xl);
-    border-radius: var(--border-radius-xl);
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+    background: var(--bg-card);
+    padding: 3rem;
+    border-radius: 4px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
     width: 100%;
-    max-width: 400px;
-    border: 3px solid #667eea;
+    max-width: 450px;
+    border: 2px solid var(--gold-dark);
 }
 
 .login-header {
     text-align: center;
-    margin-bottom: var(--spacing-2xl);
+    margin-bottom: 2.5rem;
 }
 
 .super-badge {
     display: inline-flex;
     align-items: center;
-    gap: var(--spacing-sm);
-    background: linear-gradient(135deg, #667eea, #764ba2);
+    gap: 0.75rem;
+    background: linear-gradient(135deg, #8b5cf6, #6366f1);
     color: white;
-    padding: var(--spacing-sm) var(--spacing-lg);
-    border-radius: 9999px;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
     font-weight: 700;
-    font-size: var(--font-size-sm);
-    margin-bottom: var(--spacing-lg);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.1);
+    font-family: system-ui, -apple-system, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
 }
 
 .badge-icon {
-    font-size: var(--font-size-lg);
+    font-size: 1.3rem;
 }
 
 .login-header h1 {
-    font-size: var(--font-size-2xl);
+    font-size: 1.8rem;
     font-weight: 800;
-    color: var(--gray-800);
-    margin-bottom: var(--spacing-sm);
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+    font-family: system-ui, -apple-system, sans-serif;
+    letter-spacing: 0.5px;
 }
 
 .login-header p {
-    color: var(--gray-600);
-    font-size: var(--font-size-md);
+    color: rgba(245, 245, 220, 0.6);
+    font-size: 0.95rem;
+    font-family: system-ui, -apple-system, sans-serif;
 }
 
 .login-form {
-    margin-bottom: var(--spacing-xl);
+    margin-bottom: 2rem;
 }
 
 .form-group {
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: 1.5rem;
 }
 
 .form-group label {
     display: flex;
     align-items: center;
-    gap: var(--spacing-sm);
+    gap: 0.5rem;
     font-weight: 600;
-    color: var(--gray-700);
-    margin-bottom: var(--spacing-sm);
+    color: var(--text-color);
+    margin-bottom: 0.75rem;
+    font-family: system-ui, -apple-system, sans-serif;
 }
 
 .label-icon {
-    font-size: var(--font-size-lg);
+    font-size: 1.1rem;
 }
 
 .form-input {
     width: 100%;
-    padding: var(--spacing-md);
-    border: 2px solid var(--gray-200);
-    border-radius: var(--border-radius-lg);
-    font-size: var(--font-size-md);
-    transition: all var(--transition-normal);
-    background: var(--gray-50);
+    padding: 1rem;
+    border: 2px solid var(--gold-dark);
+    border-radius: 4px;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    background: rgba(0, 0, 0, 0.3);
+    color: var(--text-color);
+    font-family: system-ui, -apple-system, sans-serif;
 }
 
 .form-input:focus {
     outline: none;
-    border-color: #667eea;
-    background: white;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: var(--gold);
+    background: rgba(0, 0, 0, 0.4);
+    box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.1);
+}
+
+.form-input::placeholder {
+    color: rgba(245, 245, 220, 0.4);
 }
 
 .login-btn {
     width: 100%;
-    background: linear-gradient(135deg, #667eea, #764ba2);
-    color: white;
+    background: var(--gold);
+    color: var(--bg-dark);
     border: none;
-    padding: var(--spacing-lg);
-    border-radius: var(--border-radius-lg);
-    font-size: var(--font-size-md);
+    padding: 1.2rem;
+    border-radius: 4px;
+    font-size: 0.95rem;
     font-weight: 700;
     cursor: pointer;
-    transition: all var(--transition-normal);
+    transition: all 0.3s ease;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: var(--spacing-sm);
-    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    gap: 0.75rem;
+    box-shadow: 0 4px 12px rgba(74, 158, 255, 0.3);
+    font-family: system-ui, -apple-system, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border: 2px solid var(--gold);
 }
 
 .login-btn:hover {
+    background: transparent;
+    color: var(--gold);
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+    box-shadow: 0 8px 20px rgba(74, 158, 255, 0.4);
 }
 
 .btn-icon {
-    font-size: var(--font-size-lg);
+    font-size: 1.2rem;
 }
 
 .login-footer {
@@ -184,51 +204,72 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: var(--spacing-sm);
-    background: var(--gray-50);
-    padding: var(--spacing-md);
-    border-radius: var(--border-radius-lg);
-    border: 2px solid var(--gray-200);
-    color: var(--gray-600);
-    font-size: var(--font-size-sm);
-    margin-bottom: var(--spacing-lg);
+    gap: 0.75rem;
+    background: rgba(255, 193, 7, 0.1);
+    padding: 1rem;
+    border-radius: 4px;
+    border: 2px solid rgba(255, 193, 7, 0.3);
+    color: rgba(245, 245, 220, 0.7);
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+    font-family: system-ui, -apple-system, sans-serif;
 }
 
 .notice-icon {
-    font-size: var(--font-size-lg);
-    color: var(--warning-color);
+    font-size: 1.2rem;
+    color: #ffc107;
 }
 
 .back-link a {
     display: inline-flex;
     align-items: center;
-    gap: var(--spacing-sm);
-    color: var(--gray-600);
+    gap: 0.5rem;
+    color: rgba(245, 245, 220, 0.6);
     text-decoration: none;
-    font-size: var(--font-size-sm);
-    transition: all var(--transition-normal);
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    font-family: system-ui, -apple-system, sans-serif;
 }
 
 .back-link a:hover {
-    color: #667eea;
+    color: var(--gold);
 }
 
 .link-icon {
-    font-size: var(--font-size-md);
+    font-size: 1rem;
 }
 
 /* Mobile */
-@media (max-width: 480px) {
+@media (max-width: 768px) {
     .super-admin-login {
-        padding: var(--spacing-md);
+        padding: 1rem;
     }
     
     .login-container {
-        padding: var(--spacing-xl);
+        padding: 2rem;
     }
     
     .login-header h1 {
-        font-size: var(--font-size-xl);
+        font-size: 1.5rem;
+    }
+    
+    .form-input {
+        font-size: 16px; /* Evita zoom no iOS */
+    }
+}
+
+@media (max-width: 480px) {
+    .login-container {
+        padding: 1.5rem;
+    }
+    
+    .login-header h1 {
+        font-size: 1.3rem;
+    }
+    
+    .super-badge {
+        font-size: 0.75rem;
+        padding: 0.6rem 1.2rem;
     }
 }
 </style>

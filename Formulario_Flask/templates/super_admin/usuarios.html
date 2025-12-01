@@ -2,95 +2,95 @@
 {% block title %}Super Admin - Usuários{% endblock %}
 
 {% block content %}
-<div class="super-admin-usuarios">
-    <!-- Header -->
-    <div class="page-header">
-        <div class="header-info">
-            <div class="super-badge">
-                <span class="badge-icon">⚡</span>
-                <span class="badge-text">SUPER ADMIN</span>
+<!-- Header -->
+<div style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); padding: 3rem 2rem; margin-bottom: 3rem; border: 3px solid var(--gold); border-radius: 4px;">
+    <div style="max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem;">
+        <div>
+            <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(0, 0, 0, 0.3); padding: 0.5rem 1.5rem; border: 2px solid var(--gold); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 2px;">
+                <span style="font-size: 1.2rem;">⚡</span>
+                <span style="color: var(--gold); font-weight: 700; font-size: 0.9rem;">SUPER ADMIN</span>
             </div>
-            <h1>Gerenciamento de Usuários</h1>
-            <p>Visualize todos os usuários organizados por barbearia</p>
+            <h1 style="font-size: 2.5rem; font-weight: 800; color: var(--text-color); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 2px;">Gerenciamento de Usuários</h1>
+            <p style="color: rgba(245, 245, 220, 0.7); font-size: 1.1rem;">Visualize todos os usuários organizados por barbearia</p>
         </div>
         
-        <div class="header-actions">
-            <a href="{{ url_for('super_admin_dashboard') }}" class="action-btn btn-back">
-                <span class="btn-icon">🏠</span>
+        <div>
+            <a href="{{ url_for('super_admin_dashboard') }}" style="display: flex; align-items: center; gap: 0.5rem; background: rgba(0, 0, 0, 0.3); color: var(--text-color); padding: 1rem 1.5rem; border: 2px solid var(--gold-dark); text-decoration: none; font-weight: 600; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px;">
+                <span style="font-size: 1.2rem;">🏠</span>
                 Dashboard
             </a>
         </div>
     </div>
+</div>
 
-    <!-- Usuários por Barbearia -->
+<!-- Usuários por Barbearia -->
+<div style="max-width: 1400px; margin: 0 auto; padding: 0 2rem 3rem;">
     {% for barbearia_nome, usuarios_lista in usuarios_organizados.items() %}
-    <div class="barbearia-section">
-        <div class="barbearia-header">
-            <h2 class="barbearia-title">
+    <div style="margin-bottom: 3rem;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding: 1.5rem; background: var(--bg-dark); border: 2px solid var(--gold-dark); border-radius: 4px; border-left: 4px solid var(--gold);">
+            <h2 style="display: flex; align-items: center; gap: 0.75rem; font-size: 1.75rem; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; margin: 0;">
                 {% if barbearia_nome == 'Sistema' %}
-                <span class="title-icon">⚡</span>
+                <span style="font-size: 1.5rem;">⚡</span>
                 {{ barbearia_nome }}
                 {% else %}
-                <span class="title-icon">🏢</span>
+                <span style="font-size: 1.5rem;">🏢</span>
                 {{ barbearia_nome }}
                 {% endif %}
             </h2>
-            <div class="users-count">
-                <span class="count-number">{{ usuarios_lista|length }}</span>
-                <span class="count-label">usuário{{ 's' if usuarios_lista|length != 1 else '' }}</span>
+            <div style="display: flex; align-items: center; gap: 0.5rem; background: rgba(0, 0, 0, 0.4); padding: 0.75rem 1.25rem; border: 2px solid var(--gold-dark); border-radius: 4px;">
+                <span style="font-size: 1.25rem; font-weight: 700; color: var(--gold);">{{ usuarios_lista|length }}</span>
+                <span style="color: rgba(245, 245, 220, 0.6); font-size: 0.9rem;">usuário{{ 's' if usuarios_lista|length != 1 else '' }}</span>
             </div>
         </div>
         
-        <div class="usuarios-grid">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem;">
             {% for item in usuarios_lista %}
             {% set usuario = item.usuario %}
             {% set vinculos = item.vinculos %}
-            <div class="usuario-card">
-                <div class="usuario-header">
-                    <div class="usuario-avatar">
+            <div style="background: var(--bg-dark); padding: 1.5rem; border: 2px solid var(--gold-dark); border-radius: 4px; transition: all 0.3s ease;" onmouseover="this.style.borderColor='var(--gold)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--gold-dark)'; this.style.transform='translateY(0)'">
+                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem;">
+                    <div style="width: 3rem; height: 3rem; border-radius: 50%; background: rgba(0, 0, 0, 0.4); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; border: 2px solid var(--gold-dark);">
                         {% if usuario.tipo_conta == 'super_admin' %}⚡
                         {% elif vinculos and vinculos[0].role == 'admin' %}🛡️
                         {% elif vinculos and vinculos[0].role == 'barbeiro' %}✂️
                         {% else %}👤{% endif %}
                     </div>
-                    <div class="usuario-info">
-                        <h4 class="usuario-nome">{{ usuario.nome }}</h4>
-                        <div class="usuario-email">{{ usuario.email }}</div>
+                    <div style="flex: 1;">
+                        <h4 style="font-size: 1.125rem; font-weight: 700; color: var(--gold); margin-bottom: 0.25rem;">{{ usuario.nome }}</h4>
+                        <div style="color: rgba(245, 245, 220, 0.6); font-size: 0.875rem;">{{ usuario.email }}</div>
                     </div>
-                    <div class="usuario-status">
-                        <div class="status-indicator {{ 'active' if usuario.ativo else 'inactive' }}">
-                            {{ '🟢' if usuario.ativo else '🔴' }}
-                        </div>
+                    <div style="font-size: 1.25rem;">
+                        {{ '🟢' if usuario.ativo else '🔴' }}
                     </div>
                 </div>
                 
-                <div class="usuario-details">
-                    <div class="detail-row">
-                        <span class="detail-label">ID:</span>
-                        <span class="detail-value">{{ usuario.id }}</span>
+                <div style="margin-bottom: 1rem; border-top: 1px solid var(--gold-dark); padding-top: 1rem;">
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid rgba(245, 245, 220, 0.1);">
+                        <span style="color: rgba(245, 245, 220, 0.6); font-size: 0.875rem; font-weight: 600;">ID:</span>
+                        <span style="color: var(--text-color); font-size: 0.875rem;">{{ usuario.id }}</span>
                     </div>
-                    <div class="detail-row">
-                        <span class="detail-label">Tipo:</span>
-                        <span class="detail-value tipo-{{ usuario.tipo_conta }}">{{ usuario.tipo_conta|replace('_', ' ')|title }}</span>
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid rgba(245, 245, 220, 0.1);">
+                        <span style="color: rgba(245, 245, 220, 0.6); font-size: 0.875rem; font-weight: 600;">Tipo:</span>
+                        <span style="color: {% if usuario.tipo_conta == 'super_admin' %}#8b5cf6{% elif usuario.tipo_conta == 'admin_barbearia' %}#ef4444{% elif usuario.tipo_conta == 'barbeiro' %}#f59e0b{% else %}#06b6d4{% endif %}; font-size: 0.875rem; font-weight: 700;">{{ usuario.tipo_conta|replace('_', ' ')|title }}</span>
                     </div>
                     {% if usuario.telefone %}
-                    <div class="detail-row">
-                        <span class="detail-label">Telefone:</span>
-                        <span class="detail-value">{{ usuario.telefone }}</span>
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid rgba(245, 245, 220, 0.1);">
+                        <span style="color: rgba(245, 245, 220, 0.6); font-size: 0.875rem; font-weight: 600;">Telefone:</span>
+                        <span style="color: var(--text-color); font-size: 0.875rem;">{{ usuario.telefone }}</span>
                     </div>
                     {% endif %}
-                    <div class="detail-row">
-                        <span class="detail-label">Cadastro:</span>
-                        <span class="detail-value">{{ usuario.data_criacao.strftime('%d/%m/%Y') if usuario.data_criacao else 'N/A' }}</span>
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
+                        <span style="color: rgba(245, 245, 220, 0.6); font-size: 0.875rem; font-weight: 600;">Cadastro:</span>
+                        <span style="color: var(--text-color); font-size: 0.875rem;">{{ usuario.data_criacao.strftime('%d/%m/%Y') if usuario.data_criacao else 'N/A' }}</span>
                     </div>
                 </div>
                 
                 {% if vinculos %}
-                <div class="usuario-roles">
-                    <div class="roles-label">Funções:</div>
-                    <div class="roles-list">
+                <div style="background: rgba(0, 0, 0, 0.3); padding: 1rem; border-radius: 4px; border: 1px solid var(--gold-dark);">
+                    <div style="font-size: 0.875rem; font-weight: 600; color: rgba(245, 245, 220, 0.7); margin-bottom: 0.5rem;">Funções:</div>
+                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
                         {% for vinculo in vinculos %}
-                        <div class="role-badge role-{{ vinculo.role }}">
+                        <div style="display: flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; background: {% if vinculo.role == 'admin' %}#ef4444{% elif vinculo.role == 'barbeiro' %}#f59e0b{% else %}#06b6d4{% endif %}; color: white;">
                             {% if vinculo.role == 'admin' %}🛡️
                             {% elif vinculo.role == 'barbeiro' %}✂️
                             {% else %}👤{% endif %}
@@ -108,274 +108,19 @@
 </div>
 
 <style>
-.super-admin-usuarios {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: var(--spacing-xl);
-}
-
-/* Header */
-.page-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: var(--spacing-2xl);
-    border-radius: var(--border-radius-xl);
-    margin-bottom: var(--spacing-2xl);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.super-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--spacing-sm);
-    background: rgba(255, 255, 255, 0.2);
-    padding: var(--spacing-sm) var(--spacing-lg);
-    border-radius: 9999px;
-    font-weight: 700;
-    font-size: var(--font-size-sm);
-    margin-bottom: var(--spacing-md);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-}
-
-.page-header h1 {
-    font-size: var(--font-size-3xl);
-    font-weight: 800;
-    margin-bottom: var(--spacing-sm);
-}
-
-.page-header p {
-    font-size: var(--font-size-lg);
-    opacity: 0.9;
-}
-
-.action-btn {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    padding: var(--spacing-md) var(--spacing-lg);
-    border-radius: var(--border-radius-lg);
-    text-decoration: none;
-    font-weight: 600;
-    transition: all var(--transition-normal);
-    border: 2px solid rgba(255, 255, 255, 0.3);
-}
-
-.action-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
+a[href]:hover {
+    border-color: var(--gold) !important;
+    background: rgba(74, 158, 255, 0.2) !important;
     transform: translateY(-2px);
 }
 
-/* Seções de Barbearia */
-.barbearia-section {
-    margin-bottom: var(--spacing-2xl);
-}
-
-.barbearia-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: var(--spacing-xl);
-    padding: var(--spacing-lg);
-    background: var(--gray-50);
-    border-radius: var(--border-radius-lg);
-    border-left: 4px solid #667eea;
-}
-
-.barbearia-title {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-sm);
-    font-size: var(--font-size-xl);
-    font-weight: 700;
-    color: var(--gray-800);
-}
-
-.title-icon {
-    font-size: var(--font-size-xl);
-}
-
-.users-count {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-xs);
-    background: white;
-    padding: var(--spacing-sm) var(--spacing-md);
-    border-radius: var(--border-radius-md);
-    border: 2px solid var(--gray-200);
-}
-
-.count-number {
-    font-size: var(--font-size-lg);
-    font-weight: 700;
-    color: #667eea;
-}
-
-.count-label {
-    color: var(--gray-600);
-    font-size: var(--font-size-sm);
-}
-
-/* Grid de Usuários */
-.usuarios-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-    gap: var(--spacing-lg);
-}
-
-.usuario-card {
-    background: white;
-    padding: var(--spacing-xl);
-    border-radius: var(--border-radius-xl);
-    box-shadow: var(--shadow-lg);
-    border: 2px solid var(--gray-100);
-    transition: all var(--transition-normal);
-}
-
-.usuario-card:hover {
-    border-color: #667eea;
-    box-shadow: var(--shadow-xl);
-    transform: translateY(-2px);
-}
-
-.usuario-header {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-md);
-    margin-bottom: var(--spacing-lg);
-}
-
-.usuario-avatar {
-    width: 3rem;
-    height: 3rem;
-    border-radius: 50%;
-    background: var(--gray-100);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: var(--font-size-xl);
-}
-
-.usuario-info {
-    flex: 1;
-}
-
-.usuario-nome {
-    font-size: var(--font-size-lg);
-    font-weight: 700;
-    color: var(--gray-800);
-    margin-bottom: var(--spacing-xs);
-}
-
-.usuario-email {
-    color: var(--gray-600);
-    font-size: var(--font-size-sm);
-}
-
-.status-indicator {
-    font-size: var(--font-size-lg);
-}
-
-/* Detalhes do Usuário */
-.usuario-details {
-    margin-bottom: var(--spacing-lg);
-}
-
-.detail-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: var(--spacing-sm) 0;
-    border-bottom: 1px solid var(--gray-100);
-}
-
-.detail-label {
-    color: var(--gray-600);
-    font-size: var(--font-size-sm);
-    font-weight: 600;
-}
-
-.detail-value {
-    color: var(--gray-800);
-    font-size: var(--font-size-sm);
-}
-
-.detail-value.tipo-super-admin { color: #8b5cf6; font-weight: 700; }
-.detail-value.tipo-admin-barbearia { color: #ef4444; font-weight: 700; }
-.detail-value.tipo-barbeiro { color: #f59e0b; font-weight: 700; }
-.detail-value.tipo-cliente { color: #06b6d4; font-weight: 700; }
-
-/* Roles */
-.usuario-roles {
-    background: var(--gray-50);
-    padding: var(--spacing-md);
-    border-radius: var(--border-radius-lg);
-}
-
-.roles-label {
-    font-size: var(--font-size-sm);
-    font-weight: 600;
-    color: var(--gray-700);
-    margin-bottom: var(--spacing-sm);
-}
-
-.roles-list {
-    display: flex;
-    gap: var(--spacing-sm);
-    flex-wrap: wrap;
-}
-
-.role-badge {
-    display: flex;
-    align-items: center;
-    gap: var(--spacing-xs);
-    padding: var(--spacing-xs) var(--spacing-sm);
-    border-radius: var(--border-radius-sm);
-    font-size: var(--font-size-xs);
-    font-weight: 600;
-    text-transform: uppercase;
-}
-
-.role-admin {
-    background: var(--error-color);
-    color: white;
-}
-
-.role-barbeiro {
-    background: var(--warning-color);
-    color: white;
-}
-
-.role-cliente {
-    background: var(--info-color);
-    color: white;
-}
-
-/* Mobile */
 @media (max-width: 768px) {
-    .page-header {
-        flex-direction: column;
-        text-align: center;
-        gap: var(--spacing-lg);
+    div[style*="display: flex"] {
+        flex-direction: column !important;
     }
     
-    .barbearia-header {
-        flex-direction: column;
-        gap: var(--spacing-md);
-        text-align: center;
-    }
-    
-    .usuarios-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .usuario-header {
-        flex-direction: column;
-        text-align: center;
-        gap: var(--spacing-sm);
+    div[style*="display: grid"] {
+        grid-template-columns: 1fr !important;
     }
 }
 </style>

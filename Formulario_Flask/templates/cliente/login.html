@@ -1,58 +1,58 @@
 {% extends "base.html" %}
 
-{% block title %}Login{% endblock %}
+{% block title %}Login - Barbearia Premium{% endblock %}
 
 {% block content %}
-<div class="col-centered">
-    <h1>🔐 Faça seu Login</h1>
+<!-- Navegação -->
+<nav class="custom-nav">
+    <div class="nav-content">
+        <div class="nav-brand">BARBEARIA PREMIUM</div>
+        <ul class="nav-list">
+            <li><a href="/" class="nav-link">HOME</a></li>
+            <li><a href="{{ url_for('cadastro', slug=barbearia.slug if barbearia else 'principal') }}" class="nav-link">CADASTRO</a></li>
+        </ul>
+    </div>
+</nav>
+
+<div style="max-width: 600px; margin: 0 auto;">
+    <h1 style="text-align: center; margin-bottom: 2rem;">ENTRAR NO SISTEMA</h1>
+    
     <div class="card-form">
         <form method="POST">
             <div class="form-group">
-                <label for="email" class="form-label">📧 Email</label>
-                <input type="email" class="form-input" id="email" name="email" 
-                       placeholder="seu@email.com" required autocomplete="email">
+                <label for="email" class="form-label">👤 USUÁRIO OU EMAIL</label>
+                <input type="text" class="form-input" id="email" name="email" 
+                       placeholder="Digite seu email" required autocomplete="username">
+                <small style="color: rgba(245, 245, 220, 0.5); font-size: 0.85rem; display: block; margin-top: 0.5rem;">
+                    Admins usam nome de usuário, clientes usam email
+                </small>
             </div>
+            
             <div class="form-group">
-                <label for="senha" class="form-label">🔒 Senha</label>
+                <label for="senha" class="form-label">🔒 SENHA</label>
                 <input type="password" class="form-input" id="senha" name="senha" 
                        placeholder="Digite sua senha" required autocomplete="current-password">
             </div>
+            
             <div class="form-actions">
                 <button type="submit" class="btn btn-primary btn-full">
-                    Entrar
+                    ENTRAR
                 </button>
             </div>
         </form>
         
-        <div class="text-center mt-4">
-            <p class="text-gray-600">Não tem uma conta?</p>
+        <div style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid rgba(212, 175, 55, 0.2); text-align: center;">
+            <p style="color: rgba(245, 245, 220, 0.7); margin-bottom: 1rem;">Ainda não tem uma conta?</p>
             <a href="{{ url_for('cadastro', slug=barbearia.slug if barbearia else 'principal') }}" class="btn btn-secondary btn-full">
-                Criar Conta
+                CRIAR CONTA AGORA
             </a>
         </div>
         
-        <div class="text-center mt-4">
-            <small class="text-gray-500">
-                Admin? Use: admin@admin.com / 2972
+        <div style="margin-top: 2rem; text-align: center; padding: 1rem; background: rgba(212, 175, 55, 0.1); border-radius: 4px; border: 1px solid var(--gold-dark);">
+            <small style="color: var(--gold-light); font-weight: 600;">
+                💡 ADMIN? Use: admin@admin.com / 2972
             </small>
         </div>
     </div>
 </div>
-
-<style>
-.text-gray-600 {
-    color: var(--gray-600);
-    margin-bottom: var(--spacing-sm);
-}
-
-.text-gray-500 {
-    color: var(--gray-500);
-}
-
-@media (max-width: 480px) {
-    .col-centered {
-        padding: 0 var(--spacing-sm);
-    }
-}
-</style>
 {% endblock %}

@@ -32,26 +32,24 @@
 
         <div class="col-half">
             <h2 class="mb-3">Clientes Cadastrados</h2>
-            {% set clientes = [
-                {'id': 1, 'nome': 'Ana Silva', 'email': 'ana@exemplo.com'},
-                {'id': 2, 'nome': 'Bruno Costa', 'email': 'bruno@exemplo.com'}
-            ] %}
 
-            {% if clientes %}
+            {% if usuarios %}
             <div class="table-responsive">
                 <table class="custom-table">
                     <thead>
                         <tr>
                             <th>Nome</th>
                             <th>Email</th>
+                            <th>Telefone</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
                     <tbody>
-                        {% for cliente in clientes %}
+                        {% for cliente in usuarios %}
                         <tr>
                             <td>{{ cliente.nome }}</td>
                             <td>{{ cliente.email }}</td>
+                            <td>{{ cliente.telefone or '-' }}</td>
                             <td>
                                 <a href="javascript:void(0);" 
                                    class="btn btn-primary-outline"
@@ -72,7 +70,7 @@
             </div>
             {% else %}
             <div class="custom-alert custom-alert-warning">
-                Nenhum cliente cadastrado.
+                Nenhum cliente cadastrado ainda.
             </div>
             {% endif %}
         </div>

@@ -24,8 +24,35 @@
 
     <!-- Formulário -->
     <div class="form-container">
-        <form method="POST" class="barbearia-form">
+        <form method="POST" enctype="multipart/form-data" class="barbearia-form">
             <div class="form-grid">
+                <!-- Logo Atual -->
+                {% if barbearia.logo %}
+                <div class="form-group full-width">
+                    <label class="form-label">
+                        <span class="label-icon">🖼️</span>
+                        Logo Atual
+                    </label>
+                    <div style="padding: 1rem; background: var(--bg-dark); border: 2px solid var(--gold-dark); border-radius: 4px; text-align: center;">
+                        <img src="{{ url_for('static', filename='uploads/logos/' + barbearia.logo) }}" 
+                             alt="Logo {{ barbearia.nome }}" 
+                             style="max-height: 150px; max-width: 100%; object-fit: contain;">
+                    </div>
+                </div>
+                {% endif %}
+                
+                <!-- Upload Nova Logo -->
+                <div class="form-group full-width">
+                    <label for="logo" class="form-label">
+                        <span class="label-icon">🖼️</span>
+                        {{ 'Alterar Logo' if barbearia.logo else 'Adicionar Logo' }}
+                    </label>
+                    <input type="file" id="logo" name="logo" 
+                           class="form-input" 
+                           accept="image/png,image/jpeg,image/jpg,image/gif,image/webp">
+                    <small class="form-help">Formatos aceitos: PNG, JPG, GIF, WEBP (máx. 5MB)</small>
+                </div>
+
                 <!-- Nome -->
                 <div class="form-group full-width">
                     <label for="nome" class="form-label">
@@ -209,18 +236,31 @@ document.getElementById('telefone').addEventListener('input', function() {
 </script>
 
 <style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--bg-dark);
+    color: var(--text-color);
+}
+
 .super-admin-form {
     max-width: 1000px;
     margin: 0 auto;
-    padding: var(--spacing-xl);
+    padding: 2rem;
 }
 
 .page-header {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: var(--spacing-2xl);
-    border-radius: var(--border-radius-xl);
-    margin-bottom: var(--spacing-2xl);
+    background: var(--bg-card);
+    border: 2px solid var(--gold-dark);
+    color: var(--text-color);
+    padding: 2rem;
+    border-radius: 4px;
+    margin-bottom: 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -229,58 +269,61 @@ document.getElementById('telefone').addEventListener('input', function() {
 .super-badge {
     display: inline-flex;
     align-items: center;
-    gap: var(--spacing-sm);
-    background: rgba(255, 255, 255, 0.2);
-    padding: var(--spacing-sm) var(--spacing-lg);
-    border-radius: 9999px;
+    gap: 0.5rem;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
     font-weight: 700;
-    font-size: var(--font-size-sm);
-    margin-bottom: var(--spacing-md);
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+    border: 2px solid rgba(255, 255, 255, 0.2);
 }
 
 .page-header h1 {
-    font-size: var(--font-size-2xl);
+    font-size: 2rem;
     font-weight: 800;
-    margin-bottom: var(--spacing-sm);
+    margin-bottom: 0.5rem;
+    color: var(--gold);
 }
 
 .page-header p {
-    font-size: var(--font-size-base);
-    opacity: 0.9;
+    font-size: 1rem;
+    opacity: 0.8;
+    color: rgba(245, 245, 220, 0.7);
 }
 
 .action-btn {
     display: flex;
     align-items: center;
-    gap: var(--spacing-sm);
-    background: rgba(255, 255, 255, 0.2);
-    color: white;
-    padding: var(--spacing-md) var(--spacing-lg);
-    border-radius: var(--border-radius-lg);
+    gap: 0.5rem;
+    background: transparent;
+    color: var(--gold);
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
     text-decoration: none;
     font-weight: 600;
-    transition: all var(--transition-normal);
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    transition: all 0.3s ease;
+    border: 2px solid var(--gold-dark);
 }
 
 .action-btn:hover {
-    background: rgba(255, 255, 255, 0.3);
+    background: var(--gold-dark);
     transform: translateY(-2px);
+    border-color: var(--gold);
 }
 
 .form-container {
-    background: white;
-    padding: var(--spacing-2xl);
-    border-radius: var(--border-radius-xl);
-    box-shadow: var(--shadow-lg);
-    margin-bottom: var(--spacing-xl);
+    background: var(--bg-card);
+    border: 2px solid var(--gold-dark);
+    padding: 2rem;
+    border-radius: 4px;
+    margin-bottom: 2rem;
 }
 
 .form-grid {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: var(--spacing-lg);
+    gap: 1.5rem;
 }
 
 .form-group.full-width {
@@ -290,158 +333,195 @@ document.getElementById('telefone').addEventListener('input', function() {
 .form-label {
     display: flex;
     align-items: center;
-    gap: var(--spacing-sm);
-    margin-bottom: var(--spacing-sm);
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
     font-weight: 600;
-    color: var(--gray-700);
+    color: var(--text-color);
 }
 
 .form-input, .form-textarea {
     width: 100%;
-    padding: var(--spacing-md);
-    border: 2px solid var(--gray-200);
-    border-radius: var(--border-radius-lg);
-    font-size: var(--font-size-base);
-    transition: all var(--transition-normal);
+    padding: 0.75rem;
+    border: 2px solid var(--gold-dark);
+    border-radius: 4px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    background: var(--bg-dark);
+    color: var(--text-color);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 .form-input:focus, .form-textarea:focus {
     outline: none;
-    border-color: #667eea;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.1);
 }
 
 .form-help {
     display: block;
-    margin-top: var(--spacing-xs);
-    font-size: var(--font-size-sm);
-    color: var(--gray-500);
+    margin-top: 0.25rem;
+    font-size: 0.875rem;
+    color: rgba(245, 245, 220, 0.5);
 }
 
 .checkbox-group {
     display: flex;
     align-items: center;
-    gap: var(--spacing-md);
-    margin-bottom: var(--spacing-sm);
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+#ativa {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
 }
 
 .checkbox-label {
     display: flex;
     align-items: center;
-    gap: var(--spacing-sm);
+    gap: 0.5rem;
     font-weight: 600;
-    color: var(--gray-700);
+    color: var(--text-color);
     cursor: pointer;
 }
 
 .form-actions {
     display: flex;
-    gap: var(--spacing-md);
-    margin-top: var(--spacing-xl);
-    padding-top: var(--spacing-xl);
-    border-top: 2px solid var(--gray-100);
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--gold-dark);
 }
 
 .btn {
     display: flex;
     align-items: center;
-    gap: var(--spacing-sm);
-    padding: var(--spacing-md) var(--spacing-lg);
-    border-radius: var(--border-radius-lg);
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
     text-decoration: none;
     font-weight: 600;
-    transition: all var(--transition-normal);
+    transition: all 0.3s ease;
     border: none;
     cursor: pointer;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
 
 .btn-success {
-    background: var(--success-color);
+    background: #10b981;
     color: white;
+    border: 2px solid #059669;
 }
 
 .btn-success:hover {
-    background: var(--success-dark);
+    background: #059669;
     transform: translateY(-2px);
 }
 
 .btn-secondary {
-    background: var(--gray-200);
-    color: var(--gray-700);
+    background: transparent;
+    color: rgba(245, 245, 220, 0.7);
+    border: 2px solid var(--gold-dark);
 }
 
 .btn-secondary:hover {
-    background: var(--gray-300);
+    background: var(--gold-dark);
+    color: var(--text-color);
 }
 
 .btn-danger {
-    background: var(--error-color);
+    background: #ef4444;
     color: white;
+    border: 2px solid #dc2626;
 }
 
 .btn-danger:hover {
-    background: var(--error-dark);
+    background: #dc2626;
+    transform: translateY(-2px);
 }
 
 .info-panel {
-    background: white;
-    padding: var(--spacing-xl);
-    border-radius: var(--border-radius-xl);
-    box-shadow: var(--shadow-lg);
+    background: var(--bg-card);
+    border: 2px solid var(--gold-dark);
+    padding: 2rem;
+    border-radius: 4px;
 }
 
 .info-panel h3 {
-    margin-bottom: var(--spacing-lg);
-    color: var(--gray-800);
+    margin-bottom: 1.5rem;
+    color: var(--gold);
+    font-size: 1.25rem;
 }
 
 .info-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: var(--spacing-md);
+    gap: 1rem;
 }
 
 .info-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: var(--spacing-md);
-    background: var(--gray-50);
-    border-radius: var(--border-radius-lg);
+    padding: 1rem;
+    background: var(--bg-dark);
+    border: 2px solid var(--gold-dark);
+    border-radius: 4px;
+    transition: all 0.3s ease;
+}
+
+.info-item:hover {
+    border-color: var(--gold);
+    transform: translateX(5px);
 }
 
 .info-label {
     font-weight: 600;
-    color: var(--gray-600);
+    color: rgba(245, 245, 220, 0.6);
 }
 
 .info-value {
     font-weight: 500;
-    color: var(--gray-800);
+    color: var(--text-color);
 }
 
 .info-value.status.active {
-    color: var(--success-color);
+    color: #10b981;
 }
 
 .info-value.status.inactive {
-    color: var(--error-color);
+    color: #ef4444;
 }
 
 .info-value a {
-    color: #667eea;
+    color: var(--gold);
     text-decoration: none;
 }
 
 .info-value a:hover {
     text-decoration: underline;
+    color: var(--gold-light);
 }
 
 @media (max-width: 768px) {
+    .super-admin-form {
+        padding: 1rem;
+    }
+    
     .page-header {
         flex-direction: column;
-        gap: var(--spacing-lg);
+        gap: 1.5rem;
         text-align: center;
+        padding: 1.5rem;
+    }
+    
+    .page-header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .form-container {
+        padding: 1.5rem;
     }
     
     .form-grid {
@@ -452,8 +532,39 @@ document.getElementById('telefone').addEventListener('input', function() {
         flex-direction: column;
     }
     
+    .btn {
+        width: 100%;
+        justify-content: center;
+    }
+    
+    .info-panel {
+        padding: 1.5rem;
+    }
+    
     .info-grid {
         grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .super-admin-form {
+        padding: 0.5rem;
+    }
+    
+    .page-header {
+        padding: 1rem;
+    }
+    
+    .page-header h1 {
+        font-size: 1.25rem;
+    }
+    
+    .form-container {
+        padding: 1rem;
+    }
+    
+    .info-panel {
+        padding: 1rem;
     }
 }
 </style>
