@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Agendamento para Barbearias | Barberagen</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #000;
+            color: #ffffff;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* Navegação */
+        .nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 2px solid rgba(74, 158, 255, 0.3);
+            padding: 1.5rem 2rem;
+            z-index: 1000;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+            text-decoration: none;
+        }
+
+        .nav-logo span {
+            color: #4a9eff;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .nav-link:hover {
+            color: #4a9eff;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #4a9eff 0%, #2563eb 100%);
+            color: #000;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            transition: all 0.3s ease;
+            display: inline-block;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(74, 158, 255, 0.4);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 150px 2rem 100px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 800px;
+            height: 800px;
+            background: radial-gradient(circle, rgba(74, 158, 255, 0.15) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .hero-content {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-badge {
+            display: inline-block;
+            background: rgba(74, 158, 255, 0.2);
+            color: #4a9eff;
+            padding: 0.6rem 1.5rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(74, 158, 255, 0.3);
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #ffffff 0%, #4a9eff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 3rem;
+            line-height: 1.8;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #ffffff;
+            padding: 0.8rem 2rem;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 700;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s ease;
+            display: inline-block;
+        }
+
+        .btn-secondary:hover {
+            border-color: #4a9eff;
+            background: rgba(74, 158, 255, 0.1);
+        }
+
+        /* Features */
+        .features {
+            padding: 100px 2rem;
+            background: linear-gradient(180deg, transparent 0%, rgba(26, 26, 26, 0.5) 100%);
+        }
+
+        .features-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 1rem;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 4rem;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .feature-card {
+            background: rgba(26, 26, 26, 0.5);
+            border: 2px solid rgba(74, 158, 255, 0.2);
+            border-radius: 20px;
+            padding: 2.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            border-color: #4a9eff;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(74, 158, 255, 0.3);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 1rem;
+        }
+
+        .feature-card p {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.8;
+        }
+
+        /* CTA Section */
+        .cta {
+            padding: 100px 2rem;
+            text-align: center;
+        }
+
+        .cta-box {
+            max-width: 800px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, rgba(74, 158, 255, 0.2) 0%, rgba(37, 99, 235, 0.1) 100%);
+            border: 2px solid rgba(74, 158, 255, 0.3);
+            border-radius: 30px;
+            padding: 4rem 3rem;
+        }
+
+        .cta h2 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin-bottom: 1rem;
+        }
+
+        .cta p {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 2.5rem;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 3rem 2rem;
+            background: rgba(13, 13, 13, 0.8);
+            border-top: 2px solid rgba(74, 158, 255, 0.2);
+            text-align: center;
+        }
+
+        .footer p {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.95rem;
+        }
+
+        /* Responsivo */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .hero-buttons {
+                flex-direction: column;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta h2 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navegação -->
+    <nav class="nav">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">Barbera<span>gen</span></a>
+            <div class="nav-links">
+                <a href="#recursos" class="nav-link">Recursos</a>
+                <a href="#como-funciona" class="nav-link">Como Funciona</a>
+                <a href="{{ url_for('admin_index') }}" class="btn-primary">Acessar Barbearias</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">✨ Sistema de Agendamento Profissional</div>
+            <h1>Transforme sua barbearia em um negócio digital</h1>
+            <p>Plataforma completa de agendamento online com páginas personalizadas, gestão de clientes e muito mais. Tudo que você precisa para modernizar sua barbearia.</p>
+            <div class="hero-buttons">
+                <a href="{{ url_for('admin_index') }}" class="btn-primary">🚀 Ver Barbearias</a>
+                <a href="#recursos" class="btn-secondary">📖 Saiba Mais</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section id="recursos" class="features">
+        <div class="features-container">
+            <h2 class="section-title">Tudo que você precisa em um só lugar</h2>
+            <p class="section-subtitle">Recursos profissionais para levar sua barbearia ao próximo nível</p>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">🌐</div>
+                    <h3>Página Personalizada</h3>
+                    <p>Cada barbearia recebe uma página única e profissional com sua marca, logo e identidade visual.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📅</div>
+                    <h3>Agendamento Online</h3>
+                    <p>Sistema completo de reservas com gerenciamento de horários, serviços e disponibilidade semanal.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">👥</div>
+                    <h3>Gestão de Clientes</h3>
+                    <p>Cadastro de clientes, histórico de agendamentos e relacionamento facilitado.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📊</div>
+                    <h3>Dashboard Completo</h3>
+                    <p>Visualize estatísticas, agendamentos e gerencie toda sua operação em um painel intuitivo.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">📱</div>
+                    <h3>Mobile First</h3>
+                    <p>Design responsivo otimizado para celular. Seus clientes podem agendar de qualquer lugar.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">⚡</div>
+                    <h3>Rápido e Seguro</h3>
+                    <p>Plataforma otimizada com segurança de dados e performance de alto nível.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Como Funciona -->
+    <section id="como-funciona" class="features" style="background: transparent;">
+        <div class="features-container">
+            <h2 class="section-title">Como funciona?</h2>
+            <p class="section-subtitle">Em 3 passos simples, sua barbearia está online</p>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">1️⃣</div>
+                    <h3>Cadastre sua Barbearia</h3>
+                    <p>Crie sua conta, adicione as informações da sua barbearia, logo e serviços oferecidos.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">2️⃣</div>
+                    <h3>Configure Horários</h3>
+                    <p>Defina seus horários de atendimento, disponibilidade semanal e preferências de agendamento.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">3️⃣</div>
+                    <h3>Compartilhe o Link</h3>
+                    <p>Receba seu link personalizado e compartilhe com seus clientes. Pronto para começar!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <section class="cta">
+        <div class="cta-box">
+            <h2>Pronto para começar?</h2>
+            <p>Acesse nossa plataforma e veja as barbearias já cadastradas ou entre em contato para criar a sua.</p>
+            <a href="{{ url_for('admin_index') }}" class="btn-primary" style="font-size: 1.1rem; padding: 1rem 3rem;">🎯 Acessar Plataforma</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>© 2025 Barberagen. Todos os direitos reservados.</p>
+        <p style="margin-top: 0.5rem;">Sistema profissional de agendamento para barbearias.</p>
+    </footer>
+</body>
+</html>

@@ -1,72 +1,326 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro - {{ barbearia.nome }}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #000;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            color: #fff;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+        
+        h1 {
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+        }
+        
+        .cadastro-container {
+            max-width: 500px;
+            width: 100%;
+        }
+        
+        .cadastro-card {
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            padding: 3rem;
+            border-radius: 20px;
+            border: 1px solid rgba(74, 158, 255, 0.2);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+        
+        .logo-section {
+            text-align: center;
+            margin-bottom: 2.5rem;
+        }
+        
+        .logo-section h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .logo-section p {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.95rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #4a9eff;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(74, 158, 255, 0.05);
+            border: 1px solid rgba(74, 158, 255, 0.2);
+            border-radius: 10px;
+            color: #ffffff;
+            font-size: 1rem;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #4a9eff;
+            background: rgba(74, 158, 255, 0.1);
+        }
+        
+        .form-input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+        
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 1.1rem;
+            border: none;
+            border-radius: 50px;
+            font-size: 1rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        
+        .btn-primary {
+            background: #4a9eff;
+            color: #000000;
+            margin-top: 1rem;
+        }
+        
+        .btn-primary:hover {
+            background: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(74, 158, 255, 0.4);
+        }
+        
+        .divider {
+            margin: 2rem 0;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(74, 158, 255, 0.2);
+            text-align: center;
+        }
+        
+        .divider p {
+            color: rgba(255, 255, 255, 0.6);
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+        
+        .btn-secondary {
+            background: transparent;
+            color: #4a9eff;
+            border: 1px solid rgba(74, 158, 255, 0.5);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(74, 158, 255, 0.1);
+            border-color: #4a9eff;
+        }
+        
+        .back-link {
+            text-align: center;
+            margin-top: 2rem;
+        }
+        
+        .back-link a {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: color 0.3s ease;
+        }
+        
+        .back-link a:hover {
+            color: #4a9eff;
+        }
+        
+        .alert {
+            padding: 1rem;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+            font-size: 0.95rem;
+        }
+        
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #6ee7b7;
+        }
+        
+        .alert-error {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: #fca5a5;
+        }
 
-{% block title %}Cadastro - Barbearia Premium{% endblock %}
-
-{% block content %}
-<!-- Navegação -->
-<nav class="custom-nav">
-    <div class="nav-content">
-        <div class="nav-brand">BARBEARIA PREMIUM</div>
-        <ul class="nav-list">
-            <li><a href="/" class="nav-link">HOME</a></li>
-            <li><a href="{{ url_for('login', slug=barbearia.slug if barbearia else 'principal') }}" class="nav-link">LOGIN</a></li>
-        </ul>
-    </div>
-</nav>
-
-<div style="max-width: 600px; margin: 0 auto;">
-    <h1 style="text-align: center; margin-bottom: 2rem;">CRIAR NOVA CONTA</h1>
-    
-    <div class="card-form">
-        <form method="POST">
-            {% if request.args.get('b') %}
-            <input type="hidden" name="barbearia_slug" value="{{ request.args.get('b') }}">
-            {% endif %}
+        /* Responsividade Mobile */
+        @media (max-width: 640px) {
+            body {
+                padding: 1rem;
+            }
             
-            <div class="form-group">
-                <label for="nome" class="form-label">👤 NOME COMPLETO</label>
-                <input type="text" class="form-input" id="nome" name="nome" 
-                       placeholder="Seu nome completo" required autocomplete="name">
+            .cadastro-card {
+                padding: 2rem 1.5rem;
+            }
+            
+            .logo-section h1 {
+                font-size: 1.5rem !important;
+            }
+            
+            .logo-section p {
+                font-size: 0.9rem;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr !important;
+                gap: 0 !important;
+            }
+            
+            .form-label {
+                font-size: 0.9rem;
+            }
+            
+            .form-input {
+                padding: 0.9rem 1.2rem;
+                font-size: 0.95rem;
+            }
+            
+            .btn {
+                padding: 1rem;
+                font-size: 0.9rem;
+            }
+        }
+        
+        @media (max-width: 400px) {
+            body {
+                padding: 0.5rem;
+            }
+            
+            .cadastro-card {
+                padding: 1.5rem 1rem;
+            }
+            
+            .logo-section h1 {
+                font-size: 1.3rem !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cadastro-container">
+        <div class="cadastro-card">
+            <!-- Logo/Nome da Barbearia -->
+            <div class="logo-section">
+                {% set nome_parts = barbearia.nome.split() %}
+                <h1>
+                    {% if nome_parts|length >= 2 %}
+                        <span style="color: #ffffff;">{{ nome_parts[0] }} {{ nome_parts[1] }}</span><span style="color: #4a9eff;">{{ ' '.join(nome_parts[2:]) if nome_parts|length > 2 else '' }}</span>
+                    {% else %}
+                        <span style="color: #ffffff;">{{ barbearia.nome }}</span>
+                    {% endif %}
+                </h1>
+                <p>Crie sua conta e agende seu horário</p>
             </div>
             
-            <div class="form-group">
-                <label for="email" class="form-label">📧 EMAIL</label>
-                <input type="email" class="form-input" id="email" name="email" 
-                       placeholder="seu@email.com" required autocomplete="email">
-            </div>
+            <!-- Mensagens Flash -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'success' if category == 'success' else 'error' }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
             
-            <div class="form-group">
-                <label for="telefone" class="form-label">📱 TELEFONE</label>
-                <input type="tel" class="form-input" id="telefone" name="telefone" 
-                       placeholder="(11) 99999-9999" autocomplete="tel" maxlength="15">
-            </div>
-            
-            <div class="form-group">
-                <label for="senha" class="form-label">🔐 SENHA</label>
-                <input type="password" class="form-input" id="senha" name="senha" 
-                       placeholder="Crie uma senha segura" required autocomplete="new-password">
-            </div>
-            
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary btn-full">
-                    🚀 CRIAR CONTA
+            <!-- Formulário de Cadastro -->
+            <form method="POST">
+                <div class="form-group">
+                    <label for="nome" class="form-label">👤 Nome completo</label>
+                    <input type="text" class="form-input" id="nome" name="nome" 
+                           placeholder="Digite seu nome completo" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email" class="form-label">📧 Email</label>
+                    <input type="email" class="form-input" id="email" name="email" 
+                           placeholder="seu@email.com" required autocomplete="email">
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="telefone" class="form-label">📱 Telefone</label>
+                        <input type="tel" class="form-input" id="telefone" name="telefone" 
+                               placeholder="(00) 00000-0000" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="data_nascimento" class="form-label">🎂 Nascimento</label>
+                        <input type="date" class="form-input" id="data_nascimento" name="data_nascimento">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="senha" class="form-label">🔒 Senha</label>
+                    <input type="password" class="form-input" id="senha" name="senha" 
+                           placeholder="Mínimo 6 caracteres" required minlength="6" autocomplete="new-password">
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirmar_senha" class="form-label">🔒 Confirmar senha</label>
+                    <input type="password" class="form-input" id="confirmar_senha" name="confirmar_senha" 
+                           placeholder="Digite a senha novamente" required minlength="6" autocomplete="new-password">
+                </div>
+                
+                <button type="submit" class="btn btn-primary">
+                    Criar conta →
                 </button>
+            </form>
+            
+            <!-- Divisor -->
+            <div class="divider">
+                <p>Já tem uma conta?</p>
+                <a href="{{ url_for('login', slug=barbearia.slug) }}" class="btn btn-secondary">
+                    Fazer login
+                </a>
             </div>
-        </form>
-        
-        <div style="margin-top: 2rem; padding-top: 2rem; border-top: 2px solid rgba(212, 175, 55, 0.2); text-align: center;">
-            <p style="color: rgba(245, 245, 220, 0.7); margin-bottom: 1rem;">Já possui uma conta?</p>
-            <a href="{{ url_for('login', slug=barbearia.slug if barbearia else 'principal') }}" class="btn btn-secondary btn-full">
-                FAZER LOGIN
-            </a>
         </div>
         
-        <div style="margin-top: 2rem; text-align: center; padding: 1rem; background: rgba(212, 175, 55, 0.05); border-radius: 4px; border: 1px solid rgba(212, 175, 55, 0.2);">
-            <p style="color: rgba(245, 245, 220, 0.6); font-size: 0.85rem; line-height: 1.6;">
-                🔒 Seus dados estão seguros e não serão compartilhados<br>
-                ✨ Cadastro 100% gratuito e sem compromisso
-            </p>
+        <!-- Link para voltar -->
+        <div class="back-link">
+            <a href="{{ url_for('barbearia_publica', slug=barbearia.slug) }}">← Voltar para página inicial</a>
         </div>
     </div>
-</div>
-{% endblock %}
+</body>
+</html>

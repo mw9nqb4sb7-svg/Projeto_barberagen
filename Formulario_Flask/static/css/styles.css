@@ -25,8 +25,8 @@
     --warning: #f59e0b;
     
     /* Tipografia */
-    --font-main: 'Georgia', 'Times New Roman', serif;
-    --font-accent: 'Arial', sans-serif;
+    --font-main: 'Plus Jakarta Sans', 'Georgia', 'Times New Roman', serif;
+    --font-accent: 'Plus Jakarta Sans', 'Arial', sans-serif;
     --font-display: "Playfair Display", serif;
     
     /* Sombras */
@@ -50,7 +50,7 @@
 
 body {
     font-family: var(--font-main);
-    background: radial-gradient(ellipse at top, #1a1a1a 0%, #0d0d0d 50%, #000000 100%);
+    background: #000;
     color: var(--accent-cream);
     line-height: 1.8;
     min-height: 100vh;
@@ -180,7 +180,8 @@ h1 {
     text-align: center;
     margin-bottom: 3rem;
     text-transform: uppercase;
-    letter-spacing: 6px;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
     position: relative;
     font-weight: 900;
     filter: drop-shadow(0 4px 8px rgba(74, 158, 255, 0.4));
@@ -1080,6 +1081,37 @@ select {
     }
 }
 
+/* ========== MENU HAMBÚRGUER ========== */
+.nav-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    cursor: pointer;
+    padding: 0.5rem;
+    z-index: 1001;
+}
+
+.nav-toggle span {
+    display: block;
+    width: 28px;
+    height: 3px;
+    background: var(--gold);
+    border-radius: 3px;
+    transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.nav-toggle.active span:nth-child(1) {
+    transform: rotate(45deg) translate(8px, 8px);
+}
+
+.nav-toggle.active span:nth-child(2) {
+    opacity: 0;
+}
+
+.nav-toggle.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(8px, -8px);
+}
+
 @media (max-width: 768px) {
     .custom-container {
         padding: 100px 1rem 2rem;
@@ -1095,19 +1127,112 @@ select {
         letter-spacing: 1px;
     }
 
+    .nav-content {
+        position: relative;
+    }
+
     .nav-brand {
         font-size: 1.2rem;
         letter-spacing: 1px;
     }
 
+    .nav-toggle {
+        display: flex;
+    }
+
     .nav-list {
-        flex-wrap: wrap;
-        gap: 0.3rem;
+        position: fixed;
+        top: 0;
+        right: -100%;
+        height: 100vh;
+        width: 280px;
+        background: rgba(0, 0, 0, 0.98);
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 2rem;
+        transition: right 0.3s ease;
+        box-shadow: -5px 0 30px rgba(0, 0, 0, 0.9);
+        border-left: 3px solid var(--gold);
+        z-index: 999;
+        will-change: right;
+    }
+
+    .nav-list.active {
+        right: 0;
     }
 
     .nav-link {
-        padding: 0.4rem 0.8rem;
-        font-size: 0.75rem;
+        padding: 0.8rem 1.5rem;
+        font-size: 1rem;
+        width: 80%;
+        text-align: center;
+        border: 2px solid var(--gold-dark);
+        transition: all 0.2s ease;
+    }
+
+    .nav-link:hover {
+        transform: scale(1.05);
+        background: rgba(74, 158, 255, 0.1);
+    }
+
+    /* Hero Section Mobile */
+    .nav-brand span {
+        font-size: 1rem;
+    }
+
+    .nav-brand img {
+        height: 60px !important;
+    }
+
+    .hero-section {
+        margin-top: 1rem !important;
+        padding: 2rem 1rem !important;
+    }
+
+    .hero-decoration {
+        display: none;
+    }
+
+    .hero-line {
+        display: none;
+    }
+
+    .hero-logo img {
+        max-width: 70vw !important;
+    }
+
+    .hero-icon {
+        font-size: 3rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+
+    .hero-title {
+        font-size: 1.8rem !important;
+        letter-spacing: 1px !important;
+        margin-bottom: 0.5rem !important;
+    }
+
+    .hero-info {
+        gap: 1rem !important;
+        margin-top: 1rem !important;
+        flex-direction: column;
+    }
+
+    .hero-info span {
+        font-size: 0.9rem !important;
+    }
+
+    .hero-actions {
+        margin-top: 2rem !important;
+        gap: 1rem !important;
+        flex-direction: column;
+    }
+
+    .hero-actions .btn {
+        width: 100%;
+        font-size: 1rem !important;
+        padding: 1rem 2rem !important;
     }
 
     .card-form {

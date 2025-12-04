@@ -346,9 +346,13 @@ body {
     border-radius: 4px;
     font-size: 16px;
     transition: all 0.3s ease;
-    background: var(--bg-dark);
-    color: var(--text-color);
+    background: #1a1a1a;
+    color: #f5f5dc;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.form-input::placeholder, .form-textarea::placeholder {
+    color: rgba(245, 245, 220, 0.4);
 }
 
 .form-input:focus, .form-textarea:focus {

@@ -1,0 +1,326 @@
+{% extends "base.html" %}
+{% block title %}Editar CSS - {{ barbearia.nome }}{% endblock %}
+
+{% block content %}
+<style>
+/* Estilos específicos para o editor de CSS */
+.editor-container {
+    background: linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(26, 26, 26, 0.85) 100%);
+    border: 2px solid rgba(74, 158, 255, 0.3);
+    border-radius: 24px;
+    padding: 2rem;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8), 0 0 80px rgba(74, 158, 255, 0.1);
+}
+
+.code-editor {
+    width: 100%;
+    min-height: 500px;
+    background: #0d0d0d;
+    border: 2px solid rgba(74, 158, 255, 0.3);
+    border-radius: 15px;
+    padding: 1.5rem;
+    color: #f5f5dc;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    resize: vertical;
+    tab-size: 4;
+}
+
+.code-editor:focus {
+    outline: none;
+    border-color: #4a9eff;
+    box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.15);
+}
+
+.preview-frame {
+    width: 100%;
+    min-height: 600px;
+    border: 2px solid rgba(74, 158, 255, 0.3);
+    border-radius: 20px;
+    background: #000;
+    overflow: auto;
+}
+
+.info-box {
+    background: rgba(74, 158, 255, 0.1);
+    border: 2px solid rgba(74, 158, 255, 0.3);
+    border-radius: 15px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.info-box h3 {
+    color: #4a9eff;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    font-weight: 800;
+}
+
+.info-box ul {
+    list-style: none;
+    padding: 0;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.info-box li {
+    padding: 0.5rem 0;
+    padding-left: 1.5rem;
+    position: relative;
+}
+
+.info-box li:before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: #4a9eff;
+    font-weight: bold;
+}
+
+.btn-preview {
+    background: linear-gradient(135deg, #4a9eff 0%, #2563eb 100%);
+    color: #000;
+    border: none;
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(74, 158, 255, 0.3);
+}
+
+.btn-preview:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 35px rgba(74, 158, 255, 0.5);
+}
+
+.btn-clear {
+    background: transparent;
+    color: rgba(255, 255, 255, 0.8);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    padding: 1rem 2rem;
+    border-radius: 50px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-clear:hover {
+    border-color: #ef4444;
+    color: #ef4444;
+}
+
+@media (max-width: 768px) {
+    .code-editor {
+        font-size: 12px;
+        min-height: 400px;
+    }
+    
+    .preview-frame {
+        min-height: 400px;
+    }
+}
+</style>
+
+<!-- Navegação -->
+<nav class="custom-nav">
+    <div class="nav-content">
+        <div class="nav-brand">EDITOR DE CSS</div>
+        <ul class="nav-list">
+            <li><a href="{{ url_for('super_admin_barbearias') }}" class="nav-link">← VOLTAR</a></li>
+            <li><a href="{{ url_for('super_admin_dashboard') }}" class="nav-link">DASHBOARD</a></li>
+        </ul>
+    </div>
+</nav>
+
+<h1 style="text-align: center; margin-bottom: 2rem;">🎨 Editor de CSS - {{ barbearia.nome }}</h1>
+
+<!-- Info Box -->
+<div class="info-box">
+    <h3>💡 Como usar o Editor de CSS Personalizado</h3>
+    <ul>
+        <li>Digite seu CSS personalizado no editor abaixo</li>
+        <li>Use seletores CSS padrão para estilizar a página da barbearia</li>
+        <li>O CSS será aplicado automaticamente na página inicial da barbearia</li>
+        <li>Exemplo: <code style="background: rgba(0,0,0,0.5); padding: 0.2rem 0.5rem; border-radius: 5px;">body { background: linear-gradient(135deg, #1a1a1a, #2a2a2a); }</code></li>
+        <li>Você pode alterar cores, fontes, tamanhos, espaçamentos, etc.</li>
+        <li>Clique em "Visualizar Mudanças" para ver o resultado antes de salvar</li>
+    </ul>
+</div>
+
+<form method="POST">
+    <div class="editor-container">
+        <label class="form-label" style="color: #4a9eff; font-size: 1.1rem; font-weight: 800; margin-bottom: 1rem; display: block;">
+            📝 CSS Personalizado
+        </label>
+        
+        <textarea name="custom_css" id="css-editor" class="code-editor" placeholder="/* Digite seu CSS aqui */
+/* Exemplo:
+body {
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+}
+
+.hero-section {
+    background: rgba(0, 0, 0, 0.8);
+}
+
+.nav-brand {
+    color: #ff6b6b !important;
+}
+
+h1, h2, h3 {
+    color: #4ecdc4 !important;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #ff6b6b, #ee5a6f) !important;
+}
+*/">{{ barbearia.custom_css or '' }}</textarea>
+        
+        <div style="display: flex; gap: 1rem; margin-top: 2rem; flex-wrap: wrap;">
+            <button type="submit" class="btn btn-success" style="flex: 1; min-width: 200px;">
+                💾 SALVAR CSS
+            </button>
+            
+            <button type="button" onclick="previewCSS()" class="btn-preview" style="flex: 1; min-width: 200px;">
+                👁 VISUALIZAR MUDANÇAS
+            </button>
+            
+            <button type="button" onclick="clearCSS()" class="btn-clear" style="flex: 1; min-width: 200px;">
+                🗑 LIMPAR TUDO
+            </button>
+        </div>
+    </div>
+</form>
+
+<!-- Preview Section -->
+<div class="editor-container" style="margin-top: 2rem;">
+    <h2 style="color: #4a9eff; margin-bottom: 1.5rem; font-weight: 800;">
+        👀 Preview da Página
+    </h2>
+    <p style="color: rgba(255, 255, 255, 0.7); margin-bottom: 1rem;">
+        Clique em "Visualizar Mudanças" para ver como ficará o CSS na página da barbearia
+    </p>
+    <iframe id="preview-frame" class="preview-frame" src="{{ url_for('acessar_barbearia', slug=barbearia.slug) }}"></iframe>
+</div>
+
+<!-- Exemplos de CSS -->
+<div class="info-box" style="margin-top: 2rem;">
+    <h3>🎨 Exemplos de CSS Personalizados</h3>
+    
+    <details style="margin-bottom: 1rem;">
+        <summary style="cursor: pointer; font-weight: 700; color: #4a9eff; padding: 0.5rem 0;">Tema Vermelho/Dourado</summary>
+        <pre style="background: rgba(0,0,0,0.5); padding: 1rem; border-radius: 10px; overflow-x: auto; margin-top: 0.5rem;"><code>/* Tema Vermelho e Dourado */
+body {
+    background: linear-gradient(135deg, #1a0000, #2a0a0a) !important;
+}
+
+.nav-brand span:first-child {
+    color: #ffd700 !important;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #dc143c, #8b0000) !important;
+}
+
+h1, h2 {
+    color: #ffd700 !important;
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+}
+
+.service-card:hover {
+    border-color: #dc143c !important;
+}</code></pre>
+    </details>
+    
+    <details style="margin-bottom: 1rem;">
+        <summary style="cursor: pointer; font-weight: 700; color: #4a9eff; padding: 0.5rem 0;">Tema Verde/Escuro</summary>
+        <pre style="background: rgba(0,0,0,0.5); padding: 1rem; border-radius: 10px; overflow-x: auto; margin-top: 0.5rem;"><code>/* Tema Verde Escuro */
+body {
+    background: linear-gradient(135deg, #0a1f0a, #1a3a1a) !important;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #10b981, #059669) !important;
+}
+
+h1 span {
+    color: #10b981 !important;
+}
+
+.nav-brand {
+    color: #6ee7b7 !important;
+}</code></pre>
+    </details>
+    
+    <details style="margin-bottom: 1rem;">
+        <summary style="cursor: pointer; font-weight: 700; color: #4a9eff; padding: 0.5rem 0;">Tema Roxo/Rosa</summary>
+        <pre style="background: rgba(0,0,0,0.5); padding: 1rem; border-radius: 10px; overflow-x: auto; margin-top: 0.5rem;"><code>/* Tema Roxo e Rosa */
+body {
+    background: linear-gradient(135deg, #1a0a1f, #2a1a3a) !important;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #a855f7, #ec4899) !important;
+}
+
+h1, h2 {
+    background: linear-gradient(135deg, #a855f7, #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}</code></pre>
+    </details>
+</div>
+
+<script>
+function previewCSS() {
+    const css = document.getElementById('css-editor').value;
+    const preview = document.getElementById('preview-frame');
+    
+    // Recarregar o iframe
+    preview.src = preview.src;
+    
+    // Aguardar o carregamento e injetar o CSS
+    preview.onload = function() {
+        try {
+            const doc = preview.contentDocument || preview.contentWindow.document;
+            const style = doc.createElement('style');
+            style.textContent = css;
+            doc.head.appendChild(style);
+            
+            alert('✅ Preview atualizado! Role a página para ver as mudanças.');
+        } catch (e) {
+            console.error('Erro ao atualizar preview:', e);
+            alert('⚠ Não foi possível atualizar o preview. Salve e visualize na página da barbearia.');
+        }
+    };
+}
+
+function clearCSS() {
+    if (confirm('⚠ Tem certeza que deseja limpar todo o CSS? Esta ação não pode ser desfeita até você salvar.')) {
+        document.getElementById('css-editor').value = '';
+        alert('🗑 CSS limpo! Lembre-se de salvar para aplicar as mudanças.');
+    }
+}
+
+// Atalhos de teclado
+document.getElementById('css-editor').addEventListener('keydown', function(e) {
+    // Tab para indentação
+    if (e.key === 'Tab') {
+        e.preventDefault();
+        const start = this.selectionStart;
+        const end = this.selectionEnd;
+        this.value = this.value.substring(0, start) + '    ' + this.value.substring(end);
+        this.selectionStart = this.selectionEnd = start + 4;
+    }
+    
+    // Ctrl+S para salvar
+    if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        document.querySelector('form').submit();
+    }
+});
+</script>
+
+{% endblock %}

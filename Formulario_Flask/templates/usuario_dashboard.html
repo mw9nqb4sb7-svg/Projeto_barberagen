@@ -1,313 +1,927 @@
-{% extends "base.html" %}
-{% block title %}{{ barbearia.nome }} - Dashboard{% endblock %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ barbearia.nome }} - Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-{% block content %}
-<!-- Navbar -->
-<nav style="background: var(--bg-dark); border-bottom: 2px solid var(--gold-dark); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); backdrop-filter: blur(10px);">
-    <div style="max-width: 1400px; margin: 0 auto; padding: 1.25rem 2rem; display: flex; justify-content: space-between; align-items: center; gap: 1.5rem;">
-        <!-- Logo e Info da Barbearia -->
-        <div style="display: flex; align-items: center; gap: 1.5rem;">
-            <div style="display: flex; flex-direction: column; gap: 0.25rem;">
-                <span style="font-size: 1.3rem; font-weight: 700; color: var(--gold); font-family: system-ui, -apple-system, sans-serif; letter-spacing: 0.5px;">{{ barbearia.nome }}</span>
-                <span style="font-size: 0.7rem; color: rgba(245, 245, 220, 0.5); font-family: system-ui, -apple-system, sans-serif; text-transform: uppercase; letter-spacing: 1px;">
-                    {% if user_type == 'barbeiro' %}✂️ Barbeiro{% else %}👤 Cliente{% endif %}
-                </span>
-            </div>
-        </div>
-        
-        <!-- Menu de Navegação -->
-        <div style="display: flex; align-items: center; gap: 1rem;">
-            <a href="{{ url_for('nova_reserva', slug=barbearia.slug) }}" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: var(--gold); color: var(--bg-dark); text-decoration: none; font-weight: 700; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; border-radius: 4px; transition: all 0.3s ease; font-family: system-ui, -apple-system, sans-serif; border: 2px solid var(--gold);" onmouseover="this.style.background='transparent'; this.style.color='var(--gold)'" onmouseout="this.style.background='var(--gold)'; this.style.color='var(--bg-dark)'">
-                <span>📅</span> <span style="white-space: nowrap;">Nova Reserva</span>
-            </a>
-            
-            {% if user_type == 'barbeiro' %}
-            <a href="{{ url_for('servicos', b=request.args.get('b', '')) }}" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: transparent; color: var(--text-color); text-decoration: none; font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; border-radius: 4px; transition: all 0.3s ease; font-family: system-ui, -apple-system, sans-serif; border: 2px solid var(--gold-dark);" onmouseover="this.style.borderColor='var(--gold)'; this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--gold-dark)'; this.style.color='var(--text-color)'">
-                <span>⚙️</span> <span style="white-space: nowrap;">Serviços</span>
-            </a>
-            {% endif %}
-            
-            <!-- User Info e Logout -->
-            <div style="display: flex; align-items: center; gap: 1.25rem; margin-left: 1rem; padding-left: 1.25rem; border-left: 1px solid var(--gold-dark);">
-                <div style="display: flex; flex-direction: column; text-align: right;">
-                    <span style="font-size: 0.7rem; color: rgba(245, 245, 220, 0.5); font-family: system-ui, -apple-system, sans-serif;">Olá,</span>
-                    <span style="font-size: 0.9rem; font-weight: 600; color: var(--text-color); font-family: system-ui, -apple-system, sans-serif;">{{ session.usuario_nome }}</span>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #000;
+            color: #ffffff;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: rgba(26, 26, 26, 0.6);
+            border-bottom: 2px solid rgba(74, 158, 255, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            backdrop-filter: blur(10px);
+        }
+
+        .navbar-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 1.5rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .navbar-logo {
+            height: 50px;
+            width: auto;
+            filter: drop-shadow(0 4px 15px rgba(74, 158, 255, 0.4));
+        }
+
+        .navbar-title-wrap {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+
+        .navbar-title {
+            font-size: 1.5rem;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+        }
+
+        .navbar-subtitle {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.6);
+            font-weight: 600;
+        }
+
+        .navbar-menu {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.9rem 1.8rem;
+            background: linear-gradient(135deg, #4a9eff 0%, #2563eb 100%);
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            border: none;
+            box-shadow: 0 4px 15px rgba(74, 158, 255, 0.4);
+            white-space: nowrap;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(74, 158, 255, 0.5);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.9rem 1.8rem;
+            background: transparent;
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(74, 158, 255, 0.3);
+            white-space: nowrap;
+        }
+
+        .btn-secondary:hover {
+            border-color: #4a9eff;
+            background: rgba(74, 158, 255, 0.1);
+        }
+
+        .btn-danger {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 0.9rem 1.8rem;
+            background: transparent;
+            color: #ef4444;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            border: 2px solid rgba(239, 68, 68, 0.3);
+            white-space: nowrap;
+        }
+
+        .btn-danger:hover {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: #ef4444;
+        }
+
+        /* Container Principal */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        /* Welcome Section */
+        .welcome-section {
+            background: linear-gradient(135deg, rgba(74, 158, 255, 0.1) 0%, rgba(37, 99, 235, 0.05) 100%);
+            border: 2px solid rgba(74, 158, 255, 0.2);
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 3rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .welcome-title {
+            font-size: 2rem;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+            line-height: 1.2;
+            margin-bottom: 0.75rem;
+        }
+
+        .welcome-subtitle {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
+        }
+
+        /* Dashboard Grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+
+        /* Card Base */
+        .card {
+            background: rgba(26, 26, 26, 0.6);
+            border: 2px solid rgba(74, 158, 255, 0.2);
+            border-radius: 20px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .card-header {
+            background: rgba(74, 158, 255, 0.1);
+            padding: 1.8rem 2rem;
+            border-bottom: 2px solid rgba(74, 158, 255, 0.3);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title {
+            margin: 0;
+            color: #ffffff;
+            font-size: 1.4rem;
+            font-weight: 900;
+            letter-spacing: -0.5px;
+        }
+
+        .card-badge {
+            background: linear-gradient(135deg, #4a9eff 0%, #2563eb 100%);
+            color: #ffffff;
+            padding: 0.6rem 1.2rem;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 15px rgba(74, 158, 255, 0.3);
+        }
+
+        .card-body {
+            padding: 2rem;
+        }
+
+        /* Reservas List */
+        .reservas-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .reserva-item {
+            padding: 1.5rem;
+            border: 2px solid rgba(74, 158, 255, 0.2);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .reserva-item:hover {
+            border-color: #4a9eff;
+            transform: translateX(5px);
+            box-shadow: 0 8px 25px rgba(74, 158, 255, 0.3);
+        }
+
+        .reserva-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .reserva-servico {
+            color: #ffffff;
+            font-size: 1.15rem;
+            font-weight: 800;
+        }
+
+        .reserva-preco {
+            color: #10b981;
+            font-weight: 800;
+            font-size: 1.2rem;
+        }
+
+        .reserva-info {
+            display: flex;
+            gap: 1.5rem;
+            font-size: 0.9rem;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .reserva-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+
+        .status-badge {
+            padding: 0.35rem 0.75rem;
+            border-radius: 50px;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        .status-agendada {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+            border: 1px solid #f59e0b;
+        }
+
+        .status-confirmada {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid #10b981;
+        }
+
+        .status-concluida {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+            border: 1px solid #10b981;
+        }
+
+        .status-cancelada {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+            border: 1px solid #ef4444;
+        }
+
+        .btn-cancel {
+            color: #ef4444;
+            text-decoration: none;
+            font-size: 0.85rem;
+            padding: 0.5rem 1rem;
+            border: 2px solid #ef4444;
+            border-radius: 50px;
+            transition: all 0.3s ease;
+            background: rgba(239, 68, 68, 0.1);
+            white-space: nowrap;
+            font-weight: 700;
+        }
+
+        .btn-cancel:hover {
+            background: rgba(239, 68, 68, 0.2);
+        }
+
+        /* Serviços List */
+        .servicos-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .servico-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 15px;
+            border: 2px solid rgba(74, 158, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+        .servico-item:hover {
+            border-color: #4a9eff;
+            transform: translateX(5px);
+        }
+
+        .servico-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.35rem;
+        }
+
+        .servico-nome {
+            color: #ffffff;
+            font-size: 1.05rem;
+            font-weight: 700;
+        }
+
+        .servico-duracao {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .servico-preco {
+            font-weight: 700;
+            color: #10b981;
+            font-size: 1.2rem;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: rgba(255, 255, 255, 0.5);
+        }
+
+        .empty-icon {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+        }
+
+        .empty-title {
+            font-size: 1.1rem;
+            margin-bottom: 0.5rem;
+            color: #ffffff;
+        }
+
+        .empty-subtitle {
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .action-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 2rem;
+            background: rgba(26, 26, 26, 0.6);
+            border: 2px solid rgba(74, 158, 255, 0.2);
+            border-radius: 20px;
+            text-decoration: none;
+            color: #ffffff;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .action-card:hover {
+            border-color: #4a9eff;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(74, 158, 255, 0.3);
+        }
+
+        .action-icon {
+            font-size: 2.5rem;
+        }
+
+        .action-title {
+            font-size: 1rem;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        /* Footer */
+        footer {
+            margin-top: 6rem;
+            padding: 3rem 2rem 2rem;
+            background: linear-gradient(180deg, transparent 0%, rgba(26, 26, 26, 0.5) 50%, rgba(13, 13, 13, 0.8) 100%);
+            border-top: 2px solid rgba(74, 158, 255, 0.3);
+            backdrop-filter: blur(10px);
+        }
+
+        .footer-grid {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 3rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .footer-brand {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .footer-logo {
+            height: 50px;
+            width: auto;
+            filter: drop-shadow(0 4px 15px rgba(74, 158, 255, 0.4));
+        }
+
+        .footer-title {
+            color: #ffffff;
+            font-size: 1.2rem;
+            font-weight: 900;
+            margin: 0;
+            letter-spacing: -0.5px;
+        }
+
+        .footer-text {
+            color: rgba(255, 255, 255, 0.7);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .footer-heading {
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .footer-link {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: color 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .footer-link:hover {
+            color: #4a9eff;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .social-icon {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 45px;
+            height: 45px;
+            background: rgba(74, 158, 255, 0.1);
+            border: 2px solid rgba(74, 158, 255, 0.3);
+            border-radius: 50%;
+            color: #ffffff;
+            text-decoration: none;
+            font-size: 1.3rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .social-icon:hover {
+            border-color: #4a9eff;
+            background: rgba(74, 158, 255, 0.2);
+            transform: translateY(-3px);
+        }
+
+        .footer-bottom {
+            padding-top: 2rem;
+            border-top: 1px solid rgba(74, 158, 255, 0.2);
+            text-align: center;
+        }
+
+        .footer-copyright {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-cnpj {
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.85rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 968px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .navbar-content {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 1rem;
+                padding: 1rem;
+            }
+
+            .navbar-brand {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .navbar-menu {
+                width: 100%;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.75rem;
+            }
+
+            .navbar-menu .btn-primary,
+            .navbar-menu .btn-secondary,
+            .navbar-menu .btn-danger {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 2rem 1rem;
+            }
+
+            .welcome-section {
+                padding: 1.5rem;
+            }
+
+            .welcome-title {
+                font-size: 1.5rem;
+            }
+
+            .card-body {
+                padding: 1.5rem;
+            }
+
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .navbar-content {
+                padding: 0.75rem;
+            }
+
+            .navbar-title {
+                font-size: 1.2rem;
+            }
+
+            .btn-primary,
+            .btn-secondary,
+            .btn-danger {
+                padding: 0.7rem 1.2rem;
+                font-size: 0.85rem;
+            }
+
+            .welcome-title {
+                font-size: 1.3rem;
+            }
+
+            .card-header {
+                padding: 1.2rem 1.5rem;
+            }
+
+            .card-title {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-content">
+            <div class="navbar-brand">
+                {% if barbearia.logo %}
+                <img src="{{ url_for('static', filename='uploads/logos/' + barbearia.logo) }}" 
+                     alt="{{ barbearia.nome }}" 
+                     class="navbar-logo">
+                {% endif %}
+                <div class="navbar-title-wrap">
+                    <h1 class="navbar-title">
+                        <span style="color: #ffffff;">{{ barbearia.nome.split()[0] if barbearia else 'Barbearia' }}</span>
+                        <span style="color: #4a9eff;">{{ ' '.join(barbearia.nome.split()[1:]) if barbearia and barbearia.nome.split()[1:] else '' }}</span>
+                    </h1>
+                    <span class="navbar-subtitle">
+                        {% if user_type == 'barbeiro' %}✂️ Barbeiro{% else %}👤 Cliente{% endif %} • Olá, {{ session.usuario_nome }}
+                    </span>
                 </div>
+            </div>
+            
+            <div class="navbar-menu">
+                <a href="{{ url_for('nova_reserva', slug=barbearia.slug) }}" class="btn-primary">
+                    📅 AGENDAR
+                </a>
                 
-                <a href="{{ url_for('logout', slug=barbearia.slug if barbearia else 'principal') }}" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.25rem; background: transparent; color: #ef4444; text-decoration: none; font-weight: 600; font-size: 0.85rem; text-transform: uppercase; border-radius: 4px; transition: all 0.3s ease; border: 2px solid rgba(239, 68, 68, 0.3); font-family: system-ui, -apple-system, sans-serif;" onmouseover="this.style.background='rgba(239, 68, 68, 0.1)'; this.style.borderColor='#ef4444'" onmouseout="this.style.background='transparent'; this.style.borderColor='rgba(239, 68, 68, 0.3)'">
-                    <span>🚪</span> <span style="white-space: nowrap;">Sair</span>
+                {% if user_type == 'barbeiro' %}
+                <a href="{{ url_for('servicos', b=request.args.get('b', '')) }}" class="btn-secondary">
+                    ⚙️ SERVIÇOS
+                </a>
+                {% endif %}
+                
+                <a href="{{ url_for('logout', slug=barbearia.slug if barbearia else 'principal') }}" class="btn-danger">
+                    🚪 SAIR
                 </a>
             </div>
         </div>
-    </div>
-</nav>
+    </nav>
 
-<!-- Info adicional da barbearia (opcional) -->
-{% if barbearia.endereco or barbearia.telefone %}
-<div style="background: rgba(0, 0, 0, 0.3); border-bottom: 1px solid var(--gold-dark);">
-    <div style="max-width: 1400px; margin: 0 auto; padding: 0.65rem 2rem; display: flex; gap: 2rem; font-size: 0.8rem; color: rgba(245, 245, 220, 0.6); font-family: system-ui, -apple-system, sans-serif; flex-wrap: wrap;">
-        {% if barbearia.endereco %}
-        <span>📍 {{ barbearia.endereco }}</span>
-        {% endif %}
-        {% if barbearia.telefone %}
-        <span>📞 {{ barbearia.telefone }}</span>
-        {% endif %}
-    </div>
-</div>
-{% endif %}
+    <!-- Container Principal -->
+    <div class="container">
+        <!-- Welcome Section -->
+        <div class="welcome-section">
+            <h2 class="welcome-title">
+                Bem-vindo, <span style="color: #4a9eff;">{{ session.usuario_nome }}</span>
+            </h2>
+            <p class="welcome-subtitle">
+                {% if user_type == 'barbeiro' %}
+                    Gerencie seus atendimentos e horários disponíveis
+                {% else %}
+                    Seus agendamentos e serviços em um só lugar
+                {% endif %}
+            </p>
+        </div>
 
-<div style="margin-top: 2.5rem;">
-</div>
-
-    <!-- Grid Principal -->
-    <div style="max-width: 1200px; margin: 0 auto; padding: 0 2rem; display: grid; grid-template-columns: 2fr 1fr; gap: 2rem; margin-bottom: 3rem;">
-        <!-- Minhas Reservas -->
-        <div style="background: var(--bg-dark); border: 2px solid var(--gold-dark); border-radius: 4px; overflow: hidden;">
-            <div style="background: rgba(74, 158, 255, 0.1); padding: 1.5rem; border-bottom: 3px solid var(--gold); display: flex; justify-content: space-between; align-items: center;">
-                <h3 style="margin: 0; color: var(--gold-light); font-size: 1.3rem; text-transform: uppercase; letter-spacing: 1px; font-family: system-ui, -apple-system, sans-serif;">
-                    {% if user_type == 'barbeiro' %}📋 Seus Atendimentos{% else %}📅 Suas Reservas{% endif %}
-                </h3>
-                <span style="background: var(--gold); color: var(--bg-dark); padding: 0.5rem 1rem; border-radius: 4px; font-weight: 700; font-size: 0.9rem; font-family: system-ui, -apple-system, sans-serif;">{{ reservas|length }}</span>
-            </div>
-            
-            <div style="padding: 1.5rem; overflow-x: auto;">
-                {% if reservas %}
-                    <div style="display: flex; flex-direction: column; gap: 1rem;">
-                        {% for reserva in reservas[:5] %}
-                        <div style="padding: 1.25rem; border: 2px solid var(--gold-dark); border-radius: 4px; transition: all 0.3s ease; background: var(--bg-card); min-width: 280px;" onmouseover="this.style.borderColor='var(--gold)'; this.style.transform='translateX(5px)'" onmouseout="this.style.borderColor='var(--gold-dark)'; this.style.transform='translateX(0)'">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 0.5rem;">
-                                <strong style="color: var(--gold); font-size: 1.1rem; font-family: system-ui, -apple-system, sans-serif;">{{ reserva.servico.nome }}</strong>
-                                <span style="color: #10b981; font-weight: 700; font-size: 1.1rem; font-family: system-ui, -apple-system, sans-serif;">R$ {{ "%.2f"|format(reserva.servico.preco) }}</span>
-                            </div>
-                            
-                            <div style="display: flex; gap: 1.5rem; font-size: 0.9rem; color: rgba(245, 245, 220, 0.7); margin-bottom: 1rem; flex-wrap: wrap; font-family: system-ui, -apple-system, sans-serif;">
-                                <span>📅 {{ reserva.data }}</span>
-                                <span>⏰ {{ reserva.hora_inicio }}</span>
-                                {% if user_type == 'barbeiro' %}
-                                    <span>👤 {{ reserva.cliente.nome }}</span>
-                                {% endif %}
-                            </div>
-                            
-                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
-                                <span style="{% if reserva.status == 'agendada' %}background: rgba(245, 158, 11, 0.2); color: #f59e0b; border: 1px solid #f59e0b;{% elif reserva.status in ['confirmada', 'concluida'] %}background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid #10b981;{% else %}background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444;{% endif %} padding: 0.35rem 0.75rem; border-radius: 4px; font-size: 0.8rem; font-weight: 600; text-transform: uppercase; font-family: system-ui, -apple-system, sans-serif;">
-                                    {% if reserva.status == 'agendada' %}🕐 Agendada{% elif reserva.status == 'confirmada' %}✅ Confirmada{% elif reserva.status == 'concluida' %}✅ Concluída{% else %}❌ Cancelada{% endif %}
-                                </span>
+        <!-- Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- Minhas Reservas -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">
+                        {% if user_type == 'barbeiro' %}📋 Seus Atendimentos{% else %}📅 Suas Reservas{% endif %}
+                    </h3>
+                    <span class="card-badge">{{ reservas|length }}</span>
+                </div>
+                
+                <div class="card-body">
+                    {% if reservas %}
+                        <div class="reservas-list">
+                            {% for reserva in reservas[:5] %}
+                            <div class="reserva-item">
+                                <div class="reserva-header">
+                                    <strong class="reserva-servico">{{ reserva.servico.nome }}</strong>
+                                    <span class="reserva-preco">R$ {{ "%.2f"|format(reserva.servico.preco) }}</span>
+                                </div>
                                 
-                                {% if user_type == 'cliente' and reserva.status == 'agendada' %}
-                                <a href="{{ url_for('cancelar_reserva', reserva_id=reserva.id) }}" 
-                                   onclick="return confirm('Tem certeza que deseja cancelar esta reserva?')"
-                                   style="color: #ef4444; text-decoration: none; font-size: 0.85rem; padding: 0.5rem 1rem; border: 1px solid #ef4444; border-radius: 4px; transition: all 0.3s ease; background: rgba(239, 68, 68, 0.1); font-family: system-ui, -apple-system, sans-serif; white-space: nowrap;">
-                                    ❌ Cancelar
-                                </a>
-                                {% endif %}
+                                <div class="reserva-info">
+                                    <span>📅 {{ reserva.data }}</span>
+                                    <span>⏰ {{ reserva.hora_inicio }}</span>
+                                    {% if user_type == 'barbeiro' %}
+                                        <span>👤 {{ reserva.cliente.nome }}</span>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="reserva-footer">
+                                    <span class="status-badge status-{{ reserva.status }}">
+                                        {% if reserva.status == 'agendada' %}🕐 Agendada
+                                        {% elif reserva.status == 'confirmada' %}✅ Confirmada
+                                        {% elif reserva.status == 'concluida' %}✅ Concluída
+                                        {% else %}❌ Cancelada
+                                        {% endif %}
+                                    </span>
+                                    
+                                    {% if user_type == 'cliente' and reserva.status == 'agendada' %}
+                                    <a href="{{ url_for('cancelar_reserva', reserva_id=reserva.id) }}" 
+                                       onclick="return confirm('Tem certeza que deseja cancelar esta reserva?')"
+                                       class="btn-cancel">
+                                        ❌ Cancelar
+                                    </a>
+                                    {% endif %}
+                                </div>
                             </div>
+                            {% endfor %}
+                            
+                            {% if reservas|length > 5 %}
+                            <div style="text-align: center; padding: 1rem; color: rgba(255, 255, 255, 0.5); font-style: italic; font-size: 0.9rem;">
+                                E mais {{ reservas|length - 5 }} reservas...
+                            </div>
+                            {% endif %}
                         </div>
-                        {% endfor %}
-                        
-                        {% if reservas|length > 5 %}
-                        <div style="text-align: center; padding: 1rem; color: rgba(245, 245, 220, 0.5); font-style: italic; font-size: 0.9rem;">
-                            E mais {{ reservas|length - 5 }} reservas...
+                    {% else %}
+                        <div class="empty-state">
+                            <div class="empty-icon">📭</div>
+                            {% if user_type == 'barbeiro' %}
+                                <p class="empty-title">Nenhum atendimento agendado ainda</p>
+                                <small class="empty-subtitle">Os clientes verão seus horários disponíveis aqui</small>
+                            {% else %}
+                                <p class="empty-title">Você ainda não tem reservas</p>
+                                <a href="{{ url_for('nova_reserva', slug=barbearia.slug) }}" class="btn-primary" style="margin-top: 1rem;">
+                                    📅 FAZER RESERVA
+                                </a>
+                            {% endif %}
                         </div>
-                        {% endif %}
-                    </div>
-                {% else %}
-                    <div style="text-align: center; padding: 3rem; color: rgba(245, 245, 220, 0.5);">
-                        <div style="font-size: 4rem; margin-bottom: 1rem;">📭</div>
-                        {% if user_type == 'barbeiro' %}
-                            <p style="font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-color);">Nenhum atendimento agendado ainda</p>
-                            <small style="font-size: 0.9rem;">Os clientes verão seus horários disponíveis aqui</small>
-                        {% else %}
-                            <p style="font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-color);">Você ainda não tem reservas</p>
-                            <small style="font-size: 0.9rem;">Clique em "Nova Reserva" para agendar</small>
-                        {% endif %}
-                    </div>
-                {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Serviços Disponíveis -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">💼 Serviços</h3>
+                    <span class="card-badge">{{ servicos|length }}</span>
+                </div>
+                
+                <div class="card-body">
+                    {% if servicos %}
+                        <div class="servicos-list">
+                            {% for servico in servicos %}
+                            <div class="servico-item">
+                                <div class="servico-info">
+                                    <strong class="servico-nome">{{ servico.nome }}</strong>
+                                    <span class="servico-duracao">⏱️ {{ servico.duracao }}min</span>
+                                </div>
+                                <div class="servico-preco">
+                                    R$ {{ "%.2f"|format(servico.preco) }}
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            <div class="empty-icon">⚙️</div>
+                            <p class="empty-title">Nenhum serviço cadastrado</p>
+                            <small class="empty-subtitle">Entre em contato com o administrador</small>
+                        </div>
+                    {% endif %}
+                </div>
             </div>
         </div>
 
-        <!-- Serviços Disponíveis -->
-        <div style="background: var(--bg-dark); border: 2px solid var(--gold-dark); border-radius: 4px; overflow: hidden;">
-            <div style="background: rgba(74, 158, 255, 0.1); padding: 1.5rem; border-bottom: 3px solid var(--gold); display: flex; justify-content: space-between; align-items: center;">
-                <h3 style="margin: 0; color: var(--gold-light); font-size: 1.3rem; text-transform: uppercase; letter-spacing: 1px; font-family: system-ui, -apple-system, sans-serif;">💼 Serviços</h3>
-                <span style="background: var(--gold); color: var(--bg-dark); padding: 0.5rem 1rem; border-radius: 4px; font-weight: 700; font-size: 0.9rem; font-family: system-ui, -apple-system, sans-serif;">{{ servicos|length }}</span>
+        <!-- Quick Actions -->
+        <div class="quick-actions">
+            <a href="{{ url_for('perfil') }}" class="action-card">
+                <span class="action-icon">👤</span>
+                <span class="action-title">Meu Perfil</span>
+            </a>
+            
+            {% if user_type == 'barbeiro' %}
+            <a href="{{ url_for('admin_disponibilidade', b=request.args.get('b', '')) }}" class="action-card">
+                <span class="action-icon">📋</span>
+                <span class="action-title">Horários</span>
+            </a>
+            {% endif %}
+            
+            <a href="{{ url_for('nova_reserva', slug=barbearia.slug) }}" class="action-card">
+                <span class="action-icon">📅</span>
+                <span class="action-title">Nova Reserva</span>
+            </a>
+            
+            <a href="{{ url_for('meus_agendamentos', slug=barbearia.slug) }}" class="action-card">
+                <span class="action-icon">📋</span>
+                <span class="action-title">Meus Agendamentos</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-grid">
+            <!-- Sobre a Barbearia -->
+            <div>
+                <div class="footer-brand">
+                    {% if barbearia.logo %}
+                    <img src="{{ url_for('static', filename='uploads/logos/' + barbearia.logo) }}" 
+                         alt="{{ barbearia.nome }}" 
+                         class="footer-logo">
+                    {% endif %}
+                    <h3 class="footer-title">
+                        <span style="color: #ffffff;">{{ barbearia.nome.split()[0] }}</span>
+                        <span style="color: #4a9eff;">{{ barbearia.nome.split()[1:] | join(' ') }}</span>
+                    </h3>
+                </div>
+                <p class="footer-text">
+                    Qualidade, estilo e profissionalismo em cada atendimento. Sua satisfação é nossa prioridade.
+                </p>
             </div>
             
-            <div style="padding: 1.5rem;">
-                {% if servicos %}
-                    <div style="display: grid; gap: 0.75rem;">
-                        {% for servico in servicos %}
-                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; background: var(--bg-card); border-radius: 4px; border: 1px solid var(--gold-dark); transition: all 0.3s ease;" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--gold-dark)'">
-                            <div style="display: flex; flex-direction: column; gap: 0.35rem;">
-                                <strong style="color: var(--text-color); font-size: 1.05rem; font-family: system-ui, -apple-system, sans-serif;">{{ servico.nome }}</strong>
-                                <span style="font-size: 0.8rem; color: rgba(245, 245, 220, 0.6); font-family: system-ui, -apple-system, sans-serif;">⏱️ {{ servico.duracao }}min</span>
-                            </div>
-                            <div style="font-weight: 700; color: #10b981; font-size: 1.2rem; font-family: system-ui, -apple-system, sans-serif;">
-                                R$ {{ "%.2f"|format(servico.preco) }}
-                            </div>
-                        </div>
-                        {% endfor %}
+            <!-- Contato -->
+            <div>
+                <h4 class="footer-heading">Contato</h4>
+                <div class="footer-links">
+                    {% if barbearia.telefone %}
+                    <a href="tel:{{ barbearia.telefone }}" class="footer-link">
+                        <span>📞</span>
+                        <span>{{ barbearia.telefone }}</span>
+                    </a>
+                    {% endif %}
+                    
+                    {% if barbearia.endereco %}
+                    <div class="footer-link" style="cursor: default;">
+                        <span>📍</span>
+                        <span>{{ barbearia.endereco }}</span>
                     </div>
-                {% else %}
-                    <div style="text-align: center; padding: 3rem; color: rgba(245, 245, 220, 0.5);">
-                        <div style="font-size: 4rem; margin-bottom: 1rem;">⚙️</div>
-                        <p style="font-size: 1.1rem; margin-bottom: 0.5rem; color: var(--text-color);">Nenhum serviço cadastrado</p>
-                        <small style="font-size: 0.9rem;">Entre em contato com o administrador</small>
+                    {% endif %}
+                    
+                    <div class="footer-link" style="cursor: default;">
+                        <span>⏰</span>
+                        <span>Segunda a Sábado</span>
                     </div>
-                {% endif %}
+                </div>
+            </div>
+            
+            <!-- Links Rápidos -->
+            <div>
+                <h4 class="footer-heading">Links Rápidos</h4>
+                <div class="footer-links">
+                    <a href="{{ url_for('nova_reserva', slug=barbearia.slug) }}" class="footer-link">
+                        📅 Nova Reserva
+                    </a>
+                    <a href="{{ url_for('servicos', slug=barbearia.slug) }}" class="footer-link">
+                        ✂️ Serviços
+                    </a>
+                    <a href="{{ url_for('meus_agendamentos', slug=barbearia.slug) }}" class="footer-link">
+                        📋 Meus Agendamentos
+                    </a>
+                </div>
+            </div>
+            
+            <!-- Redes Sociais -->
+            <div>
+                <h4 class="footer-heading">Redes Sociais</h4>
+                <div class="social-icons">
+                    <a href="#" class="social-icon">📱</a>
+                    <a href="#" class="social-icon">💬</a>
+                    <a href="#" class="social-icon">📸</a>
+                </div>
+                <p style="color: rgba(255, 255, 255, 0.6); margin-top: 1.5rem; font-size: 0.9rem;">
+                    Siga-nos nas redes sociais!
+                </p>
             </div>
         </div>
-    </div>
-
-    <!-- Ações Rápidas -->
-    <div style="max-width: 1200px; margin: 0 auto; padding: 0 2rem; display: flex; gap: 1.5rem; justify-content: center; flex-wrap: wrap;">
-        <a href="/" style="display: flex; flex-direction: column; align-items: center; gap: 0.75rem; padding: 1.5rem; background: var(--bg-dark); border: 2px solid var(--gold-dark); border-radius: 4px; text-decoration: none; color: var(--text-color); transition: all 0.3s ease; min-width: 120px;" onmouseover="this.style.borderColor='var(--gold)'; this.style.transform='translateY(-5px)'" onmouseout="this.style.borderColor='var(--gold-dark)'; this.style.transform='translateY(0)'">
-            <span style="font-size: 2rem;">🏠</span>
-            <span style="font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-family: system-ui, -apple-system, sans-serif;">Barbearias</span>
-        </a>
         
-        <a href="{{ url_for('perfil') }}" style="display: flex; flex-direction: column; align-items: center; gap: 0.75rem; padding: 1.5rem; background: var(--bg-dark); border: 2px solid var(--gold-dark); border-radius: 4px; text-decoration: none; color: var(--text-color); transition: all 0.3s ease; min-width: 120px;" onmouseover="this.style.borderColor='var(--gold)'; this.style.transform='translateY(-5px)'" onmouseout="this.style.borderColor='var(--gold-dark)'; this.style.transform='translateY(0)'">
-            <span style="font-size: 2rem;">👤</span>
-            <span style="font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-family: system-ui, -apple-system, sans-serif;">Meu Perfil</span>
-        </a>
-        
-        {% if user_type == 'barbeiro' %}
-        <a href="{{ url_for('admin_disponibilidade', b=request.args.get('b', '')) }}" style="display: flex; flex-direction: column; align-items: center; gap: 0.75rem; padding: 1.5rem; background: var(--bg-dark); border: 2px solid var(--gold-dark); border-radius: 4px; text-decoration: none; color: var(--text-color); transition: all 0.3s ease; min-width: 120px;" onmouseover="this.style.borderColor='var(--gold)'; this.style.transform='translateY(-5px)'" onmouseout="this.style.borderColor='var(--gold-dark)'; this.style.transform='translateY(0)'">
-            <span style="font-size: 2rem;">📋</span>
-            <span style="font-size: 0.9rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-family: system-ui, -apple-system, sans-serif;">Horários</span>
-        </a>
-        {% endif %}
-    </div>
-
-<style>
-/* Mobile Responsivo */
-@media (max-width: 968px) {
-    nav > div:first-child {
-        flex-direction: column;
-        align-items: stretch !important;
-        gap: 1rem;
-        padding: 1rem !important;
-    }
-    
-    nav > div:first-child > div:first-child {
-        width: 100%;
-        justify-content: center;
-        text-align: center;
-    }
-    
-    nav > div:first-child > div:nth-child(2) {
-        width: 100%;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 0.75rem;
-    }
-    
-    nav > div:first-child > div:nth-child(2) > a {
-        width: 100%;
-        justify-content: center;
-    }
-    
-    nav > div:first-child > div:nth-child(2) > div {
-        width: 100%;
-        border-left: none !important;
-        border-top: 1px solid var(--gold-dark);
-        padding-top: 1rem;
-        padding-left: 0 !important;
-        margin-left: 0 !important;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-    }
-    
-    nav > div:first-child > div:nth-child(2) > div > div {
-        text-align: left !important;
-    }
-}
-
-@media (max-width: 768px) {
-    /* Grid de 2 colunas vira 1 coluna */
-    div[style*="grid-template-columns: 2fr 1fr"] {
-        grid-template-columns: 1fr !important;
-        padding: 0 1rem !important;
-    }
-    
-    /* Padding reduzido em mobile */
-    nav > div:first-child {
-        padding: 0.85rem 1rem !important;
-    }
-    
-    /* Botões menores */
-    nav a {
-        padding: 0.65rem 1rem !important;
-        font-size: 0.8rem !important;
-    }
-    
-    nav a span:last-child {
-        display: inline !important;
-    }
-    
-    /* Texto menor na navbar */
-    nav span[style*="font-size: 1.3rem"] {
-        font-size: 1.1rem !important;
-    }
-    
-    /* Cards de reserva responsivos */
-    div[style*="padding: 1.25rem"] {
-        padding: 1rem !important;
-    }
-    
-    /* Ações rápidas em coluna */
-    div[style*="justify-content: center"] > a[style*="min-width: 120px"] {
-        min-width: 100%;
-        flex-direction: row !important;
-        justify-content: flex-start !important;
-    }
-    
-    div[style*="justify-content: center"] > a[style*="min-width: 120px"] span:first-child {
-        font-size: 1.5rem !important;
-    }
-}
-
-@media (max-width: 480px) {
-    /* Navbar ainda mais compacta */
-    nav > div:first-child {
-        padding: 0.75rem !important;
-    }
-    
-    nav a {
-        padding: 0.6rem 0.85rem !important;
-        font-size: 0.75rem !important;
-    }
-    
-    nav span[style*="font-size: 1.3rem"] {
-        font-size: 1rem !important;
-    }
-    
-    nav > div:first-child > div:nth-child(2) > div {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 0.75rem;
-    }
-    
-    nav > div:first-child > div:nth-child(2) > div > div {
-        text-align: center !important;
-    }
-    
-    nav > div:first-child > div:nth-child(2) > div > a {
-        width: 100%;
-        justify-content: center;
-    }
-    
-    /* Cards ainda mais compactos */
-    div[style*="max-width: 1200px"],
-    div[style*="max-width: 1400px"] {
-        padding: 0 0.75rem !important;
-    }
-    
-    /* Status badges menores */
-    span[style*="text-transform: uppercase"][style*="font-size: 0.8rem"] {
-        font-size: 0.7rem !important;
-        padding: 0.25rem 0.5rem !important;
-    }
-}
-</style>
-{% endblock %}
+        <!-- Footer Bottom -->
+        <div class="footer-bottom">
+            <p class="footer-copyright">
+                © 2025 {{ barbearia.nome }}. Todos os direitos reservados.
+            </p>
+            {% if barbearia.cnpj %}
+            <p class="footer-cnpj">
+                CNPJ: {{ barbearia.cnpj }}
+            </p>
+            {% endif %}
+            <p style="color: rgba(255, 255, 255, 0.5); font-size: 0.85rem; margin-top: 1rem;">
+                Desenvolvido por <span style="color: #ffffff; font-weight: 700;">Barber</span><span style="color: #4a9eff; font-weight: 700;">Connect</span>
+            </p>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,181 @@
+/* ========================================
+   TEMA BARBEARIA LEO
+   Azul Premium e Ouro
+   ======================================== */
+
+:root {
+    --leo-blue: #4a9eff;
+    --leo-blue-dark: #2563eb;
+    --leo-gold: #d4af37;
+    --leo-gold-dark: #b8941f;
+    --leo-white: #ffffff;
+}
+
+/* ========================================
+   NAVBAR
+   ======================================== */
+/* Nome da barbearia na navbar - MÁXIMA PRIORIDADE */
+.nav-brand .brand-first,
+span.brand-first,
+.nav-brand-text .brand-first {
+    color: var(--leo-white) !important;
+    -webkit-text-fill-color: var(--leo-white) !important;
+    background: transparent !important;
+    -webkit-background-clip: unset !important;
+}
+
+.nav-brand .brand-last,
+span.brand-last,
+.nav-brand-text .brand-last {
+    color: var(--leo-blue) !important;
+    -webkit-text-fill-color: var(--leo-blue) !important;
+    background: transparent !important;
+    -webkit-background-clip: unset !important;
+}
+
+.nav-link {
+    color: var(--leo-white) !important;
+}
+
+.nav-link:hover {
+    color: var(--leo-blue) !important;
+    border-color: var(--leo-blue) !important;
+}
+
+/* ========================================
+   HERO SECTION - TÍTULOS
+   ======================================== */
+.hero-title {
+    color: var(--leo-white) !important;
+}
+
+h1.hero-title .title-line-1,
+.title-line-1,
+h1 .title-line-1 {
+    color: var(--leo-white) !important;
+    -webkit-text-fill-color: var(--leo-white) !important;
+    background: transparent !important;
+    -webkit-background-clip: unset !important;
+}
+
+h1.hero-title .title-line-2,
+.title-line-2,
+h1 .title-line-2 {
+    color: var(--leo-blue) !important;
+    -webkit-text-fill-color: var(--leo-blue) !important;
+    text-shadow: 0 0 20px rgba(74, 158, 255, 0.6) !important;
+    background: transparent !important;
+    -webkit-background-clip: unset !important;
+}
+
+h1.hero-title .title-line-3,
+.title-line-3,
+h1 .title-line-3 {
+    color: var(--leo-white) !important;
+    -webkit-text-fill-color: var(--leo-white) !important;
+    background: transparent !important;
+    -webkit-background-clip: unset !important;
+}
+
+.hero-description {
+    color: rgba(255, 255, 255, 0.8) !important;
+}
+
+/* ========================================
+   INFO PILLS
+   ======================================== */
+.info-pill {
+    color: var(--leo-white) !important;
+}
+
+/* ========================================
+   BOTÕES CTA
+   ======================================== */
+.btn-primary-cta {
+    background: linear-gradient(135deg, var(--leo-blue) 0%, var(--leo-blue-dark) 100%) !important;
+    color: #000000 !important;
+    box-shadow: 0 10px 30px rgba(74, 158, 255, 0.4) !important;
+}
+
+.btn-primary-cta:hover {
+    background: linear-gradient(135deg, var(--leo-blue-dark) 0%, var(--leo-blue) 100%) !important;
+    box-shadow: 0 16px 48px rgba(74, 158, 255, 0.6) !important;
+}
+
+.btn-secondary-cta {
+    background: transparent !important;
+    color: var(--leo-white) !important;
+    border: 2px solid var(--leo-blue) !important;
+}
+
+.btn-secondary-cta:hover {
+    border-color: var(--leo-blue) !important;
+    background: rgba(74, 158, 255, 0.1) !important;
+    color: var(--leo-blue) !important;
+}
+
+/* ========================================
+   LOGO E ELEMENTOS DECORATIVOS
+   ======================================== */
+.logo-img {
+    filter: drop-shadow(0 0 15px rgba(74, 158, 255, 0.5)) brightness(1.1) !important;
+}
+
+.logo-img:hover {
+    filter: drop-shadow(0 0 25px rgba(74, 158, 255, 0.8)) brightness(1.2) !important;
+}
+
+.hero-logo {
+    filter: drop-shadow(0 20px 60px rgba(74, 158, 255, 0.3)) !important;
+}
+
+.deco-shape-1 {
+    background: linear-gradient(135deg, var(--leo-blue) 0%, var(--leo-blue-dark) 100%) !important;
+}
+
+.deco-shape-2 {
+    background: linear-gradient(135deg, rgba(74, 158, 255, 0.3) 0%, rgba(37, 99, 235, 0.2) 100%) !important;
+}
+
+.logo-fallback {
+    background: linear-gradient(135deg, rgba(74, 158, 255, 0.2) 0%, rgba(255, 255, 255, 0.05) 100%) !important;
+}
+
+.fallback-icon {
+    filter: drop-shadow(0 10px 30px rgba(74, 158, 255, 0.5)) !important;
+}
+
+/* ========================================
+   TÍTULOS GERAIS
+   ======================================== */
+h2, h3 {
+    color: var(--leo-white) !important;
+}
+
+/* ========================================
+   CARDS
+   ======================================== */
+.grid > div:hover {
+    border-color: var(--leo-blue) !important;
+    box-shadow: 0 10px 40px rgba(74, 158, 255, 0.3) !important;
+}
+
+/* ========================================
+   FOOTER - LOGO BARBERCONNECT
+   ======================================== */
+.bc-barber {
+    color: var(--leo-white) !important;
+}
+
+.bc-connect {
+    color: var(--leo-blue) !important;
+}
+
+footer a:hover {
+    color: var(--leo-blue) !important;
+}
+
+footer a[style*="border-radius: 50%"]:hover {
+    background: rgba(74, 158, 255, 0.3) !important;
+    border-color: var(--leo-blue) !important;
+}

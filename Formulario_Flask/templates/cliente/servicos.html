@@ -3,6 +3,134 @@
 {% block title %}Gerenciar Serviços{% endblock %}
 
 {% block content %}
+<style>
+/* Modern rounded design for services page */
+.card-form {
+    border-radius: 24px !important;
+    background: linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(26, 26, 26, 0.85) 100%) !important;
+    border: 2px solid rgba(74, 158, 255, 0.3) !important;
+    padding: 2.5rem !important;
+    backdrop-filter: blur(20px) !important;
+    box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8), 0 0 80px rgba(74, 158, 255, 0.1) !important;
+}
+
+.form-control, .form-input {
+    border-radius: 15px !important;
+    border: 2px solid rgba(74, 158, 255, 0.3) !important;
+    background: rgba(13, 13, 13, 0.8) !important;
+    transition: all 0.3s ease !important;
+}
+
+.form-control:focus, .form-input:focus {
+    border-color: #4a9eff !important;
+    box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.15) !important;
+    transform: translateY(-2px) !important;
+}
+
+.btn {
+    border-radius: 50px !important;
+    padding: 1rem 2rem !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.5px !important;
+    transition: all 0.3s ease !important;
+    border: none !important;
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4) !important;
+}
+
+.btn-success:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 12px 35px rgba(16, 185, 129, 0.6) !important;
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4) !important;
+    padding: 0.6rem 1.5rem !important;
+    font-size: 0.9rem !important;
+}
+
+.btn-danger:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 25px rgba(239, 68, 68, 0.6) !important;
+}
+
+.table-responsive {
+    border-radius: 24px !important;
+    overflow: hidden !important;
+    background: linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(26, 26, 26, 0.85) 100%) !important;
+    border: 2px solid rgba(74, 158, 255, 0.3) !important;
+    backdrop-filter: blur(20px) !important;
+    box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8), 0 0 80px rgba(74, 158, 255, 0.1) !important;
+}
+
+.custom-table {
+    border-radius: 0 !important;
+}
+
+.custom-table th {
+    background: rgba(13, 13, 13, 0.9) !important;
+    padding: 1.5rem 1.5rem !important;
+    font-size: 0.95rem !important;
+}
+
+.custom-table td {
+    padding: 1.5rem 1.5rem !important;
+    font-size: 1rem !important;
+}
+
+.custom-table tbody tr {
+    transition: all 0.3s ease !important;
+}
+
+.custom-table tbody tr:hover {
+    background: linear-gradient(90deg, rgba(74, 158, 255, 0.08) 0%, rgba(74, 158, 255, 0.15) 50%, rgba(74, 158, 255, 0.08) 100%) !important;
+    transform: scale(1.01) !important;
+}
+
+.custom-alert {
+    border-radius: 20px !important;
+    border: 2px solid !important;
+    padding: 1.5rem 2rem !important;
+    backdrop-filter: blur(10px) !important;
+}
+
+.custom-alert-warning {
+    background: rgba(245, 158, 11, 0.15) !important;
+    border-color: rgba(245, 158, 11, 0.4) !important;
+}
+
+h2 {
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    letter-spacing: -0.5px !important;
+    font-weight: 800 !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .card-form {
+        padding: 1.5rem !important;
+        border-radius: 20px !important;
+    }
+    
+    .btn {
+        padding: 0.9rem 1.5rem !important;
+        font-size: 0.95rem !important;
+    }
+    
+    .custom-table th,
+    .custom-table td {
+        padding: 1rem !important;
+        font-size: 0.9rem !important;
+    }
+}
+</style>
+
 <h1>Gerenciar Serviços</h1>
 
 <div class="row">

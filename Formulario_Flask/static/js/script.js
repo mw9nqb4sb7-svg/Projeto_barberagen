@@ -1,7 +1,41 @@
 // script.js - Funcionalidades JavaScript para o Sistema de Agendamentos
 
 document.addEventListener('DOMContentLoaded', function() {
-    // Configurações gerais
+    // ========== MENU HAMBÚRGUER ==========
+    const navToggle = document.querySelector('.nav-toggle');
+    const navList = document.querySelector('.nav-list');
+    
+    if (navToggle && navList) {
+        navToggle.addEventListener('click', function(e) {
+            e.stopPropagation();
+            this.classList.toggle('active');
+            navList.classList.toggle('active');
+            document.body.style.overflow = navList.classList.contains('active') ? 'hidden' : '';
+        });
+        
+        // Fechar menu ao clicar fora
+        document.addEventListener('click', function(e) {
+            if (navList.classList.contains('active') && 
+                !navList.contains(e.target) && 
+                !navToggle.contains(e.target)) {
+                navToggle.classList.remove('active');
+                navList.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        });
+        
+        // Fechar menu ao clicar em um link
+        const navLinks = document.querySelectorAll('.nav-link');
+        navLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                navToggle.classList.remove('active');
+                navList.classList.remove('active');
+                document.body.style.overflow = '';
+            });
+        });
+    }
+    
+    // ========== CONFIGURAÇÕES GERAIS ==========
     console.log('Sistema de Agendamentos carregado');
     
     // Funcionalidade para melhorar a experiência do usuário

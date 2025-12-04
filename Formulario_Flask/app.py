@@ -7,6 +7,13 @@ import sys
 import json
 from pathlib import Path
 from jinja2 import ChoiceLoader, FileSystemLoader
+from datetime import datetime
+
+# Importar módulo de segurança
+from security import (
+    sanitize_input, validate_email, validate_phone, validate_password_strength,
+    check_rate_limit, record_login_attempt, require_login, get_client_ip, audit_log
+)
 
 # Caminhos absolutos
 BASE_DIR = str(Path(__file__).resolve().parent)
@@ -17,7 +24,16 @@ DB_PATH = os.path.join(BASE_DIR, 'meubanco.db')
 
 # Cria app com template_folder apontando para templates principal
 app = Flask(__name__, template_folder=TEMPLATES_DIR, static_folder=STATIC_DIR)
-app.secret_key = os.environ.get('FLASK_SECRET', 'segredo123')
+
+# Segurança: SECRET_KEY forte
+import secrets
+app.secret_key = os.environ.get('FLASK_SECRET', secrets.token_hex(32))
+
+# Configurações de segurança da sessão
+app.config['SESSION_COOKIE_SECURE'] = True  # Apenas HTTPS em produção
+app.config['SESSION_COOKIE_HTTPONLY'] = True  # Previne acesso via JavaScript
+app.config['SESSION_COOKIE_SAMESITE'] = 'Lax'  # Proteção CSRF
+app.config['PERMANENT_SESSION_LIFETIME'] = 3600  # 1 hora
 
 # Adiciona vários caminhos de busca de templates (templates/ e cliente/)
 app.jinja_loader = ChoiceLoader([
@@ -42,6 +58,24 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 db = SQLAlchemy(app)
+
+# Headers de Segurança
+@app.after_request
+def set_security_headers(response):
+    # Proteção contra clickjacking
+    response.headers['X-Frame-Options'] = 'SAMEORIGIN'
+    # Proteção XSS
+    response.headers['X-Content-Type-Options'] = 'nosniff'
+    response.headers['X-XSS-Protection'] = '1; mode=block'
+    # Content Security Policy
+    response.headers['Content-Security-Policy'] = "default-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;"
+    # HSTS (apenas em produção com HTTPS)
+    if not app.debug:
+        response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
+    return response
+
+# Adicionar pasta scripts ao sys.path para importar módulos de lá
+sys.path.insert(0, os.path.join(BASE_DIR, 'scripts'))
 
 # Importar sistema multi-tenant após db ser criado
 from tenant import setup_tenant_context, require_tenant, require_admin, require_barbeiro, require_role, get_current_barbearia_id, get_current_barbearia, is_super_admin
@@ -77,6 +111,9 @@ class Barbearia(db.Model):
     logo = db.Column(db.String(200), nullable=True)  # caminho da logo
     ativa = db.Column(db.Boolean, default=True, nullable=False)
     data_criacao = db.Column(db.DateTime, default=db.func.current_timestamp())
+    
+    # CSS personalizado único para cada barbearia
+    custom_css = db.Column(db.Text, nullable=True)
     
     # Configurações específicas da barbearia (JSON)
     configuracoes = db.Column(db.Text, default='{}')
@@ -332,6 +369,11 @@ def get_current_barbearia_slug():
 
 # ============= ÁREA ADMINISTRATIVA (SUPER ADMIN) =============
 @app.route('/')
+def landing_page():
+    """Landing page institucional do serviço"""
+    return render_template('landing_page.html')
+
+@app.route('/barbearias')
 def admin_index():
     """Área administrativa - lista de barbearias (só para super admin)"""
     barbearias = Barbearia.query.filter_by(ativa=True).all()
@@ -437,9 +479,24 @@ def login(slug):
         
     if 'usuario_id' in session:
         return redirect(url_for('dashboard', slug=slug))
+    
     if request.method == 'POST':
-        login_input = request.form.get('email','').strip()  # Pode ser username ou email
-        senha = request.form.get('senha','')
+        # Rate limiting por IP
+        client_ip = get_client_ip()
+        allowed, remaining, lockout_seconds = check_rate_limit(client_ip)
+        
+        if not allowed:
+            minutes = lockout_seconds // 60
+            flash(f'Muitas tentativas de login. Tente novamente em {minutes} minutos.', 'error')
+            audit_log('login_blocked', details={'ip': client_ip, 'slug': slug})
+            return render_template('cliente/login.html', barbearia=barbearia)
+        
+        login_input = sanitize_input(request.form.get('email', '').strip())
+        senha = request.form.get('senha', '')
+        
+        if not login_input or not senha:
+            flash('Email/usuário e senha são obrigatórios!', 'error')
+            return render_template('cliente/login.html', barbearia=barbearia)
         
         # Para admins, buscar por username ou email
         # Para clientes, buscar apenas por email
@@ -455,6 +512,12 @@ def login(slug):
                 session['user_id'] = usuario.id  # compatibilidade
                 session['usuario_nome'] = usuario.nome
                 session['barbearia_id'] = barbearia.id  # Garantir contexto
+                session.permanent = True  # Usar PERMANENT_SESSION_LIFETIME
+                
+                # Registrar sucesso
+                record_login_attempt(client_ip, success=True)
+                audit_log('login_success', user_id=usuario.id, details={'slug': slug, 'tipo': 'super_admin'})
+                
                 flash('Login realizado com sucesso!', 'success')
                 return redirect(url_for('dashboard', slug=slug))
             
@@ -466,6 +529,8 @@ def login(slug):
             ).first()
             
             if not usuario_barbearia:
+                record_login_attempt(client_ip, success=False)
+                audit_log('login_failed', user_id=usuario.id, details={'reason': 'no_access_to_barbearia', 'slug': slug})
                 flash('Usuário não tem acesso a esta barbearia!', 'error')
                 return render_template('cliente/login.html', barbearia=barbearia)
             
@@ -475,10 +540,27 @@ def login(slug):
             session['usuario_nome'] = usuario.nome
             session['barbearia_id'] = barbearia.id  # Garantir contexto
             session['usuario_role'] = usuario_barbearia.role  # Armazenar role na sessão
+            session.permanent = True  # Usar PERMANENT_SESSION_LIFETIME
+            
+            # Registrar sucesso
+            record_login_attempt(client_ip, success=True)
+            audit_log('login_success', user_id=usuario.id, details={'slug': slug, 'role': usuario_barbearia.role})
+            
             flash('Login realizado com sucesso!', 'success')
             return redirect(url_for('dashboard', slug=slug))
         else:
-            flash('Credenciais inválidas!', 'error')
+            # Login falhou
+            record_login_attempt(client_ip, success=False)
+            if usuario:
+                audit_log('login_failed', user_id=usuario.id, details={'reason': 'wrong_password', 'slug': slug})
+            else:
+                audit_log('login_failed', details={'reason': 'user_not_found', 'login_input': login_input[:20], 'slug': slug})
+            
+            if remaining <= 2:
+                flash(f'Credenciais inválidas! Você tem mais {remaining} tentativas.', 'error')
+            else:
+                flash('Credenciais inválidas!', 'error')
+    
     return render_template('cliente/login.html', barbearia=get_current_barbearia())
 
 @app.route('/<slug>/cadastro', methods=['GET','POST'])
@@ -492,13 +574,46 @@ def cadastro(slug):
     session['barbearia_id'] = barbearia.id
         
     if request.method == 'POST':
-        nome = request.form.get('nome','').strip()
-        email = request.form.get('email','').strip()
-        telefone = request.form.get('telefone', '').strip()
-        senha = request.form.get('senha','')
+        # Sanitizar inputs
+        nome = sanitize_input(request.form.get('nome', '').strip())
+        email = sanitize_input(request.form.get('email', '').strip().lower())
+        telefone = sanitize_input(request.form.get('telefone', '').strip())
+        senha = request.form.get('senha', '')
+        confirmar_senha = request.form.get('confirmar_senha', '')
+        
+        # Validações
+        if not all([nome, email, telefone, senha]):
+            flash('Todos os campos são obrigatórios!', 'error')
+            return render_template('cliente/cadastro_cliente.html', barbearia=barbearia)
+        
+        if len(nome) < 3:
+            flash('Nome deve ter pelo menos 3 caracteres!', 'error')
+            return render_template('cliente/cadastro_cliente.html', barbearia=barbearia)
+        
+        if not validate_email(email):
+            flash('Email inválido!', 'error')
+            return render_template('cliente/cadastro_cliente.html', barbearia=barbearia)
+        
+        if not validate_phone(telefone):
+            flash('Telefone inválido! Use formato: (00) 00000-0000', 'error')
+            return render_template('cliente/cadastro_cliente.html', barbearia=barbearia)
+        
+        # Validar senha
+        valid, message = validate_password_strength(senha)
+        if not valid:
+            flash(message, 'error')
+            return render_template('cliente/cadastro_cliente.html', barbearia=barbearia)
+        
+        if senha != confirmar_senha:
+            flash('As senhas não coincidem!', 'error')
+            return render_template('cliente/cadastro_cliente.html', barbearia=barbearia)
+        
+        # Verificar se email já existe
         if Usuario.query.filter_by(email=email).first():
             flash('Email já cadastrado!', 'warning')
+            audit_log('cadastro_failed', details={'reason': 'email_exists', 'email': email[:20], 'slug': slug})
             return redirect(url_for('cadastro', slug=slug))
+        
         # Criar usuário
         novo = Usuario(
             nome=nome, 
@@ -511,7 +626,7 @@ def cadastro(slug):
         db.session.add(novo)
         db.session.commit()
         
-        # Vincular à barbearia específica (usar diretamente a barbearia do slug)
+        # Vincular à barbearia específica
         vinculo = UsuarioBarbearia(
             usuario_id=novo.id,
             barbearia_id=barbearia.id,
@@ -521,8 +636,12 @@ def cadastro(slug):
         db.session.add(vinculo)
         db.session.commit()
         
-        flash('Cadastro realizado! Faça login.', 'success')
+        # Registrar auditoria
+        audit_log('cadastro_success', user_id=novo.id, details={'slug': slug})
+        
+        flash('Cadastro realizado com sucesso! Faça login.', 'success')
         return redirect(url_for('login', slug=slug))
+    
     return render_template('cliente/cadastro_cliente.html', barbearia=get_current_barbearia())
 
 @app.route('/<slug>/logout')

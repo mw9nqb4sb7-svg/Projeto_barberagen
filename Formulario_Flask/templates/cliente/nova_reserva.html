@@ -2,564 +2,746 @@
 {% block title %}Nova Reserva{% endblock %}
 
 {% block content %}
-<!-- Header -->
-<div class="page-header" style="background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%); padding: 2.5rem 2rem; margin-bottom: 3rem; border: 3px solid var(--gold); border-radius: 4px; text-align: center;">
-    <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(0, 0, 0, 0.3); padding: 0.5rem 1.5rem; border: 2px solid var(--gold); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 2px;">
-        <span style="font-size: 1.2rem;">👤</span>
-        <span style="color: var(--gold); font-weight: 700; font-size: 0.9rem; font-family: system-ui, -apple-system, sans-serif;">CLIENTE</span>
-    </div>
-    <h1 class="page-title" style="font-size: 2.5rem; font-weight: 800; color: var(--text-color); margin: 0; text-transform: uppercase; letter-spacing: 2px; font-family: system-ui, -apple-system, sans-serif;">📅 NOVA RESERVA</h1>
-</div>
+<style>
+/* Reset container padding for this page */
+.custom-container {
+    padding: 0 !important;
+    margin: 0 !important;
+    max-width: 100% !important;
+}
+</style>
 
-<div class="page-container" style="max-width: 800px; margin: 0 auto; padding: 0 2rem 3rem;">
-    <div class="form-container" style="background: var(--bg-dark); border: 2px solid var(--gold-dark); border-radius: 4px; padding: 3rem;">
-        <form method="POST" id="reservaForm">
-            <!-- Passo 1: Serviço -->
-            <div class="form-step">
-                <div class="step-header">
-                    <span class="step-number">1</span>
-                    <h3>Escolha o Serviço</h3>
-                </div>
-                <div class="form-group">
-                    <label for="servico" class="form-label">🎯 Qual serviço você deseja?</label>
-                    <select name="servico" id="servico" class="form-input" required>
-                        <option value="">👆 Selecione um serviço</option>
-                        {% for s in servicos %}
-                            <option value="{{ s.id }}">{{ s.nome }} - 💰 R$ {{ "%.2f"|format(s.preco) }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-            </div>
-            
-            <!-- Passo 2: Data -->
-            <div class="form-step">
-                <div class="step-header">
-                    <span class="step-number">2</span>
-                    <h3>Escolha a Data</h3>
-                </div>
-                <div class="form-group">
-                    <label for="data" class="form-label">📆 Que dia funciona para você?</label>
-                    <input type="date" name="data" id="data" class="form-input" required>
-                    <small class="form-help">📱 Dica: Após escolher a data, os horários disponíveis aparecerão</small>
-                </div>
-            </div>
-            
-            <!-- Passo 3: Horário -->
-            <div class="form-step">
-                <div class="step-header">
-                    <span class="step-number">3</span>
-                    <h3>Escolha o Horário</h3>
-                </div>
-                <div class="form-group">
-                    <label for="hora" class="form-label">⏰ Qual horário prefere?</label>
-                    <select name="hora" id="hora" class="form-input" required disabled>
-                        <option value="">⬆️ Primeiro selecione uma data</option>
-                    </select>
-                    
-                    <div id="loading-horarios" class="loading-state" style="display: none;">
-                        <div class="loading-spinner"></div>
-                        <span>Carregando horários disponíveis...</span>
-                    </div>
-                    
-                    <div id="sem-horarios" class="empty-state" style="display: none;">
-                        <div class="empty-icon">😔</div>
-                        <p>Ops! Não há horários disponíveis para esta data.</p>
-                        <small>Tente escolher outro dia</small>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Resumo da Reserva -->
-            <div id="reserva-resumo" class="reservation-summary" style="display: none;">
-                <h3>📋 Resumo da sua Reserva</h3>
-                <div class="summary-content">
-                    <div class="summary-item">
-                        <span class="summary-label">Serviço:</span>
-                        <span class="summary-value" id="resumo-servico">-</span>
-                    </div>
-                    <div class="summary-item">
-                        <span class="summary-label">Data:</span>
-                        <span class="summary-value" id="resumo-data">-</span>
-                    </div>
-                    <div class="summary-item">
-                        <span class="summary-label">Horário:</span>
-                        <span class="summary-value" id="resumo-hora">-</span>
-                    </div>
-                    <div class="summary-item summary-total">
-                        <span class="summary-label">Valor:</span>
-                        <span class="summary-value" id="resumo-preco">-</span>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Ações -->
-            <div class="form-actions">
-                <button type="submit" class="btn btn-success btn-full" id="btnAgendar" disabled>
-                    ✨ Confirmar Reserva
-                </button>
-                <a href="{{ url_for('barbearia_publica', slug=barbearia.slug if barbearia else 'principal') }}" class="btn btn-secondary btn-full">
-                    ← Voltar
-                </a>
-            </div>
-        </form>
+<!-- Simple Navbar -->
+<nav style="background: rgba(26, 26, 26, 0.6); padding: 1.5rem 2rem; border-bottom: 2px solid rgba(74, 158, 255, 0.3); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; margin: 0; width: 100%; box-sizing: border-box;">
+    <div style="max-width: 1400px; margin: 0 auto; display: flex; align-items: center; gap: 1.5rem; width: 100%; box-sizing: border-box;">
+        {% if barbearia.logo %}
+        <img src="{{ url_for('static', filename='uploads/logos/' + barbearia.logo) }}" 
+             alt="{{ barbearia.nome }}" 
+             style="height: 50px; width: auto; filter: drop-shadow(0 4px 15px rgba(74, 158, 255, 0.4));">
+        {% endif %}
+        <h1 style="color: #ffffff; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.5rem; font-weight: 900; margin: 0; letter-spacing: -0.5px;">
+            <span style="color: #4a9eff; -webkit-text-fill-color: #4a9eff !important;">{{ barbearia.nome.split()[0] }}</span>
+            <span style="color: #ffffff; -webkit-text-fill-color: #ffffff !important;">{{ barbearia.nome.split()[1:] | join(' ') }}</span>
+        </h1>
     </div>
+</nav>
+
+<!-- Main Content -->
+<div style="max-width: 900px; margin: 3rem auto; padding: 0 2rem; width: 100%; box-sizing: border-box;">
+    <form method="POST" id="reservaForm">
+        
+        <!-- Step 1: Profissional (simulado como serviço por enquanto) -->
+        <div id="section-step-1" class="step-section" style="display: block;">
+            <h2 style="color: #ffffff; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.5rem; font-weight: 900; margin-bottom: 2rem; text-align: center;">
+                Escolha o Profissional ou Serviço
+            </h2>
+            
+            <div style="display: grid; gap: 1rem;">
+                {% for s in servicos %}
+                <label class="service-card" data-price="{{ s.preco }}">
+                    <input type="radio" name="servico" value="{{ s.id }}" style="display: none;" required>
+                    <div style="padding: 1.5rem; background: rgba(26, 26, 26, 0.6); border: 2px solid rgba(74, 158, 255, 0.2); border-radius: 20px; cursor: pointer; transition: all 0.3s ease; backdrop-filter: blur(10px);">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <h3 style="color: #ffffff; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.2rem; font-weight: 800; margin: 0 0 0.5rem 0;">
+                                    {{ s.nome }}
+                                </h3>
+                                <p style="color: rgba(255, 255, 255, 0.7); font-size: 0.95rem; margin: 0;">
+                                    Profissional disponível
+                                </p>
+                            </div>
+                            <div style="text-align: right;">
+                                <span style="color: #4a9eff; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.5rem; font-weight: 900;">
+                                    R$ {{ "%.2f"|format(s.preco) }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </label>
+                {% endfor %}
+            </div>
+            
+            <button type="button" onclick="goToStep(2)" class="btn-next" style="width: 100%; margin-top: 2rem; padding: 1.2rem; background: linear-gradient(135deg, #4a9eff 0%, #2563eb 100%); color: #ffffff; border: none; border-radius: 50px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.1rem; font-weight: 800; letter-spacing: 0.5px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 8px 25px rgba(74, 158, 255, 0.3);">
+                CONTINUAR →
+            </button>
+        </div>
+        
+        <!-- Step 2: Data (calendar week view) -->
+        <div id="section-step-2" class="step-section" style="display: none;">
+            <h2 style="color: #ffffff; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.5rem; font-weight: 900; margin-bottom: 2rem; text-align: center;">
+                Escolha a Data
+            </h2>
+            
+            <!-- Month/Year Display -->
+            <div style="text-align: center; margin-bottom: 2rem;">
+                <h3 id="current-month" style="color: rgba(255, 255, 255, 0.9); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.3rem; font-weight: 800; margin: 0;">
+                    dezembro
+                </h3>
+            </div>
+            
+            <!-- Week Days Grid -->
+            <div id="week-days-container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 1rem; margin-bottom: 2rem;">
+                <!-- Days will be populated by JavaScript -->
+            </div>
+            
+            <!-- Navigation Arrows -->
+            <div style="display: flex; justify-content: space-between; gap: 1rem; margin-bottom: 2rem;">
+                <button type="button" onclick="previousWeek()" style="flex: 1; padding: 1rem; background: rgba(74, 158, 255, 0.1); border: 2px solid rgba(74, 158, 255, 0.3); border-radius: 50px; color: #ffffff; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; cursor: pointer; transition: all 0.3s ease;">
+                    ← Anterior
+                </button>
+                <button type="button" onclick="nextWeek()" style="flex: 1; padding: 1rem; background: rgba(74, 158, 255, 0.1); border: 2px solid rgba(74, 158, 255, 0.3); border-radius: 50px; color: #ffffff; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; cursor: pointer; transition: all 0.3s ease;">
+                    Próxima →
+                </button>
+            </div>
+            
+            <button type="button" onclick="goToStep(3)" class="btn-next" disabled id="btn-step-2" style="width: 100%; padding: 1.2rem; background: linear-gradient(135deg, #4a9eff 0%, #2563eb 100%); color: #ffffff; border: none; border-radius: 50px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.1rem; font-weight: 800; letter-spacing: 0.5px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 8px 25px rgba(74, 158, 255, 0.3); opacity: 0.5;">
+                CONTINUAR →
+            </button>
+            
+            <button type="button" onclick="goToStep(1)" style="width: 100%; margin-top: 1rem; padding: 1rem; background: transparent; border: 2px solid rgba(74, 158, 255, 0.3); border-radius: 50px; color: rgba(255, 255, 255, 0.8); font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; cursor: pointer; transition: all 0.3s ease;">
+                ← VOLTAR
+            </button>
+        </div>
+        
+        <!-- Step 3: Horário (time slots list) -->
+        <div id="section-step-3" class="step-section" style="display: none;">
+            <h2 style="color: #ffffff; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.5rem; font-weight: 900; margin-bottom: 2rem; text-align: center;">
+                Escolha o Horário
+            </h2>
+            
+            <!-- Loading State -->
+            <div id="loading-horarios" style="display: none; text-align: center; padding: 3rem;">
+                <div style="width: 40px; height: 40px; border: 4px solid rgba(74, 158, 255, 0.3); border-top-color: #4a9eff; border-radius: 50%; margin: 0 auto 1rem; animation: spin 1s linear infinite;"></div>
+                <p style="color: rgba(255, 255, 255, 0.7); font-family: 'Plus Jakarta Sans', sans-serif;">Carregando horários...</p>
+            </div>
+            
+            <!-- Time Slots List -->
+            <div id="time-slots-container" style="display: grid; gap: 0.75rem; max-height: 400px; overflow-y: auto; padding-right: 0.5rem;">
+                <!-- Time slots will be populated by JavaScript -->
+            </div>
+            
+            <!-- Empty State -->
+            <div id="no-horarios" style="display: none; text-align: center; padding: 3rem; background: rgba(239, 68, 68, 0.1); border: 2px solid rgba(239, 68, 68, 0.3); border-radius: 20px;">
+                <div style="font-size: 3rem; margin-bottom: 1rem;">😔</div>
+                <p style="color: #ffffff; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; margin-bottom: 0.5rem;">
+                    Nenhum horário disponível
+                </p>
+                <p style="color: rgba(255, 255, 255, 0.6); font-size: 0.9rem;">
+                    Tente selecionar outra data
+                </p>
+            </div>
+            
+            <button type="button" onclick="goToStep(4)" class="btn-next" disabled id="btn-step-3" style="width: 100%; margin-top: 2rem; padding: 1.2rem; background: linear-gradient(135deg, #4a9eff 0%, #2563eb 100%); color: #ffffff; border: none; border-radius: 50px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.1rem; font-weight: 800; letter-spacing: 0.5px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 8px 25px rgba(74, 158, 255, 0.3); opacity: 0.5;">
+                CONTINUAR →
+            </button>
+            
+            <button type="button" onclick="goToStep(2)" style="width: 100%; margin-top: 1rem; padding: 1rem; background: transparent; border: 2px solid rgba(74, 158, 255, 0.3); border-radius: 50px; color: rgba(255, 255, 255, 0.8); font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; cursor: pointer; transition: all 0.3s ease;">
+                ← VOLTAR
+            </button>
+        </div>
+        
+        <!-- Step 4: Confirmação -->
+        <div id="section-step-4" class="step-section" style="display: none;">
+            <h2 style="color: #ffffff; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.5rem; font-weight: 900; margin-bottom: 2rem; text-align: center;">
+                Confirmar Reserva
+            </h2>
+            
+            <!-- Summary Card -->
+            <div style="background: rgba(26, 26, 26, 0.6); border: 2px solid rgba(74, 158, 255, 0.3); border-radius: 20px; padding: 2rem; backdrop-filter: blur(10px); margin-bottom: 2rem;">
+                <h3 style="color: #4a9eff; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.2rem; font-weight: 800; margin-bottom: 1.5rem; text-align: center;">
+                    📋 Resumo da Reserva
+                </h3>
+                
+                <div style="display: grid; gap: 1rem;">
+                    <div style="display: flex; justify-content: space-between; padding: 1rem; background: rgba(0, 0, 0, 0.3); border-radius: 15px;">
+                        <span style="color: rgba(255, 255, 255, 0.7); font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600;">Serviço:</span>
+                        <span id="resumo-servico" style="color: #ffffff; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800;">-</span>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; padding: 1rem; background: rgba(0, 0, 0, 0.3); border-radius: 15px;">
+                        <span style="color: rgba(255, 255, 255, 0.7); font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600;">Data:</span>
+                        <span id="resumo-data" style="color: #ffffff; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800;">-</span>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; padding: 1rem; background: rgba(0, 0, 0, 0.3); border-radius: 15px;">
+                        <span style="color: rgba(255, 255, 255, 0.7); font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 600;">Horário:</span>
+                        <span id="resumo-hora" style="color: #ffffff; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800;">-</span>
+                    </div>
+                    
+                    <div style="display: flex; justify-content: space-between; padding: 1.5rem; background: rgba(74, 158, 255, 0.15); border: 2px solid #4a9eff; border-radius: 15px;">
+                        <span style="color: #4a9eff; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.1rem;">TOTAL:</span>
+                        <span id="resumo-preco" style="color: #4a9eff; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 900; font-size: 1.3rem;">-</span>
+                    </div>
+                </div>
+            </div>
+            
+            <button type="submit" class="btn-submit" style="width: 100%; padding: 1.2rem; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; border: none; border-radius: 50px; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.1rem; font-weight: 800; letter-spacing: 0.5px; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);">
+                ✨ CONFIRMAR AGENDAMENTO
+            </button>
+            
+            <button type="button" onclick="goToStep(3)" style="width: 100%; margin-top: 1rem; padding: 1rem; background: transparent; border: 2px solid rgba(74, 158, 255, 0.3); border-radius: 50px; color: rgba(255, 255, 255, 0.8); font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; cursor: pointer; transition: all 0.3s ease;">
+                ← VOLTAR
+            </button>
+        </div>
+        
+        <!-- Hidden inputs for form submission -->
+        <input type="hidden" name="data" id="hidden-data">
+        <input type="hidden" name="hora" id="hidden-hora">
+        
+    </form>
 </div>
 
 <script>
+// Global variables
+let currentStep = 1;
+let selectedService = null;
+let selectedServiceName = null;
+let selectedServicePrice = null;
+let selectedDate = null;
+let selectedTime = null;
+let currentWeekStart = new Date();
+
+// Initialize
 document.addEventListener('DOMContentLoaded', function() {
-    const dataInput = document.getElementById('data');
-    const horaSelect = document.getElementById('hora');
-    const btnAgendar = document.getElementById('btnAgendar');
-    const loadingDiv = document.getElementById('loading-horarios');
-    const semHorariosDiv = document.getElementById('sem-horarios');
+    // Set week start to today
+    currentWeekStart.setHours(0, 0, 0, 0);
+    loadWeekDays();
     
-    // Configurar data mínima (hoje)
-    const hoje = new Date();
-    dataInput.min = hoje.toISOString().split('T')[0];
-    
-    dataInput.addEventListener('change', function() {
-        const dataSelecionada = this.value;
-        if (!dataSelecionada) return;
-        
-        // Limpar horários anteriores
-        horaSelect.innerHTML = '<option value="">Carregando...</option>';
-        horaSelect.disabled = true;
-        btnAgendar.disabled = true;
-        loadingDiv.style.display = 'block';
-        semHorariosDiv.style.display = 'none';
-        
-        // Buscar horários disponíveis
-        fetch(`/api/horarios_disponiveis?data=${dataSelecionada}`)
-            .then(response => response.json())
-            .then(data => {
-                loadingDiv.style.display = 'none';
-                
-                if (data.error) {
-                    horaSelect.innerHTML = '<option value="">Erro ao carregar horários</option>';
-                    console.error('Erro:', data.error);
-                    return;
-                }
-                
-                horaSelect.innerHTML = '';
-                
-                if (data.horarios && data.horarios.length > 0) {
-                    horaSelect.innerHTML = '<option value="">Selecione um horário</option>';
-                    data.horarios.forEach(horario => {
-                        const option = document.createElement('option');
-                        option.value = horario;
-                        option.textContent = horario;
-                        horaSelect.appendChild(option);
-                    });
-                    horaSelect.disabled = false;
-                    semHorariosDiv.style.display = 'none';
-                } else {
-                    horaSelect.innerHTML = '<option value="">Nenhum horário disponível</option>';
-                    semHorariosDiv.style.display = 'block';
-                }
-            })
-            .catch(error => {
-                loadingDiv.style.display = 'none';
-                horaSelect.innerHTML = '<option value="">Erro ao carregar horários</option>';
-                console.error('Erro na requisição:', error);
+    // Service selection
+    document.querySelectorAll('.service-card').forEach(card => {
+        card.addEventListener('click', function() {
+            // Remove active from all cards
+            document.querySelectorAll('.service-card').forEach(c => {
+                c.querySelector('div').style.borderColor = 'rgba(74, 158, 255, 0.2)';
+                c.querySelector('div').style.background = 'rgba(26, 26, 26, 0.6)';
             });
+            
+            // Add active to clicked card
+            this.querySelector('div').style.borderColor = '#4a9eff';
+            this.querySelector('div').style.background = 'rgba(74, 158, 255, 0.15)';
+            
+            // Select radio
+            const radio = this.querySelector('input[type="radio"]');
+            radio.checked = true;
+            
+            // Store selection
+            selectedService = radio.value;
+            selectedServiceName = this.querySelector('h3').textContent.trim();
+            selectedServicePrice = this.dataset.price;
+        });
     });
-    
-    horaSelect.addEventListener('change', function() {
-        btnAgendar.disabled = !this.value;
-        atualizarResumo();
-    });
-    
-    // Listeners para atualizar resumo
-    document.getElementById('servico').addEventListener('change', atualizarResumo);
-    dataInput.addEventListener('change', atualizarResumo);
-    
-    function atualizarResumo() {
-        const servicoSelect = document.getElementById('servico');
-        const dataValue = dataInput.value;
-        const horaValue = horaSelect.value;
-        const resumoDiv = document.getElementById('reserva-resumo');
-        
-        if (servicoSelect.value && dataValue && horaValue) {
-            // Mostrar resumo
-            resumoDiv.style.display = 'block';
-            
-            // Atualizar valores
-            const servicoText = servicoSelect.options[servicoSelect.selectedIndex].text;
-            const servicoParts = servicoText.split(' - ');
-            const servicoNome = servicoParts[0];
-            const servicoPreco = servicoParts[1] || 'R$ 0,00';
-            
-            // Formatar data
-            const dataFormatada = new Date(dataValue + 'T00:00:00').toLocaleDateString('pt-BR');
-            
-            document.getElementById('resumo-servico').textContent = servicoNome;
-            document.getElementById('resumo-data').textContent = dataFormatada;
-            document.getElementById('resumo-hora').textContent = horaValue;
-            document.getElementById('resumo-preco').textContent = servicoPreco;
-        } else {
-            resumoDiv.style.display = 'none';
+});
+
+// Navigation functions
+function goToStep(step) {
+    // Validate current step before proceeding
+    if (step > currentStep) {
+        if (currentStep === 1 && !selectedService) {
+            alert('Por favor, selecione um serviço primeiro.');
+            return;
+        }
+        if (currentStep === 2 && !selectedDate) {
+            alert('Por favor, selecione uma data primeiro.');
+            return;
+        }
+        if (currentStep === 3 && !selectedTime) {
+            alert('Por favor, selecione um horário primeiro.');
+            return;
         }
     }
     
-    // Validação do formulário
-    document.getElementById('reservaForm').addEventListener('submit', function(e) {
-        if (!document.getElementById('servico').value || !dataInput.value || !horaSelect.value) {
-            e.preventDefault();
-            alert('Por favor, preencha todos os campos antes de continuar.');
-        }
+    // Hide all sections
+    document.querySelectorAll('.step-section').forEach(section => {
+        section.style.display = 'none';
     });
+    
+    // Show target section
+    document.getElementById('section-step-' + step).style.display = 'block';
+    
+    // Load data for step
+    if (step === 3 && selectedDate) {
+        loadTimeSlots();
+    }
+    
+    if (step === 4) {
+        updateSummary();
+    }
+    
+    currentStep = step;
+    
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Week calendar functions
+function loadWeekDays() {
+    const container = document.getElementById('week-days-container');
+    container.innerHTML = '';
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const monthNames = ['janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho', 
+                        'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'];
+    const dayNames = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+    
+    // Update month display
+    document.getElementById('current-month').textContent = monthNames[currentWeekStart.getMonth()];
+    
+    // Generate 7 days starting from currentWeekStart
+    for (let i = 0; i < 7; i++) {
+        const date = new Date(currentWeekStart);
+        date.setDate(currentWeekStart.getDate() + i);
+        
+        const isPast = date < today;
+        const isSelected = selectedDate === date.toISOString().split('T')[0];
+        
+        const dayCard = document.createElement('div');
+        dayCard.style.cssText = `
+            padding: 1.5rem 1rem;
+            background: ${isSelected ? 'linear-gradient(135deg, #4a9eff 0%, #2563eb 100%)' : 'rgba(26, 26, 26, 0.6)'};
+            border: 2px solid ${isSelected ? '#4a9eff' : 'rgba(74, 158, 255, 0.2)'};
+            border-radius: 20px;
+            text-align: center;
+            cursor: ${isPast ? 'not-allowed' : 'pointer'};
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            opacity: ${isPast ? '0.4' : '1'};
+        `;
+        
+        if (!isPast) {
+            dayCard.onclick = () => selectDate(date);
+            dayCard.onmouseenter = function() {
+                if (!isSelected) {
+                    this.style.borderColor = '#4a9eff';
+                    this.style.transform = 'translateY(-5px)';
+                }
+            };
+            dayCard.onmouseleave = function() {
+                if (!isSelected) {
+                    this.style.borderColor = 'rgba(74, 158, 255, 0.2)';
+                    this.style.transform = 'translateY(0)';
+                }
+            };
+        }
+        
+        dayCard.innerHTML = `
+            <div style="color: ${isSelected ? '#ffffff' : '#4a9eff'}; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.9rem; font-weight: 700; margin-bottom: 0.5rem;">
+                ${dayNames[date.getDay()]}
+            </div>
+            <div style="color: #ffffff; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.8rem; font-weight: 900;">
+                ${date.getDate()}
+            </div>
+            <div style="color: ${isSelected ? 'rgba(255, 255, 255, 0.8)' : 'rgba(255, 255, 255, 0.6)'}; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 0.85rem; margin-top: 0.5rem;">
+                ${monthNames[date.getMonth()].substring(0, 3)}/${date.getFullYear().toString().substring(2)}
+            </div>
+        `;
+        
+        container.appendChild(dayCard);
+    }
+}
+
+function selectDate(date) {
+    selectedDate = date.toISOString().split('T')[0];
+    document.getElementById('hidden-data').value = selectedDate;
+    document.getElementById('btn-step-2').disabled = false;
+    document.getElementById('btn-step-2').style.opacity = '1';
+    loadWeekDays(); // Refresh to show selection
+}
+
+function previousWeek() {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
+    const newWeekStart = new Date(currentWeekStart);
+    newWeekStart.setDate(currentWeekStart.getDate() - 7);
+    
+    // Don't go before today
+    if (newWeekStart < today) {
+        newWeekStart.setTime(today.getTime());
+    }
+    
+    currentWeekStart = newWeekStart;
+    loadWeekDays();
+}
+
+function nextWeek() {
+    currentWeekStart.setDate(currentWeekStart.getDate() + 7);
+    loadWeekDays();
+}
+
+// Time slots functions
+function loadTimeSlots() {
+    const container = document.getElementById('time-slots-container');
+    const loading = document.getElementById('loading-horarios');
+    const noHorarios = document.getElementById('no-horarios');
+    
+    container.innerHTML = '';
+    container.style.display = 'none';
+    loading.style.display = 'block';
+    noHorarios.style.display = 'none';
+    
+    // Fetch available times
+    fetch(`/api/horarios_disponiveis?data=${selectedDate}`)
+        .then(response => response.json())
+        .then(data => {
+            loading.style.display = 'none';
+            
+            if (data.error) {
+                console.error('Erro:', data.error);
+                noHorarios.style.display = 'block';
+                return;
+            }
+            
+            if (data.horarios && data.horarios.length > 0) {
+                container.style.display = 'grid';
+                data.horarios.forEach(horario => {
+                    const timeCard = document.createElement('div');
+                    timeCard.style.cssText = `
+                        padding: 1.2rem;
+                        background: rgba(26, 26, 26, 0.6);
+                        border: 2px solid rgba(74, 158, 255, 0.2);
+                        border-radius: 15px;
+                        cursor: pointer;
+                        transition: all 0.3s ease;
+                        backdrop-filter: blur(10px);
+                        display: flex;
+                        align-items: center;
+                        gap: 1rem;
+                    `;
+                    
+                    timeCard.onclick = () => selectTime(horario, timeCard);
+                    timeCard.onmouseenter = function() {
+                        if (!this.classList.contains('selected')) {
+                            this.style.borderColor = '#4a9eff';
+                            this.style.transform = 'translateX(10px)';
+                        }
+                    };
+                    timeCard.onmouseleave = function() {
+                        if (!this.classList.contains('selected')) {
+                            this.style.borderColor = 'rgba(74, 158, 255, 0.2)';
+                            this.style.transform = 'translateX(0)';
+                        }
+                    };
+                    
+                    timeCard.innerHTML = `
+                        <div style="width: 8px; height: 8px; background: #4a9eff; border-radius: 50%; box-shadow: 0 0 10px rgba(74, 158, 255, 0.5);"></div>
+                        <span style="color: #ffffff; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.1rem; font-weight: 800;">
+                            ${horario}
+                        </span>
+                    `;
+                    
+                    container.appendChild(timeCard);
+                });
+            } else {
+                noHorarios.style.display = 'block';
+            }
+        })
+        .catch(error => {
+            console.error('Erro na requisição:', error);
+            loading.style.display = 'none';
+            noHorarios.style.display = 'block';
+        });
+}
+
+function selectTime(time, element) {
+    // Remove selection from all time cards
+    document.querySelectorAll('#time-slots-container > div').forEach(card => {
+        card.style.borderColor = 'rgba(74, 158, 255, 0.2)';
+        card.style.background = 'rgba(26, 26, 26, 0.6)';
+        card.classList.remove('selected');
+    });
+    
+    // Add selection to clicked card
+    element.style.borderColor = '#4a9eff';
+    element.style.background = 'rgba(74, 158, 255, 0.15)';
+    element.style.transform = 'translateX(10px)';
+    element.classList.add('selected');
+    
+    selectedTime = time;
+    document.getElementById('hidden-hora').value = time;
+    document.getElementById('btn-step-3').disabled = false;
+    document.getElementById('btn-step-3').style.opacity = '1';
+}
+
+// Summary functions
+function updateSummary() {
+    const dateObj = new Date(selectedDate + 'T00:00:00');
+    const dateFormatted = dateObj.toLocaleDateString('pt-BR', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+    });
+    
+    document.getElementById('resumo-servico').textContent = selectedServiceName;
+    document.getElementById('resumo-data').textContent = dateFormatted;
+    document.getElementById('resumo-hora').textContent = selectedTime;
+    document.getElementById('resumo-preco').textContent = 'R$ ' + parseFloat(selectedServicePrice).toFixed(2);
+}
+
+// Form submission
+document.getElementById('reservaForm').addEventListener('submit', function(e) {
+    if (!selectedService || !selectedDate || !selectedTime) {
+        e.preventDefault();
+        alert('Por favor, preencha todos os dados da reserva.');
+    }
 });
 </script>
 
 <style>
-/* Form Steps Dark Theme */
-.form-step {
-    margin-bottom: 2rem;
-    padding: 2rem;
-    background: var(--bg-card);
-    border-radius: 4px;
-    border: 2px solid var(--gold-dark);
-    transition: all 0.3s ease;
+/* Modern BarberConnect Reservation System */
+* {
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
 }
 
-.form-step:hover {
-    border-color: var(--gold);
-    box-shadow: 0 4px 15px rgba(74, 158, 255, 0.2);
+body {
+    background: #000000 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    min-height: 100vh;
+    width: 100vw;
+    overflow-x: hidden;
 }
 
-.step-header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1.5rem;
+html {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100%;
+    overflow-x: hidden;
 }
 
-.step-number {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 2.5rem;
-    height: 2.5rem;
-    background: linear-gradient(135deg, var(--gold-dark), var(--gold));
-    color: var(--bg-dark);
-    border-radius: 50%;
-    font-weight: 700;
-    font-size: 1.2rem;
+/* Hover effects for buttons */
+.btn-next:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 35px rgba(74, 158, 255, 0.5) !important;
 }
 
-.step-header h3 {
-    margin: 0;
-    color: var(--gold-light);
-    font-size: 1.3rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+.btn-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 35px rgba(16, 185, 129, 0.6) !important;
 }
 
-.form-group {
-    margin-bottom: 1.5rem;
+button:hover:not(:disabled) {
+    opacity: 0.9;
 }
 
-.form-label {
-    display: block;
-    margin-bottom: 0.75rem;
-    font-weight: 600;
-    color: var(--text-color);
-    font-size: 1.05rem;
+button:disabled {
+    cursor: not-allowed;
 }
 
-.form-help {
-    display: block;
-    margin-top: 0.5rem;
-    font-size: 0.85rem;
-    color: rgba(245, 245, 220, 0.6);
+/* Scrollbar styling for time slots */
+#time-slots-container::-webkit-scrollbar {
+    width: 8px;
 }
 
-/* Loading State */
-.loading-state {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    padding: 1.5rem;
+#time-slots-container::-webkit-scrollbar-track {
     background: rgba(74, 158, 255, 0.1);
-    border-radius: 4px;
-    margin-top: 1rem;
-    color: var(--gold);
-    font-weight: 500;
-    border: 1px solid var(--gold-dark);
+    border-radius: 10px;
 }
 
-.loading-spinner {
-    width: 1.5rem;
-    height: 1.5rem;
-    border: 2px solid var(--gold-dark);
-    border-top: 2px solid var(--gold);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
+#time-slots-container::-webkit-scrollbar-thumb {
+    background: rgba(74, 158, 255, 0.5);
+    border-radius: 10px;
 }
 
+#time-slots-container::-webkit-scrollbar-thumb:hover {
+    background: #4a9eff;
+}
+
+/* Spin animation */
 @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
 }
 
-/* Empty State */
-.empty-state {
-    text-align: center;
-    padding: 2rem;
-    background: rgba(239, 68, 68, 0.1);
-    border-radius: 4px;
-    margin-top: 1rem;
-    border: 1px solid rgba(239, 68, 68, 0.3);
-}
-
-.empty-icon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-}
-
-.empty-state p {
-    color: var(--text-color);
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-}
-
-.empty-state small {
-    color: rgba(245, 245, 220, 0.6);
-}
-
-/* Reservation Summary */
-.reservation-summary {
-    background: rgba(16, 185, 129, 0.1);
-    border: 2px solid #10b981;
-    border-radius: 4px;
-    padding: 2rem;
-    margin: 2rem 0;
-}
-
-.reservation-summary h3 {
-    color: #10b981;
-    margin-bottom: 1.5rem;
-    text-align: center;
-    font-size: 1.3rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-}
-
-.summary-content {
-    display: grid;
-    gap: 1rem;
-}
-
-.summary-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 1rem;
-    background: rgba(0, 0, 0, 0.3);
-    border-radius: 4px;
-    border: 1px solid var(--gold-dark);
-}
-
-.summary-label {
-    font-weight: 600;
-    color: rgba(245, 245, 220, 0.7);
-    text-transform: uppercase;
-    font-size: 0.9rem;
-    letter-spacing: 1px;
-}
-
-.summary-value {
-    font-weight: 700;
-    color: var(--gold);
-}
-
-.summary-total {
-    border: 2px solid #10b981;
-    background: rgba(16, 185, 129, 0.15);
-}
-
-.summary-total .summary-value {
-    color: #10b981;
-    font-size: 1.3rem;
-}
-
-/* Form Actions */
-.form-actions {
-    margin-top: 2rem;
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-}
-
-.btn-full {
-    flex: 1;
-    min-width: 200px;
-}
-
-.form-input:disabled {
-    background-color: rgba(0, 0, 0, 0.4);
-    cursor: not-allowed;
-    opacity: 0.6;
-}
-
-/* Mobile */
+/* Mobile Responsive */
 @media (max-width: 768px) {
-    .page-header {
-        padding: 1.5rem 1rem !important;
-        margin-bottom: 2rem !important;
-        border-width: 2px !important;
+    html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100vw !important;
+        overflow-x: hidden !important;
     }
     
-    .page-title {
-        font-size: 1.5rem !important;
-        letter-spacing: 1px !important;
-    }
-    
-    .page-container {
-        padding: 0 1rem 2rem !important;
-    }
-    
-    .form-container {
-        padding: 1.5rem !important;
-    }
-    
-    .form-step {
-        padding: 1rem;
-        margin-bottom: 1rem;
-    }
-    
-    .step-header {
-        flex-direction: row;
-        text-align: left;
-        gap: 0.75rem;
-    }
-    
-    .step-number {
-        width: 2rem;
-        height: 2rem;
-        font-size: 1rem;
-        flex-shrink: 0;
-    }
-    
-    .step-header h3 {
-        font-size: 1rem;
-        letter-spacing: 0.5px;
-    }
-    
-    .form-label {
-        font-size: 0.95rem;
-    }
-    
-    .form-input, .form-input select {
-        font-size: 16px !important; /* Evita zoom no iOS */
-        padding: 0.75rem !important;
-    }
-    
-    .reservation-summary {
-        padding: 1rem;
-        margin: 1.5rem 0;
-    }
-    
-    .reservation-summary h3 {
-        font-size: 1.1rem;
-        letter-spacing: 0.5px;
-    }
-    
-    .summary-item {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 0.5rem;
-        padding: 0.75rem;
-    }
-    
-    .summary-label {
-        font-size: 0.8rem;
-    }
-    
-    .summary-value {
-        font-size: 0.95rem;
-    }
-    
-    .summary-total .summary-value {
-        font-size: 1.1rem;
-    }
-    
-    .form-actions {
-        flex-direction: column;
-        gap: 0.75rem;
-        margin-top: 1.5rem;
-    }
-    
-    .btn-full {
-        width: 100%;
-        min-width: unset;
+    /* Navbar adjustments */
+    nav {
         padding: 1rem !important;
-        font-size: 0.9rem !important;
+        width: 100vw !important;
+        box-sizing: border-box !important;
+        margin: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
     }
     
-    .loading-state {
-        padding: 1rem;
-        font-size: 0.9rem;
+    nav > div {
+        width: 100% !important;
+        box-sizing: border-box !important;
     }
     
-    .empty-state {
-        padding: 1.5rem;
+    nav img {
+        height: 40px !important;
     }
     
-    .empty-icon {
-        font-size: 2.5rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .page-header {
-        padding: 1rem 0.75rem !important;
-        margin-bottom: 1.5rem !important;
-    }
-    
-    .page-title {
+    nav h1 {
         font-size: 1.2rem !important;
     }
     
-    .page-container {
-        padding: 0 0.5rem 1.5rem !important;
+    /* Content padding */
+    div[style*="max-width: 900px"] {
+        padding: 0 1rem !important;
+        margin: 2rem auto !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
     }
     
-    .form-container {
+    /* Title adjustments */
+    h2[style*="font-size: 1.5rem"] {
+        font-size: 1.2rem !important;
+    }
+    
+    /* Service cards */
+    .service-card div {
         padding: 1rem !important;
     }
     
-    .form-step {
-        padding: 0.75rem;
-        margin-bottom: 0.75rem;
+    .service-card h3 {
+        font-size: 1rem !important;
     }
     
-    .step-header h3 {
-        font-size: 0.9rem;
+    .service-card span[style*="font-size: 1.5rem"] {
+        font-size: 1.2rem !important;
     }
     
-    .step-number {
-        width: 1.75rem;
-        height: 1.75rem;
-        font-size: 0.9rem;
+    /* Week days grid */
+    #week-days-container {
+        grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)) !important;
+        gap: 0.5rem !important;
     }
     
-    .form-label {
-        font-size: 0.9rem;
+    #week-days-container > div {
+        padding: 1rem 0.5rem !important;
     }
     
-    .reservation-summary {
-        padding: 0.75rem;
+    #week-days-container > div > div:nth-child(2) {
+        font-size: 1.5rem !important;
     }
     
-    .summary-item {
-        padding: 0.5rem;
+    /* Time slots */
+    #time-slots-container {
+@media (max-width: 480px) {
+    html, body {
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100vw !important;
+        overflow-x: hidden !important;
     }
     
-    .btn-full {
-        padding: 0.85rem !important;
+    /* Navbar for small screens */
+    nav {
+        padding: 0.75rem 0.75rem !important;
+        width: 100vw !important;
+        box-sizing: border-box !important;
+        margin: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+    }btn-submit {
+        padding: 1rem !important;
+@media (max-width: 480px) {
+    body {
+        padding: 0 !important;
+        margin: 0 !important;
+    }
+    
+    /* Navbar for small screens */
+    nav {
+        padding: 0.75rem 0.75rem !important;
+        width: 100vw !important;
+        box-sizing: border-box !important;
+    }
+    
+    nav > div {
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+    
+    nav img {
+        height: 35px !important;
+    }
+    
+    nav h1 {
+        font-size: 1rem !important;
+    }
+    
+    nav > div {
+        gap: 0.75rem !important;
+    }
+    
+    /* Main content container */
+    div[style*="max-width: 900px"] {
+        padding: 0 0.75rem !important;
+        margin: 1.5rem auto !important;
+        width: 100% !important;
+        max-width: 100vw !important;
+        box-sizing: border-box !important;
+    }   padding: 0.75rem 1rem !important;
+    }
+    
+    nav img {
+        height: 35px !important;
+    }
+    
+    nav h1 {
+        font-size: 1rem !important;
+    }
+    
+    nav > div {
+        gap: 1rem !important;
+    }
+    
+    h2[style*="font-size: 1.5rem"] {
+        font-size: 1.1rem !important;
+        margin-bottom: 1.5rem !important;
+    }
+    
+    .service-card h3 {
+        font-size: 0.95rem !important;
+    }
+    
+    .service-card p {
         font-size: 0.85rem !important;
+    }
+    
+    #week-days-container {
+        grid-template-columns: repeat(7, 1fr) !important;
+        gap: 0.25rem !important;
+    }
+    
+    #week-days-container > div {
+        padding: 0.75rem 0.25rem !important;
+    }
+    
+    #week-days-container > div > div:first-child {
+        font-size: 0.75rem !important;
+    }
+    
+    #week-days-container > div > div:nth-child(2) {
+        font-size: 1.3rem !important;
+    }
+    
+    #week-days-container > div > div:last-child {
+        font-size: 0.7rem !important;
+    }
+    
+    #time-slots-container > div span {
+        font-size: 1rem !important;
+    }
+    
+    button[type="button"],
+    button[type="submit"],
+    .btn-next,
+    .btn-submit {
+        padding: 0.9rem !important;
+        font-size: 0.9rem !important;
     }
 }
 </style>
