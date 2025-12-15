@@ -1,41 +1,288 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Clientes - BarberConnect</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            max-width: 100vw;
+        }
+        
+        html, body {
+            overflow-x: hidden;
+            background: #000;
+            color: #fff;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            letter-spacing: -0.3px;
+        }
+        
+        body {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        nav {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(74, 158, 255, 0.2);
+            border-radius: 16px;
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+        
+        nav > div {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        nav h2 {
+            color: #4a9eff;
+            font-size: 1.5rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+        }
+        
+        nav a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        
+        nav a:hover {
+            background: rgba(74, 158, 255, 0.1);
+            border-color: rgba(74, 158, 255, 0.3);
+            color: #4a9eff;
+        }
+        
+        h1 {
+            color: #4a9eff;
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        
 
-{% block title %}Gerenciar Clientes{% endblock %}
+        
+        h2 {
+            color: #4a9eff;
+            font-size: 1.5rem;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .card-form {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(74, 158, 255, 0.2);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.2px;
+        }
+        
+        input[type="text"],
+        input[type="email"] {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(74, 158, 255, 0.2);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1rem;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            transition: all 0.3s ease;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #4a9eff;
+            background: rgba(74, 158, 255, 0.05);
+            box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.1);
+        }
+        
+        button[type="submit"] {
+            width: 100%;
+            padding: 1rem;
+            background: rgba(74, 158, 255, 0.2);
+            border: 1px solid #4a9eff;
+            border-radius: 12px;
+            color: #4a9eff;
+            font-size: 1rem;
+            font-weight: 700;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            letter-spacing: -0.3px;
+        }
+        
+        button[type="submit"]:hover {
+            background: rgba(74, 158, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(74, 158, 255, 0.3);
+        }
+        
+        .table-responsive {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(74, 158, 255, 0.2);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        table thead {
+            border-bottom: 2px solid rgba(74, 158, 255, 0.3);
+        }
+        
+        th {
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: #4a9eff;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            letter-spacing: 1px;
+        }
+        
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        
+        tr:hover {
+            background: rgba(74, 158, 255, 0.05);
+        }
+        
+        .btn-action {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: 1px solid;
+            margin-right: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: rgba(74, 158, 255, 0.1);
+            border-color: rgba(74, 158, 255, 0.3);
+            color: #4a9eff;
+        }
+        
+        .btn-primary:hover {
+            background: rgba(74, 158, 255, 0.2);
+            border-color: #4a9eff;
+        }
+        
+        .btn-danger {
+            background: rgba(255, 59, 48, 0.1);
+            border-color: rgba(255, 59, 48, 0.3);
+            color: #ff3b30;
+        }
+        
+        .btn-danger:hover {
+            background: rgba(255, 59, 48, 0.2);
+            border-color: #ff3b30;
+        }
+        
+        .alert-warning {
+            background: rgba(255, 159, 10, 0.1);
+            border: 1px solid rgba(255, 159, 10, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            color: rgba(255, 255, 255, 0.8);
+            text-align: center;
+        }
+        
+        @media (max-width: 968px) {
+            nav > div {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+        @media (max-width: 968px) {
+            nav > div {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            nav > div > div {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 0.5rem;
+                width: 100%;
+            }
+        }   
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .table-responsive {
+                overflow-x: auto;
+            }
+            
+            table {
+                min-width: 600px;
+            }
+        }
+    </style>
+</head>
+<body>
+{% set extra_nav_html %}
+    <a href="javascript:history.back();">← Voltar</a>
+    {% set dash_slug = barbearia.slug if barbearia else (request.view_args.slug if request.view_args and request.view_args.get('slug') else session.get('slug', 'principal')) %}
+    <a href="{{ url_for('dashboard', slug=dash_slug) }}">📊 Dashboard</a>
+{% endset %}
+{% if user_type is defined %}
+{% include 'cliente/_navbar.html' %}
+{% endif %}
 
-{% block content %}
     <h1>Gerenciamento de Clientes</h1>
 
-    <div class="row">
-        <div class="col-half">
-            <h2 class="mb-3">Adicionar Novo Cliente</h2>
-            <div class="card-form mb-4">
-                <form method="POST">
-                    <input type="hidden" name="id_cliente" value=""> 
-
-                    <div class="form-group">
-                        <label for="nome">Nome Completo</label>
-                        <input type="text" class="form-control" id="nome" name="nome" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" class="form-control" id="email" name="email" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="telefone">Telefone</label>
-                        <input type="text" class="form-control" id="telefone" name="telefone">
-                    </div>
-
-                    <button type="submit" class="btn btn-success" style="width: 100%;">Salvar Cliente</button>
-                </form>
-            </div>
-        </div>
-
-        <div class="col-half">
-            <h2 class="mb-3">Clientes Cadastrados</h2>
+    <div style="max-width: 1400px; margin: 0 auto;">
+        <h2>📋 Clientes Cadastrados</h2>
 
             {% if usuarios %}
             <div class="table-responsive">
-                <table class="custom-table">
+                <table>
                     <thead>
                         <tr>
                             <th>Nome</th>
@@ -51,14 +298,11 @@
                             <td>{{ cliente.email }}</td>
                             <td>{{ cliente.telefone or '-' }}</td>
                             <td>
-                                <a href="javascript:void(0);" 
-                                   class="btn btn-primary-outline"
-                                   style="padding: 5px 10px; font-size: 0.8em; margin-right: 5px;">
+                                <a href="javascript:void(0);" class="btn-action btn-primary">
                                     Alterar
                                 </a>
-                                <a href="{{ url_for('deletar_cliente', cliente_id=cliente.id) }}" 
-                                   class="btn btn-danger-outline"
-                                   style="padding: 5px 10px; font-size: 0.8em;"
+                                <a href="{{ url_for('deletar_cliente', cliente_uuid=cliente.uuid) }}" 
+                                   class="btn-action btn-danger"
                                    onclick="return confirm('Deseja realmente excluir {{ cliente.nome }}? Essa ação não pode ser desfeita.')">
                                     Excluir
                                 </a>
@@ -69,10 +313,16 @@
                 </table>
             </div>
             {% else %}
-            <div class="custom-alert custom-alert-warning">
+            <div class="alert-warning">
                 Nenhum cliente cadastrado ainda.
             </div>
             {% endif %}
-        </div>
     </div>
-{% endblock %}
+
+    <footer style="background: rgba(255, 255, 255, 0.03); border-top: 1px solid rgba(74, 158, 255, 0.2); padding: 2rem; text-align: center; margin-top: 4rem; border-radius: 16px;">
+        <p style="color: rgba(255, 255, 255, 0.6); font-size: 0.9rem;">
+            Desenvolvido por <span style="color: #4a9eff; font-weight: 700;">BarberConnect</span> ✂️
+        </p>
+    </footer>
+</body>
+</html>

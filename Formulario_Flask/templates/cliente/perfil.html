@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+{% block title %}Meu Perfil - {{ usuario.nome }}{% endblock %}
+
+{% block content %}
+<style>
+    body {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        background: #000;
+        color: #fff;
+        line-height: 1.6;
+    }
+    /* Removed legacy local nav styles (partial provides navbar) */
+    .nav-logo {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #fff;
+        letter-spacing: -0.5px;
+        text-decoration: none;
+        word-break: break-word;
+    }
+    .nav-logo span { color: #4a9eff; }
+    .nav-links { display: flex; gap: 1.2rem; align-items: center; flex-wrap: wrap; }
+    .nav-link { color: rgba(255,255,255,0.8); text-decoration: none; font-weight: 600; transition: color 0.3s; padding: 0.5rem 0.7rem; border-radius: 8px; }
+    .nav-link:hover { color: #4a9eff; background: rgba(74,158,255,0.08); }
+    .btn-primary {
+        background: linear-gradient(135deg, #4a9eff 0%, #2563eb 100%);
+        color: #000;
+        padding: 0.8rem 2rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 700;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: inline-block;
+        font-size: 1rem;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(74,158,255,0.4); }
+    .btn-secondary {
+        background: transparent;
+        color: #fff;
+        padding: 0.8rem 2rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 700;
+        border: 2px solid rgba(255,255,255,0.3);
+        transition: all 0.3s;
+        display: inline-block;
+        font-size: 1rem;
+    }
+    .btn-secondary:hover { border-color: #4a9eff; background: rgba(74,158,255,0.1); }
+    .perfil-hero-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        line-height: 1.1;
+        margin-bottom: 1.5rem;
+        background: linear-gradient(135deg, #fff 0%, #4a9eff 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        text-align: center;
+        margin-top: 18px; /* rely on navbar script to add proper top gap */
+    }
+    .perfil-card {
+        background: rgba(26,26,26,0.5);
+        border: 2px solid rgba(74,158,255,0.2);
+        border-radius: 20px;
+        padding: 2rem 2.5rem;
+        margin-bottom: 2.5rem;
+        box-shadow: 0 10px 40px rgba(74,158,255,0.08);
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+        display: flex;
+        flex-direction: column;
+        gap: 1.2rem;
+    }
+    .perfil-avatar {
+        background: linear-gradient(135deg, #4a9eff 0%, #2563eb 100%);
+        color: #fff;
+        border-radius: 50%;
+        width: 80px; height: 80px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 2.5rem; font-weight: 700;
+        margin: 0 auto 1.2rem auto;
+        box-shadow: 0 2px 12px rgba(74,158,255,0.15);
+    }
+    .perfil-info { text-align: center; margin-bottom: 1.2rem; }
+    .perfil-info .nome { font-size: 1.25rem; font-weight: 700; color: #4a9eff; }
+    .perfil-info .email, .perfil-info .telefone, .perfil-info .data { font-size: 1.05rem; color: #aaa; }
+    .card-form label { font-weight: 700; color: #4a9eff; }
+    .card-form input {
+        width: 100%;
+        padding: 1rem;
+        border-radius: 8px;
+        border: 1px solid #4a9eff;
+        margin-top: 0.5rem;
+        background: #181818;
+        color: #fff;
+        font-size: 1.08rem;
+        transition: border 0.2s;
+    }
+    .card-form input:focus { outline: 2px solid #4a9eff; border-color: #2563eb; }
+    .card-form button { margin-top: 1.2rem; font-size: 1.08rem; }
+    .acoes-rapidas {
+        display: flex; gap: 1.2rem; justify-content: center; margin-bottom: 2.5rem; flex-wrap: wrap;
+    }
+    .acoes-rapidas a { font-size: 1.08rem; min-width: 140px; text-align: center; }
+    @media (max-width: 900px) {
+        .perfil-card { max-width: 95vw; padding: 1.2rem; }
+        .nav-container { padding: 0; }
+    }
+    @media (max-width: 600px) {
+        .nav {
+            padding: 0.25rem 0.3rem !important;
+            min-height: 38px;
+        }
+        .nav-logo {
+            font-size: 1rem !important;
+        }
+        .nav-links {
+            gap: 0.2rem !important;
+        }
+        .nav-link, .btn-primary, .btn-secondary {
+            padding: 0.4rem 0.7rem !important;
+            font-size: 0.92rem !important;
+        }
+        .perfil-hero-title { font-size: 1.1rem; margin-top: 48px; }
+        .perfil-card { padding: 0.5rem; }
+        .perfil-avatar { width: 48px; height: 48px; font-size: 1.1rem; }
+        .acoes-rapidas { gap: 0.3rem; }
+        .acoes-rapidas a { min-width: 80px; font-size: 0.92rem; padding: 0.5rem 0.3rem; }
+        .card-form input { font-size: 0.92rem; padding: 0.5rem; }
+        .card-form button { font-size: 0.92rem; }
+    }
+</style>
+
+{% set extra_nav_html = '' %}
+{% include 'cliente/_navbar.html' %}
+
+<div style="max-width: 700px; margin: 0 auto; padding: 0 1rem;">
+    <div class="perfil-hero-title">👤 Meu perfil</div>
+    <div class="perfil-card">
+        <div class="perfil-avatar">{{ usuario.nome[0]|upper if usuario.nome else '👤' }}</div>
+        <div class="perfil-info">
+            <div class="nome">{{ usuario.nome }}</div>
+            <div class="email">{{ usuario.email }}</div>
+            {% if usuario.telefone %}
+            <div class="telefone">📱 {{ usuario.telefone }}</div>
+            {% endif %}
+            <div class="data">Membro desde: {{ usuario.data_cadastro.strftime('%d/%m/%Y') if usuario.data_cadastro else '' }}</div>
+        </div>
+
+        {# Se houver assinatura ativa, mostrar acima do formulário #}
+        {% if assinatura_ativa %}
+        <div style="background: rgba(26,26,26,0.25); border-radius: 12px; padding: 1rem; color: #fff; margin-bottom: 1rem;">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:1rem; flex-wrap:wrap;">
+                <div>
+                    <div style="font-weight:800; color:#4a9eff; font-size:0.95rem;">Plano atual</div>
+                    <div style="font-size:1.1rem; font-weight:700; margin-top:0.2rem;">{{ assinatura_ativa.plano.nome }}</div>
+                    <div style="color:#aaa; margin-top:0.25rem;">R$ {{ "%.2f"|format(assinatura_ativa.plano.preco) }} / mês • {{ assinatura_ativa.atendimentos_restantes }} atendimento(s) restantes</div>
+                </div>
+                <div style="text-align:right">
+                    {% if assinatura_ativa.data_renovacao %}
+                        <div style="color:#aaa;">Próxima renovação</div>
+                        <div style="font-weight:700; color:#fff;">{{ assinatura_ativa.data_renovacao.strftime('%d/%m/%Y') }}</div>
+                    {% endif %}
+                    <div style="margin-top:0.6rem;">
+                        <a href="{{ url_for('admin_planos_ativos', slug=barbearia.slug) }}" class="btn-secondary" style="padding:0.5rem 0.8rem;">Ver planos</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        <div style="text-align:center; color:#cfcfcf; margin-bottom:0.6rem; font-size:0.95rem;">
+            Deseja alterar seus dados? Faça as alterações abaixo e clique em <strong>Salvar Alterações</strong>.
+        </div>
+
+        <form method="POST" action="{{ url_for('perfil') }}" class="card-form">
+            {% if csrf_token %}
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+            {% endif %}
+            <div style="margin-bottom: 1.2rem;">
+                <label for="nome">Nome</label>
+                <input type="text" id="nome" name="nome" value="{{ usuario.nome }}">
+            </div>
+            <div style="margin-bottom: 1.2rem;">
+                <label for="email">E-mail</label>
+                <input type="email" id="email" name="email" value="{{ usuario.email }}" readonly>
+            </div>
+            <div style="margin-bottom: 1.2rem;">
+                <label for="nova_senha">Nova Senha</label>
+                <input type="password" id="nova_senha" name="nova_senha">
+                <small style="color: #aaa;">Preencha apenas se quiser alterar sua senha.</small>
+            </div>
+            <button type="submit" class="btn-primary" style="width: 100%; padding: 1rem; font-size: 1.1rem;">Salvar Alterações</button>
+        </form>
+    </div>
+    <!-- Ações rápidas -->
+    <div class="acoes-rapidas">
+        <a href="{{ url_for('dashboard', slug=barbearia.slug if barbearia else 'principal') }}" class="btn-secondary">🏠 Dashboard</a>
+        <a href="{{ url_for('logout', slug=barbearia.slug if barbearia else 'principal') }}" class="btn-primary">🚪 Sair</a>
+    </div>
+        <!-- bloco de plano duplicado removido (já exibido acima do formulário) -->
+</div>
+{% endblock %}

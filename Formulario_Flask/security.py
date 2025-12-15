@@ -6,6 +6,7 @@ from flask import session, request, abort, flash, redirect, url_for
 from datetime import datetime, timedelta
 import re
 import bleach
+import uuid
 
 # Configurações de Rate Limiting (simulado)
 LOGIN_ATTEMPTS = {}  # {ip: [(timestamp, success), ...]}
@@ -43,16 +44,32 @@ def validate_phone(phone):
     # Aceita 10 ou 11 dígitos (com ou sem DDD)
     return len(phone_numbers) in [10, 11]
 
+def validate_uuid(uuid_string):
+    """
+    Valida se uma string é um UUID válido
+    Retorna (is_valid, sanitized_uuid)
+    """
+    if not uuid_string:
+        return False, None
+    
+    try:
+        # Tenta criar um objeto UUID a partir da string
+        uuid_obj = uuid.UUID(str(uuid_string), version=4)
+        # Retorna o UUID em formato string padronizado
+        return True, str(uuid_obj)
+    except (ValueError, AttributeError):
+        return False, None
+
 def validate_password_strength(password):
     """
     Valida força da senha
     Retorna (is_valid, message)
     """
-    if len(password) < 6:
-        return False, "Senha deve ter pelo menos 6 caracteres"
-    
     if len(password) < 8:
-        return True, "Senha fraca - considere usar pelo menos 8 caracteres"
+        return False, "Senha deve ter pelo menos 8 caracteres"
+    
+    if len(password) < 10:
+        return True, "Senha média - considere usar pelo menos 10 caracteres"
     
     has_upper = any(c.isupper() for c in password)
     has_lower = any(c.islower() for c in password)

@@ -1,0 +1,65 @@
+#!/usr/bin/env python3
+"""
+Script de inicialização para Railway
+Executa migrações e configurações iniciais do banco de dados
+"""
+import os
+import sys
+from pathlib import Path
+
+# Adicionar o diretório atual ao path
+BASE_DIR = Path(__file__).resolve().parent
+sys.path.insert(0, str(BASE_DIR))
+
+def init_database():
+    """Inicializa o banco de dados e cria tabelas se necessário"""
+    try:
+        from app import db, app
+
+        with app.app_context():
+            # Criar todas as tabelas
+            db.create_all()
+            print("✅ Tabelas criadas/verficadas com sucesso")
+
+            # Verificar se já existe super admin
+            from app import Usuario
+            super_admin = Usuario.query.filter_by(role='super_admin').first()
+            if not super_admin:
+                print("⚠️  Nenhum super admin encontrado. Execute o script configurar_super_admin.py")
+            else:
+                print("✅ Super admin já configurado")
+
+    except Exception as e:
+        print(f"❌ Erro ao inicializar banco de dados: {e}")
+        return False
+
+    return True
+
+def check_environment():
+    """Verifica se todas as variáveis de ambiente necessárias estão configuradas"""
+    required_vars = ['DATABASE_URL', 'FLASK_SECRET']
+    missing_vars = []
+
+    for var in required_vars:
+        if not os.environ.get(var):
+            missing_vars.append(var)
+
+    if missing_vars:
+        print(f"⚠️  Variáveis de ambiente faltando: {', '.join(missing_vars)}")
+        return False
+
+    print("✅ Variáveis de ambiente configuradas")
+    return True
+
+if __name__ == '__main__':
+    print("🚀 Inicializando aplicação BarberConnect no Railway...")
+
+    # Verificar ambiente
+    if not check_environment():
+        sys.exit(1)
+
+    # Inicializar banco de dados
+    if not init_database():
+        sys.exit(1)
+
+    print("🎉 Inicialização concluída com sucesso!")

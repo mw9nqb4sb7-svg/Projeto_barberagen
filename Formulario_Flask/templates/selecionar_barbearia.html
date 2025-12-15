@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selecionar Barbearia - Super Admin</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}?v=4.0">
+</head>
+<body>
+    <!-- Navegação Fixa -->
+    <nav class="custom-nav">
+        <div class="nav-content">
+            <div class="nav-brand">SUPER ADMIN</div>
+            <ul class="nav-list">
+                <li><a href="/super_admin/dashboard" class="nav-link">DASHBOARD</a></li>
+                <li><a href="/super_admin/logout" class="nav-link">SAIR</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="custom-container">
+        <!-- Hero Section Elegante -->
+        <div class="barbearias-header">
+            <h1>🔧 SELECIONE A BARBEARIA PARA GERENCIAR</h1>
+            <p>Como Super Admin, você pode acessar qualquer barbearia</p>
+        </div>
+
+        <!-- Grid de Barbearias -->
+        {% if barbearias %}
+        <div class="barbearias-grid">
+            {% for barbearia in barbearias %}
+            <a href="/super_admin/login_as/{{ barbearia.slug }}" class="barbearia-card-modern">
+                <div class="barbearia-card-icon">
+                    {% if barbearia.slug == 'principal' %}🏛
+                    {% elif barbearia.slug == 'elite' %}👑
+                    {% elif barbearia.slug == 'man' %}🎩
+                    {% else %}✂{% endif %}
+                </div>
+                <div class="barbearia-card-name">{{ barbearia.nome }}</div>
+                <div class="barbearia-card-slug">@{{ barbearia.slug }}</div>
+                <div class="barbearia-card-status">● ATIVA</div>
+            </a>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="no-barbearias">
+            <h2>Nenhuma barbearia ativa encontrada.</h2>
+            <a href="/super_admin/nova_barbearia" class="btn-primary">Criar Nova Barbearia</a>
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

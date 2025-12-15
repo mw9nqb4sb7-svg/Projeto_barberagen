@@ -266,6 +266,7 @@
             
             <!-- Formulário de Cadastro -->
             <form method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <div class="form-group">
                     <label for="nome" class="form-label">👤 Nome completo</label>
                     <input type="text" class="form-input" id="nome" name="nome" 
@@ -307,6 +308,8 @@
                     Criar conta →
                 </button>
             </form>
+
+            <!-- Integração cliente com Firebase removida; formulário submete para o servidor -->
             
             <!-- Divisor -->
             <div class="divider">

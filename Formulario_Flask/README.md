@@ -89,7 +89,53 @@ Super Admin:
   Senha: 562402
 ```
 
-## 🛠️ Scripts Administrativos
+## � Deploy no Railway
+
+### Pré-requisitos
+- Conta no [Railway](https://railway.app)
+- Git instalado localmente
+
+### Passos para Deploy
+
+1. **Clone e prepare o repositório:**
+   ```bash
+   git clone <seu-repositorio>
+   cd Formulario_Flask
+   cp .env.example .env  # Configure as variáveis
+   ```
+
+2. **Configure as variáveis de ambiente no Railway:**
+   - `FLASK_SECRET`: Chave secreta forte (gere com `python -c "import secrets; print(secrets.token_hex(32))"`)
+   - `FLASK_DEBUG`: `False` (produção)
+   - `DATABASE_URL`: Configurada automaticamente pelo Railway (PostgreSQL)
+   - `PORT`: `8080` (padrão Railway)
+
+3. **Deploy via GitHub:**
+   - Conecte seu repositório GitHub ao Railway
+   - Railway detectará automaticamente o `Procfile` e `requirements.txt`
+   - O banco PostgreSQL será provisionado automaticamente
+
+4. **Configuração inicial:**
+   ```bash
+   # Após deploy, execute no Railway:
+   python railway_init.py
+   ```
+
+5. **Acesse sua aplicação:**
+   - URL será fornecida pelo Railway após deploy
+
+### Arquivos de Configuração para Railway
+- `Procfile`: Comando de inicialização
+- `runtime.txt`: Versão do Python
+- `requirements.txt`: Dependências atualizadas
+- `.env`: Variáveis de ambiente (NÃO commite)
+
+### ⚠️ Importante
+- Nunca commite o arquivo `.env` (já está no `.gitignore`)
+- Configure backups automáticos do banco no Railway
+- Monitore logs através do painel do Railway
+
+## �🛠️ Scripts Administrativos
 
 Para gerenciar administradores das barbearias:
 ```bash

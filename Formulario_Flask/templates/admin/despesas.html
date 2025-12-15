@@ -1,0 +1,669 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Controle de Despesas - {{ barbearia.nome }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<style>
+    * {
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        letter-spacing: -0.5px;
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+    
+    html, body {
+        max-width: 100vw;
+        width: 100%;
+        position: relative;
+        margin: 0;
+        padding: 0;
+        -webkit-overflow-scrolling: touch; /* Melhora scroll no iOS */
+        overscroll-behavior: none; /* Previne bounce effect */
+    }
+    
+    body {
+        background: #000;
+        color: #fff;
+    }
+    
+    /* Menu Mobile */
+    @media (max-width: 768px) {
+        #mobileMenuBtn { display: block !important; }
+        #desktopMenu { display: none !important; }
+    }
+    
+    @media (min-width: 769px) {
+        #mobileMenu { display: none !important; }
+    }
+    
+    .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+    
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: 800;
+        letter-spacing: -1px;
+    }
+    
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+    
+    .btn-primary {
+        background: #4a9eff;
+        color: #fff;
+    }
+    
+    .btn-primary:hover {
+        background: #357abd;
+        transform: translateY(-2px);
+    }
+    
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .stat-card {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(74, 158, 255, 0.2);
+        border-radius: 16px;
+        padding: 1.5rem;
+        backdrop-filter: blur(10px);
+    }
+    
+    .stat-card.danger {
+        border-color: rgba(239, 68, 68, 0.3);
+    }
+    
+    .stat-card.warning {
+        border-color: rgba(234, 179, 8, 0.3);
+    }
+    
+    .stat-card.success {
+        border-color: rgba(34, 197, 94, 0.3);
+    }
+    
+    .stat-label {
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.5);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 0.5rem;
+    }
+    
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+    }
+    
+    .stat-value.danger { color: #ef4444; }
+    .stat-value.warning { color: #eab308; }
+    .stat-value.success { color: #22c55e; }
+    
+    .filters {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(74, 158, 255, 0.2);
+        border-radius: 16px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+    
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .filter-label {
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.7);
+        font-weight: 600;
+    }
+    
+    select, input {
+        padding: 0.75rem 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(74, 158, 255, 0.3);
+        border-radius: 8px;
+        color: #fff;
+        font-size: 0.9rem;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+    }
+    
+    select:focus, input:focus {
+        outline: none;
+        border-color: #4a9eff;
+    }
+    
+    .table-container {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(74, 158, 255, 0.2);
+        border-radius: 16px;
+        padding: 2rem;
+        overflow-x: auto;
+    }
+    
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    
+    th {
+        padding: 1rem;
+        text-align: left;
+        font-weight: 600;
+        color: #4a9eff;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        border-bottom: 2px solid rgba(74, 158, 255, 0.3);
+    }
+    
+    td {
+        padding: 1rem;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    tr:hover {
+        background: rgba(74, 158, 255, 0.05);
+    }
+    
+    .badge {
+        padding: 0.35rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        display: inline-block;
+    }
+    
+    .badge-paga {
+        background: rgba(34, 197, 94, 0.2);
+        color: #22c55e;
+        border: 1px solid rgba(34, 197, 94, 0.3);
+    }
+    
+    .badge-pendente {
+        background: rgba(234, 179, 8, 0.2);
+        color: #eab308;
+        border: 1px solid rgba(234, 179, 8, 0.3);
+    }
+    
+    .badge-atrasada {
+        background: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+        border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    
+    .action-btn {
+        padding: 0.5rem 1rem;
+        border: none;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-right: 0.5rem;
+    }
+    
+    .btn-pay {
+        background: #22c55e;
+        color: #fff;
+    }
+    
+    .btn-pay:hover {
+        background: #16a34a;
+    }
+    
+    .btn-delete {
+        background: #ef4444;
+        color: #fff;
+    }
+    
+    .btn-delete:hover {
+        background: #dc2626;
+    }
+    
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .modal-content {
+        background: #1a1a1a;
+        border: 1px solid rgba(74, 158, 255, 0.3);
+        border-radius: 16px;
+        padding: 2rem;
+        max-width: 500px;
+        width: 90%;
+        max-height: 90vh;
+        overflow-y: auto;
+    }
+    
+    .modal-header {
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        color: #4a9eff;
+    }
+    
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+    
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+    
+    .form-input {
+        width: 100%;
+        padding: 0.75rem;
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(74, 158, 255, 0.3);
+        border-radius: 8px;
+        color: #fff;
+        font-size: 0.9rem;
+    }
+    
+    textarea {
+        min-height: 80px;
+        resize: vertical;
+    }
+    
+    .checkbox-group {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .modal-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+    
+    @media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+        
+        .container {
+            padding: 1rem;
+        }
+        
+        .page-title {
+            font-size: 1.8rem;
+        }
+        
+        table {
+            font-size: 0.85rem;
+        }
+    }
+</style>
+
+<body>
+
+<div class="container">
+    <!-- Header -->
+    <div class="page-header">
+        <h1 class="page-title">💳 Controle de <span style="color: #4a9eff;">Despesas</span></h1>
+        <button onclick="abrirModal()" class="btn btn-primary">
+            ➕ Nova Despesa
+        </button>
+    </div>
+
+    <!-- Estatísticas -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-label">💰 Total do Mês</div>
+            <div class="stat-value">R$ {{ "%.2f"|format(total_despesas) }}</div>
+        </div>
+        
+        <div class="stat-card success">
+            <div class="stat-label">✅ Pagas</div>
+            <div class="stat-value success">R$ {{ "%.2f"|format(total_pagas) }}</div>
+        </div>
+        
+        <div class="stat-card warning">
+            <div class="stat-label">⏳ Pendentes</div>
+            <div class="stat-value warning">R$ {{ "%.2f"|format(total_pendentes) }}</div>
+        </div>
+        
+        <div class="stat-card danger">
+            <div class="stat-label">🚨 Atrasadas</div>
+            <div class="stat-value danger">R$ {{ "%.2f"|format(total_atrasadas) }}</div>
+        </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="filters">
+        <div class="filter-group">
+            <label class="filter-label">Mês</label>
+            <input type="month" id="filtroMes" value="{{ mes_filtro }}" onchange="aplicarFiltros()">
+        </div>
+        
+        <div class="filter-group">
+            <label class="filter-label">Categoria</label>
+            <select id="filtroCategoria" onchange="aplicarFiltros()">
+                <option value="todas" {% if categoria_filtro == 'todas' %}selected{% endif %}>Todas</option>
+                <option value="aluguel" {% if categoria_filtro == 'aluguel' %}selected{% endif %}>Aluguel</option>
+                <option value="produtos" {% if categoria_filtro == 'produtos' %}selected{% endif %}>Produtos</option>
+                <option value="energia" {% if categoria_filtro == 'energia' %}selected{% endif %}>Energia</option>
+                <option value="agua" {% if categoria_filtro == 'agua' %}selected{% endif %}>Água</option>
+                <option value="internet" {% if categoria_filtro == 'internet' %}selected{% endif %}>Internet</option>
+                <option value="salarios" {% if categoria_filtro == 'salarios' %}selected{% endif %}>Salários</option>
+                <option value="outros" {% if categoria_filtro == 'outros' %}selected{% endif %}>Outros</option>
+            </select>
+        </div>
+        
+        <div class="filter-group">
+            <label class="filter-label">Status</label>
+            <select id="filtroStatus" onchange="aplicarFiltros()">
+                <option value="todas" {% if status_filtro == 'todas' %}selected{% endif %}>Todas</option>
+                <option value="pendente" {% if status_filtro == 'pendente' %}selected{% endif %}>Pendente</option>
+                <option value="paga" {% if status_filtro == 'paga' %}selected{% endif %}>Paga</option>
+                <option value="atrasada" {% if status_filtro == 'atrasada' %}selected{% endif %}>Atrasada</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Tabela de Despesas -->
+    <div class="table-container">
+        {% if despesas %}
+        <table>
+            <thead>
+                <tr>
+                    <th>Descrição</th>
+                    <th>Categoria</th>
+                    <th>Valor</th>
+                    <th>Vencimento</th>
+                    <th>Pagamento</th>
+                    <th>Status</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for despesa in despesas %}
+                <tr>
+                    <td>
+                        <strong>{{ despesa.descricao }}</strong>
+                        {% if despesa.recorrente %}
+                        <span style="color: #4a9eff; font-size: 0.8em;">🔄 Recorrente</span>
+                        {% endif %}
+                    </td>
+                    <td>{{ despesa.categoria|title }}</td>
+                    <td style="font-weight: 700; color: #4a9eff;">R$ {{ "%.2f"|format(despesa.valor) }}</td>
+                    <td>{{ despesa.data_vencimento.strftime('%d/%m/%Y') }}</td>
+                    <td>
+                        {% if despesa.data_pagamento %}
+                        {{ despesa.data_pagamento.strftime('%d/%m/%Y') }}
+                        {% else %}
+                        -
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="badge badge-{{ despesa.status }}">
+                            {% if despesa.status == 'paga' %}✓{% elif despesa.status == 'atrasada' %}🚨{% else %}⏳{% endif %}
+                            {{ despesa.status|title }}
+                        </span>
+                    </td>
+                    <td>
+                        {% if despesa.status != 'paga' %}
+                        <button onclick="pagarDespesa('{{ despesa.uuid }}')" class="action-btn btn-pay">💳 Pagar</button>
+                        {% endif %}
+                        <button onclick="excluirDespesa('{{ despesa.uuid }}')" class="action-btn btn-delete">🗑️</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <div style="text-align: center; padding: 3rem; color: rgba(255, 255, 255, 0.5);">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">💳</div>
+            <p>Nenhuma despesa encontrada para este período</p>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Modal Nova Despesa -->
+<div id="modalNovaDespesa" class="modal">
+    <div class="modal-content">
+        <h2 class="modal-header">➕ Nova Despesa</h2>
+        
+        <div class="form-group">
+            <label class="form-label">Descrição *</label>
+            <input type="text" id="descricao" class="form-input" placeholder="Ex: Aluguel da loja" required>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Categoria *</label>
+            <select id="categoria" class="form-input" required>
+                <option value="">Selecione...</option>
+                <option value="aluguel">Aluguel</option>
+                <option value="produtos">Produtos</option>
+                <option value="energia">Energia</option>
+                <option value="agua">Água</option>
+                <option value="internet">Internet</option>
+                <option value="salarios">Salários</option>
+                <option value="outros">Outros</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Valor (R$) *</label>
+            <input type="number" id="valor" class="form-input" step="0.01" min="0" placeholder="0.00" required>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Data de Vencimento *</label>
+            <input type="date" id="dataVencimento" class="form-input" required>
+        </div>
+        
+        <div class="form-group">
+            <div class="checkbox-group">
+                <input type="checkbox" id="recorrente" style="width: auto;">
+                <label for="recorrente">Despesa recorrente (mensal)</label>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label class="form-label">Observações</label>
+            <textarea id="observacoes" class="form-input" placeholder="Informações adicionais..."></textarea>
+        </div>
+        
+        <div class="modal-actions">
+            <button onclick="salvarDespesa()" class="btn btn-primary" style="flex: 1;">💾 Salvar</button>
+            <button onclick="fecharModal()" class="btn" style="flex: 1; background: rgba(255, 255, 255, 0.1); color: #fff;">❌ Cancelar</button>
+        </div>
+    </div>
+</div>
+
+<script>
+function toggleMobileMenu() {
+    const menu = document.getElementById('mobileMenu');
+    const btn = document.getElementById('mobileMenuBtn');
+    if (menu.style.display === 'none' || menu.style.display === '') {
+        menu.style.display = 'block';
+        btn.textContent = '✕';
+    } else {
+        menu.style.display = 'none';
+        btn.textContent = '☰';
+    }
+}
+
+function aplicarFiltros() {
+    const mes = document.getElementById('filtroMes').value;
+    const categoria = document.getElementById('filtroCategoria').value;
+    const status = document.getElementById('filtroStatus').value;
+    
+    window.location.href = `{{ url_for('admin_despesas', slug=barbearia.slug) }}?mes=${mes}&categoria=${categoria}&status=${status}`;
+}
+
+function abrirModal() {
+    document.getElementById('modalNovaDespesa').style.display = 'flex';
+}
+
+function fecharModal() {
+    document.getElementById('modalNovaDespesa').style.display = 'none';
+    // Limpar campos
+    document.getElementById('descricao').value = '';
+    document.getElementById('categoria').value = '';
+    document.getElementById('valor').value = '';
+    document.getElementById('dataVencimento').value = '';
+    document.getElementById('recorrente').checked = false;
+    document.getElementById('observacoes').value = '';
+}
+
+async function salvarDespesa() {
+    const descricao = document.getElementById('descricao').value;
+    const categoria = document.getElementById('categoria').value;
+    const valor = document.getElementById('valor').value;
+    const dataVencimento = document.getElementById('dataVencimento').value;
+    const recorrente = document.getElementById('recorrente').checked;
+    const observacoes = document.getElementById('observacoes').value;
+    
+    if (!descricao || !categoria || !valor || !dataVencimento) {
+        alert('Preencha todos os campos obrigatórios!');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`{{ url_for('admin_adicionar_despesa', slug=barbearia.slug) }}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token() }}'
+            },
+            body: JSON.stringify({
+                descricao,
+                categoria,
+                valor,
+                data_vencimento: dataVencimento,
+                recorrente,
+                observacoes
+            })
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            alert(data.message);
+            location.reload();
+        } else {
+            alert('Erro: ' + data.message);
+        }
+    } catch (error) {
+        console.error('Erro:', error);
+        alert('Erro ao salvar despesa');
+    }
+}
+
+async function pagarDespesa(uuid) {
+    if (!confirm('Confirmar pagamento desta despesa?')) return;
+    
+    try {
+        const response = await fetch(`{{ url_for('admin_pagar_despesa', slug=barbearia.slug, despesa_uuid='UUID_PLACEHOLDER') }}`.replace('UUID_PLACEHOLDER', uuid), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token() }}'
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            alert(data.message);
+            location.reload();
+        } else {
+            alert('Erro: ' + data.message);
+        }
+    } catch (error) {
+        console.error('Erro:', error);
+        alert('Erro ao pagar despesa');
+    }
+}
+
+async function excluirDespesa(uuid) {
+    if (!confirm('Tem certeza que deseja excluir esta despesa?')) return;
+    
+    try {
+        const response = await fetch(`{{ url_for('admin_excluir_despesa', slug=barbearia.slug, despesa_uuid='UUID_PLACEHOLDER') }}`.replace('UUID_PLACEHOLDER', uuid), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token() }}'
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            alert(data.message);
+            location.reload();
+        } else {
+            alert('Erro: ' + data.message);
+        }
+    } catch (error) {
+        console.error('Erro:', error);
+        alert('Erro ao excluir despesa');
+    }
+}
+
+// Fechar modal ao clicar fora
+document.getElementById('modalNovaDespesa').addEventListener('click', function(e) {
+    if (e.target === this) {
+        fecharModal();
+    }
+});
+</script>
+
+</body>
+</html>

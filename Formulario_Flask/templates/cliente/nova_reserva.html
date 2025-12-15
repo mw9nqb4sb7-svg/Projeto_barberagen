@@ -11,24 +11,23 @@
 }
 </style>
 
-<!-- Simple Navbar -->
-<nav style="background: rgba(26, 26, 26, 0.6); padding: 1.5rem 2rem; border-bottom: 2px solid rgba(74, 158, 255, 0.3); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 100; margin: 0; width: 100%; box-sizing: border-box;">
-    <div style="max-width: 1400px; margin: 0 auto; display: flex; align-items: center; gap: 1.5rem; width: 100%; box-sizing: border-box;">
-        {% if barbearia.logo %}
-        <img src="{{ url_for('static', filename='uploads/logos/' + barbearia.logo) }}" 
-             alt="{{ barbearia.nome }}" 
-             style="height: 50px; width: auto; filter: drop-shadow(0 4px 15px rgba(74, 158, 255, 0.4));">
-        {% endif %}
-        <h1 style="color: #ffffff; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.5rem; font-weight: 900; margin: 0; letter-spacing: -0.5px;">
-            <span style="color: #4a9eff; -webkit-text-fill-color: #4a9eff !important;">{{ barbearia.nome.split()[0] }}</span>
-            <span style="color: #ffffff; -webkit-text-fill-color: #ffffff !important;">{{ barbearia.nome.split()[1:] | join(' ') }}</span>
-        </h1>
-    </div>
-</nav>
+<style>
+/* Hide global navbar on mobile for better booking UX */
+@media (max-width: 768px) {
+    .navbar { display: none !important; }
+    /* ensure page content doesn't get hidden behind fixed nav spacing */
+    .container, .custom-container { padding-top: 0 !important; }
+    html, body { scroll-padding-top: 0 !important; }
+}
+</style>
+
+{% set extra_nav_html = '' %}
+{% include 'cliente/_navbar.html' %}
 
 <!-- Main Content -->
 <div style="max-width: 900px; margin: 3rem auto; padding: 0 2rem; width: 100%; box-sizing: border-box;">
     <form method="POST" id="reservaForm">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         
         <!-- Step 1: Profissional (simulado como serviço por enquanto) -->
         <div id="section-step-1" class="step-section" style="display: block;">

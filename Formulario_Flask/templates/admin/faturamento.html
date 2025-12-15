@@ -1,0 +1,612 @@
+{% extends "base.html" %}
+{% block title %}Dashboard de Faturamento - {{ barbearia.nome }}{% endblock %}
+
+{% block content %}
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    html, body {
+        max-width: 100vw;
+        width: 100%;
+        position: relative;
+        margin: 0;
+        padding: 0;
+        -webkit-overflow-scrolling: touch; /* Melhora scroll no iOS */
+        overscroll-behavior: none; /* Previne bounce effect */
+    }
+
+    body {
+        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+        color: #ffffff;
+        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+        min-height: 100vh;
+        padding-top: 100px;
+    }
+
+    .navbar {
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.95) 0%, rgba(13, 13, 13, 0.98) 100%);
+        border-bottom: 3px solid #4a9eff;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        padding: 1.5rem 2rem;
+    }
+
+    .navbar-content {
+        max-width: 1600px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .navbar-brand {
+        font-size: 1.5rem;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+
+    .navbar-menu {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .btn {
+        padding: 0.8rem 1.5rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background: #4a9eff;
+        color: #000000;
+    }
+
+    .btn-primary:hover {
+        background: #3a8eef;
+        transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+        background: transparent;
+        color: #ffffff;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .container {
+        max-width: 1600px;
+        margin: 0 auto;
+        padding: 2rem;
+        width: 100%;
+        box-sizing: border-box;
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+    .page-header {
+        margin-bottom: 2rem;
+    }
+
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        letter-spacing: -0.5px;
+    }
+
+    .page-subtitle {
+        font-size: 1.1rem;
+        color: rgba(255, 255, 255, 0.7);
+    }
+
+    .date-selector {
+        background: rgba(74, 158, 255, 0.05);
+        border: 1px solid rgba(74, 158, 255, 0.2);
+        border-radius: 15px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .date-selector label {
+        font-weight: 600;
+        color: #4a9eff;
+    }
+
+    .date-selector input[type="date"] {
+        background: rgba(0, 0, 0, 0.5);
+        border: 1px solid rgba(74, 158, 255, 0.3);
+        color: #ffffff;
+        padding: 0.8rem 1rem;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-family: inherit;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: rgba(74, 158, 255, 0.05);
+        border: 1px solid rgba(74, 158, 255, 0.2);
+        border-radius: 15px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-5px);
+        border-color: #4a9eff;
+        box-shadow: 0 10px 30px rgba(74, 158, 255, 0.2);
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.6);
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #4a9eff;
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-detail {
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.5);
+    }
+
+    .charts-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .chart-card {
+        background: rgba(74, 158, 255, 0.05);
+        border: 1px solid rgba(74, 158, 255, 0.2);
+        border-radius: 15px;
+        padding: 2rem;
+    }
+
+    .chart-title {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #4a9eff;
+        margin-bottom: 1.5rem;
+    }
+
+    .bar-chart {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .bar-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .bar-label {
+        min-width: 100px;
+        font-size: 0.9rem;
+        color: rgba(255, 255, 255, 0.8);
+    }
+
+    .bar-container {
+        flex: 1;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 10px;
+        height: 30px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #4a9eff 0%, #2563eb 100%);
+        border-radius: 10px;
+        transition: width 0.5s ease;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        padding-right: 0.5rem;
+    }
+
+    .bar-value {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #ffffff;
+        white-space: nowrap;
+    }
+
+    .ranking-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .ranking-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        background: rgba(0, 0, 0, 0.3);
+        padding: 1rem;
+        border-radius: 10px;
+        border-left: 3px solid #4a9eff;
+    }
+
+    .ranking-position {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #4a9eff;
+        min-width: 40px;
+        text-align: center;
+    }
+
+    .ranking-info {
+        flex: 1;
+    }
+
+    .ranking-name {
+        font-weight: 600;
+        color: #ffffff;
+        margin-bottom: 0.3rem;
+    }
+
+    .ranking-detail {
+        font-size: 0.85rem;
+        color: rgba(255, 255, 255, 0.6);
+    }
+
+    .ranking-value {
+        font-size: 1.2rem;
+        font-weight: 700;
+        color: #4a9eff;
+    }
+
+    .full-width-chart {
+        grid-column: 1 / -1;
+    }
+
+    .month-chart {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 0.5rem;
+        margin-top: 1rem;
+    }
+
+    .month-bar {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .month-bar-container {
+        width: 100%;
+        height: 150px;
+        background: rgba(0, 0, 0, 0.3);
+        border-radius: 5px;
+        display: flex;
+        align-items: flex-end;
+        position: relative;
+    }
+
+    .month-bar-fill {
+        width: 100%;
+        background: linear-gradient(180deg, #4a9eff 0%, #2563eb 100%);
+        border-radius: 5px 5px 0 0;
+        transition: height 0.5s ease;
+    }
+
+    .month-label {
+        font-size: 0.8rem;
+        color: rgba(255, 255, 255, 0.7);
+        font-weight: 600;
+    }
+
+    @media (max-width: 1200px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .charts-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .month-chart {
+            grid-template-columns: repeat(6, 1fr);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: 1fr;
+        }
+
+        /* Ajuste: empilhar navbar no mobile para evitar overflow */
+        .navbar-content {
+            flex-direction: column;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        #mobileMenuBtn {
+            display: block !important;
+        }
+        
+        #desktopMenu {
+            display: none !important;
+        }
+        
+        .navbar-brand {
+            font-size: 1.1rem;
+        }
+
+        .month-chart {
+            grid-template-columns: repeat(4, 1fr);
+            overflow-x: auto; /* permitir scroll interno ao invés de estourar a página */
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .month-chart .month-bar {
+            min-width: 0; /* evitar que labels forçem largura minima */
+        }
+    }
+    
+    @media (min-width: 769px) {
+        #mobileMenu {
+            display: none !important;
+        }
+    }
+    
+    #mobileMenu {
+        transition: all 0.3s ease;
+    }
+    
+    #mobileMenuBtn {
+        display: none;
+        background: rgba(74, 158, 255, 0.1);
+        border: 1px solid rgba(74, 158, 255, 0.3);
+        color: #4a9eff;
+        padding: 0.5rem 0.75rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1.5rem;
+        line-height: 1;
+    }
+</style>
+
+<!-- Container Principal -->
+<div class="container">
+    <!-- Header -->
+    <div class="page-header">
+        <h1 class="page-title">
+            💰 Dashboard de <span style="color: #4a9eff;">Faturamento</span>
+        </h1>
+        <p class="page-subtitle">
+            Análise completa de receitas e performance do seu negócio
+        </p>
+    </div>
+
+    <!-- Seletor de Data -->
+    <div class="date-selector">
+        <label for="data-select">📅 Selecionar Data:</label>
+        <input type="date" 
+               id="data-select" 
+               value="{{ data_selecionada.strftime('%Y-%m-%d') }}"
+               onchange="window.location.href='{{ url_for('admin_faturamento', slug=barbearia.slug) }}?data=' + this.value">
+        <span style="color: rgba(255, 255, 255, 0.7); margin-left: auto;">
+            {{ data_selecionada.strftime('%d/%m/%Y') }}
+        </span>
+    </div>
+
+    <!-- Cards de Estatísticas -->
+    <div class="stats-grid">
+        <!-- Faturamento do Dia -->
+        <div class="stat-card">
+            <div class="stat-label">
+                📆 Faturamento do Dia
+            </div>
+            <div class="stat-value">
+                R$ {{ "%.2f"|format(faturamento_dia) }}
+            </div>
+            <div class="stat-detail">
+                {{ quantidade_dia }} atendimento{{ 's' if quantidade_dia != 1 else '' }}
+            </div>
+        </div>
+
+        <!-- Faturamento da Semana -->
+        <div class="stat-card">
+            <div class="stat-label">
+                📅 Faturamento da Semana
+            </div>
+            <div class="stat-value">
+                R$ {{ "%.2f"|format(faturamento_semana) }}
+            </div>
+            <div class="stat-detail">
+                {{ quantidade_semana }} atendimentos • {{ inicio_semana.strftime('%d/%m') }} a {{ fim_semana.strftime('%d/%m') }}
+            </div>
+        </div>
+
+        <!-- Faturamento do Mês -->
+        <div class="stat-card">
+            <div class="stat-label">
+                📊 Faturamento do Mês
+            </div>
+            <div class="stat-value">
+                R$ {{ "%.2f"|format(faturamento_mes) }}
+            </div>
+            <div class="stat-detail">
+                {{ quantidade_mes }} atendimentos • {{ inicio_mes.strftime('%B/%Y') }}
+            </div>
+        </div>
+
+        <!-- Faturamento do Ano -->
+        <div class="stat-card">
+            <div class="stat-label">
+                📈 Faturamento do Ano
+            </div>
+            <div class="stat-value">
+                R$ {{ "%.2f"|format(faturamento_ano) }}
+            </div>
+            <div class="stat-detail">
+                {{ quantidade_ano }} atendimentos • {{ data_selecionada.strftime('%Y') }}
+            </div>
+        </div>
+    </div>
+
+    <!-- Gráficos -->
+    <div class="charts-grid">
+        <!-- Faturamento por Dia da Semana -->
+        <div class="chart-card">
+            <h3 class="chart-title">📊 Faturamento por Dia da Semana</h3>
+            <div class="bar-chart">
+                {% set dias_ordem = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'] %}
+                {% set dias_pt = {'Monday': 'Segunda', 'Tuesday': 'Terça', 'Wednesday': 'Quarta', 'Thursday': 'Quinta', 'Friday': 'Sexta', 'Saturday': 'Sábado', 'Sunday': 'Domingo'} %}
+                {% set max_valor_semana = faturamento_por_dia.values()|map(attribute='valor')|max %}
+                {% for dia_en in dias_ordem %}
+                    {% set dia_data = faturamento_por_dia.get(dia_en, {'valor': 0, 'quantidade': 0}) %}
+                    <div class="bar-item">
+                        <div class="bar-label">{{ dias_pt[dia_en] }}</div>
+                        <div class="bar-container">
+                            <div class="bar-fill" style="width: {{ (dia_data.valor / max_valor_semana * 100) if max_valor_semana > 0 else 0 }}%;">
+                                <span class="bar-value">R$ {{ "%.2f"|format(dia_data.valor) }}</span>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Serviços Mais Vendidos -->
+        <div class="chart-card">
+            <h3 class="chart-title">⭐ Serviços Mais Vendidos (Mês)</h3>
+            {% if servicos_mais_vendidos %}
+            <div class="ranking-list">
+                {% for servico, stats in servicos_mais_vendidos %}
+                <div class="ranking-item">
+                    <div class="ranking-position">{{ loop.index }}º</div>
+                    <div class="ranking-info">
+                        <div class="ranking-name">{{ servico }}</div>
+                        <div class="ranking-detail">{{ stats.quantidade }} vendas</div>
+                    </div>
+                    <div class="ranking-value">R$ {{ "%.2f"|format(stats.valor) }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p style="color: rgba(255, 255, 255, 0.5); text-align: center; padding: 2rem;">
+                Nenhum serviço vendido neste mês
+            </p>
+            {% endif %}
+        </div>
+
+        <!-- Barbeiros Top Performance -->
+        <div class="chart-card">
+            <h3 class="chart-title">✂️ Top Barbeiros (Mês)</h3>
+            {% if barbeiros_top %}
+            <div class="ranking-list">
+                {% for barbeiro, stats in barbeiros_top %}
+                <div class="ranking-item">
+                    <div class="ranking-position">{{ loop.index }}º</div>
+                    <div class="ranking-info">
+                        <div class="ranking-name">{{ barbeiro }}</div>
+                        <div class="ranking-detail">{{ stats.quantidade }} atendimentos</div>
+                    </div>
+                    <div class="ranking-value">R$ {{ "%.2f"|format(stats.valor) }}</div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <p style="color: rgba(255, 255, 255, 0.5); text-align: center; padding: 2rem;">
+                Nenhum atendimento registrado neste mês
+            </p>
+            {% endif %}
+        </div>
+
+        <!-- Faturamento Mensal do Ano -->
+        <div class="chart-card full-width-chart">
+            <h3 class="chart-title">📈 Evolução Anual de Faturamento</h3>
+            <div class="month-chart">
+                {% set meses = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'] %}
+                {% set max_valor_ano = faturamento_por_mes.values()|map(attribute='valor')|max %}
+                {% for mes in range(1, 13) %}
+                    {% set mes_data = faturamento_por_mes.get(mes, {'valor': 0, 'quantidade': 0}) %}
+                    <div class="month-bar">
+                        <div class="month-bar-container" title="R$ {{ '%.2f'|format(mes_data.valor) }} - {{ mes_data.quantidade }} atendimentos">
+                            <div class="month-bar-fill" style="height: {{ (mes_data.valor / max_valor_ano * 100) if max_valor_ano > 0 else 0 }}%;"></div>
+                        </div>
+                        <div class="month-label">{{ meses[mes-1] }}</div>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Menu Mobile Toggle
+    function toggleMobileMenu() {
+        const mobileMenu = document.getElementById('mobileMenu');
+        const btn = document.getElementById('mobileMenuBtn');
+        
+        if (mobileMenu.style.display === 'none' || mobileMenu.style.display === '') {
+            mobileMenu.style.display = 'block';
+            btn.textContent = '✕';
+        } else {
+            mobileMenu.style.display = 'none';
+            btn.textContent = '☰';
+        }
+    }
+    
+    // Animação dos gráficos ao carregar
+    document.addEventListener('DOMContentLoaded', function() {
+        const barFills = document.querySelectorAll('.bar-fill, .month-bar-fill');
+        barFills.forEach(bar => {
+            const width = bar.style.width;
+            const height = bar.style.height;
+            bar.style.width = '0%';
+            bar.style.height = '0%';
+            setTimeout(() => {
+                bar.style.width = width;
+                bar.style.height = height;
+            }, 100);
+        });
+    });
+</script>
+{% endblock %}

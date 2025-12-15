@@ -1,0 +1,252 @@
+<style>
+    /* Navbar partial - adapted to match the dashboard mobile behavior */
+    .navbar {
+        background: rgba(26, 26, 26, 0.95);
+        border-bottom: 2px solid rgba(74, 158, 255, 0.3);
+        position: sticky;
+        top: 0;
+        z-index: 1100;
+        backdrop-filter: blur(8px);
+        width: 100%;
+    }
+
+    .navbar-content {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 1.2rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        position: relative;
+    }
+
+    .navbar-brand {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .navbar-logo {
+        height: 44px;
+        width: auto;
+        filter: drop-shadow(0 4px 15px rgba(74, 158, 255, 0.4));
+    }
+
+    .navbar-name { font-size: 1.05rem; font-weight: 800; margin-left: 0.6rem; }
+
+    .navbar-title-wrap { display: none; }
+    .navbar-subtitle { color: rgba(255,255,255,0.75); font-size: 0.85rem; font-weight:600; }
+
+    .navbar-menu { display: flex; align-items: center; gap: 0.8rem; }
+
+    .navbar-menu a { text-decoration: none; color: rgba(255,255,255,0.9); font-weight:700; padding:0.6rem 0.9rem; border-radius:12px; }
+    .navbar-menu a:hover { color: #fff; background: rgba(74,158,255,0.06); }
+
+    /* Buttons: transparent background, visible border for contrast */
+    .btn-primary { background: transparent; color:#ffffff; padding:0.6rem 1rem; border-radius:50px; font-weight:800; border:2px solid rgba(74,158,255,0.18); box-shadow: none; }
+    .btn-secondary { background: transparent; color:#ffffff; padding:0.5rem 0.9rem; border-radius:50px; border:2px solid rgba(255,255,255,0.08); box-shadow: none; }
+
+    /* Responsive behavior: match the dashboard's mobile stacking */
+    @media (max-width: 968px) {
+        .navbar {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            width: 100% !important;
+            z-index: 1200 !important;
+        }
+        .navbar-content { flex-direction: column; align-items: stretch; gap: 0.75rem; padding: 1rem; }
+        .navbar-brand { width: 100%; justify-content: center; }
+        .navbar-title-wrap { display: block; text-align: center; margin-top: 4px; }
+        .navbar-menu { width: 100%; flex-direction: column; align-items: stretch; gap: 0.75rem; }
+        .navbar-menu a, .navbar-menu .btn-primary, .navbar-menu .btn-secondary { width: 100%; justify-content: center; padding: 0.85rem 1rem; border-radius: 12px; }
+        /* larger touch targets on mobile */
+        .navbar-menu a, .navbar-menu button { touch-action: manipulation; -webkit-tap-highlight-color: rgba(0,0,0,0.1); }
+    }
+
+    @media (max-width: 480px) {
+        .navbar-content { padding: 0.75rem 1rem; }
+        .navbar-name { font-size: 1rem; }
+        .navbar-subtitle { font-size: 0.8rem; }
+    }
+    /* Mobile button/menu behavior similar to admin/despesas */
+    @media (max-width: 768px) {
+        #mobileMenuBtn { display: block !important; }
+        #desktopMenu { display: none !important; }
+    }
+    @media (min-width: 769px) {
+        #mobileMenu { display: none !important; }
+    }
+</style>
+
+<nav class="navbar">
+    <div class="navbar-content">
+        <div class="navbar-brand" style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.0rem; font-weight: 700; display: flex; align-items: center;">
+            {% if barbearia.logo %}
+                <img src="{{ url_for('static', filename='uploads/logos/' + barbearia.logo) }}" alt="{{ barbearia.nome }}" class="navbar-logo">
+            {% endif %}
+            {% set nome_parts = (barbearia.nome.split() if barbearia and barbearia.nome else []) %}
+            {% if nome_parts and nome_parts|length >= 2 %}
+                <div class="navbar-name"><span style="color: #ffffff;">{{ nome_parts[0] }} {{ nome_parts[1] }}</span><span style="color: #4a9eff;">{{ ' '.join(nome_parts[2:]) if nome_parts|length > 2 else '' }}</span></div>
+            {% elif barbearia and barbearia.nome %}
+                <div class="navbar-name"><span style="color:#ffffff;">{{ barbearia.nome }}</span></div>
+            {% else %}
+                <div class="navbar-name"><span style="color:#ffffff;">Barbearia</span></div>
+            {% endif %}
+        </div>
+
+        <div class="navbar-title-wrap">
+            <div class="navbar-subtitle">{% if user_type == 'barbeiro' %}✂️ Barbeiro{% else %}👤 Cliente{% endif %} • Olá, {{ session.usuario_nome }}</div>
+        </div>
+
+        <button id="mobileMenuBtn" onclick="toggleMobileMenu()" aria-controls="mobileMenu" aria-expanded="false" aria-label="Abrir menu" style="display: none; background: rgba(74, 158, 255, 0.1); border: 1px solid rgba(74, 158, 255, 0.3); color: #4a9eff; padding: 0.5rem 0.75rem; border-radius: 8px; cursor: pointer; font-size: 1.5rem; line-height: 1;">☰</button>
+
+        <div id="desktopMenu" class="navbar-menu">
+            <a href="{{ url_for('nova_reserva', slug=barbearia.slug) }}" class="btn-primary">📅 AGENDAR</a>
+            {% if user_type == 'barbeiro' %}
+                {% if barbearia %}
+                    <a href="{{ url_for('admin_servicos', slug=barbearia.slug) }}" class="btn-secondary">⚙️ SERVIÇOS</a>
+                {% else %}
+                    <a href="{{ url_for('servicos', b=request.args.get('b', '')) }}" class="btn-secondary">⚙️ SERVIÇOS</a>
+                {% endif %}
+            {% else %}
+                <a href="{{ url_for('planos_mensais', slug=barbearia.slug if barbearia else get_current_barbearia_slug()) }}" class="btn-secondary">💎 PLANOS</a>
+            {% endif %}
+            {% if extra_nav_html is defined and extra_nav_html %}
+                {{ extra_nav_html|safe }}
+            {% endif %}
+            <a href="{{ url_for('logout', slug=barbearia.slug if barbearia else 'principal') }}" class="btn-primary">🚪 SAIR</a>
+        </div>
+
+        <div id="mobileMenu" role="menu" aria-hidden="true" style="display: none;">
+            <div style="display: flex; flex-direction: column; gap: 0.75rem; padding-top: 0.75rem;">
+                <a href="{{ url_for('dashboard', slug=barbearia.slug if barbearia else get_current_barbearia_slug()) }}" style="padding: 0.85rem 1rem; background: rgba(74, 158, 255, 0.06); color: #fff; text-decoration: none; border-radius: 8px;">🏠 Dashboard</a>
+                <a href="{{ url_for('nova_reserva', slug=barbearia.slug) }}" style="padding: 0.85rem 1rem; background: rgba(74, 158, 255, 0.06); color: #fff; text-decoration: none; border-radius: 8px;">📅 AGENDAR</a>
+                {% if user_type == 'barbeiro' %}
+                    {% if barbearia %}
+                        <a href="{{ url_for('admin_servicos', slug=barbearia.slug) }}" style="padding: 0.85rem 1rem; background: rgba(74, 158, 255, 0.06); color: #fff; text-decoration: none; border-radius: 8px;">⚙️ SERVIÇOS</a>
+                    {% else %}
+                        <a href="{{ url_for('servicos', b=request.args.get('b', '')) }}" style="padding: 0.85rem 1rem; background: rgba(74, 158, 255, 0.06); color: #fff; text-decoration: none; border-radius: 8px;">⚙️ SERVIÇOS</a>
+                    {% endif %}
+                {% else %}
+                    <a href="{{ url_for('planos_mensais', slug=barbearia.slug if barbearia else get_current_barbearia_slug()) }}" style="padding: 0.85rem 1rem; background: rgba(74, 158, 255, 0.06); color: #fff; text-decoration: none; border-radius: 8px;">💎 PLANOS</a>
+                {% endif %}
+                {% if extra_nav_html is defined and extra_nav_html %}
+                    {{ extra_nav_html|safe }}
+                {% endif %}
+                <a href="{{ url_for('logout', slug=barbearia.slug if barbearia else 'principal') }}" style="padding: 0.85rem 1rem; background: rgba(255, 59, 48, 0.06); color: #ff3b30; text-decoration: none; border-radius: 8px;">🚪 SAIR</a>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<script>
+// Ensure navbar doesn't overlap page content: adjust .container padding-top dynamically
+(function(){
+    function adjustContainers(){
+        try{
+            const nav = document.querySelector('.navbar');
+            if(!nav) return;
+            const navH = nav.offsetHeight || 0;
+            const containers = Array.from(document.querySelectorAll('.container'))
+                .concat(Array.from(document.querySelectorAll('.custom-container')));
+            containers.forEach(c => {
+                try{
+                    const desired = navH + 8;
+                    c.style.paddingTop = desired + 'px';
+                    c.dataset.navAdjusted = 'true';
+                }catch(e){ /* ignore per-container errors */ }
+            });
+            // Also ensure body has enough top padding on small screens
+            try{
+                if(window.innerWidth <= 968){
+                    document.body.style.paddingTop = (navH + 8) + 'px';
+                } else {
+                    // remove forced body padding on larger screens
+                    if(document.body.dataset.navAdjusted === 'true'){
+                        document.body.style.paddingTop = '';
+                        delete document.body.dataset.navAdjusted;
+                    }
+                }
+            }catch(e){}
+            // Ensure in-page anchors and browser scrolls stop before the navbar
+            try {
+                document.documentElement.style.scrollPaddingTop = (navH + 8) + 'px';
+            } catch(e) { /* ignore */ }
+        }catch(e){ console && console.error && console.error('adjustContainers', e); }
+    }
+    window.addEventListener('load', adjustContainers);
+    window.addEventListener('resize', function(){ setTimeout(adjustContainers, 80); });
+    // Also run on DOMContentLoaded in case load already passed
+    document.addEventListener('DOMContentLoaded', adjustContainers);
+})();
+</script>
+<script>
+function toggleMobileMenu(){
+    try{
+        const btn = document.getElementById('mobileMenuBtn');
+        const menu = document.getElementById('mobileMenu');
+        if(!menu || !btn) return;
+        const isClosed = menu.style.display === 'none' || menu.style.display === '';
+        if(isClosed){
+            menu.style.display = 'block';
+            menu.setAttribute('aria-hidden', 'false');
+            btn.setAttribute('aria-expanded', 'true');
+            btn.innerText = '✕';
+            // focus first focusable link inside menu
+            const first = menu.querySelector('a, button');
+            if(first) first.focus();
+            // add outside click listener
+            setTimeout(() => {
+                document.addEventListener('click', outsideMenuClick);
+                document.addEventListener('keydown', escCloseMenu);
+            }, 50);
+        } else {
+            closeMobileMenu();
+        }
+    }catch(e){ console && console.error && console.error('toggleMobileMenu', e); }
+}
+
+function closeMobileMenu(){
+    try{
+        const btn = document.getElementById('mobileMenuBtn');
+        const menu = document.getElementById('mobileMenu');
+        if(!menu || !btn) return;
+        menu.style.display = 'none';
+        menu.setAttribute('aria-hidden', 'true');
+        btn.setAttribute('aria-expanded', 'false');
+        btn.innerText = '☰';
+        document.removeEventListener('click', outsideMenuClick);
+        document.removeEventListener('keydown', escCloseMenu);
+        // return focus to button
+        btn.focus();
+    }catch(e){ console && console.error && console.error('closeMobileMenu', e); }
+}
+
+function outsideMenuClick(e){
+    const menu = document.getElementById('mobileMenu');
+    const btn = document.getElementById('mobileMenuBtn');
+    if(!menu) return;
+    if(menu.contains(e.target) || btn.contains(e.target)) return;
+    closeMobileMenu();
+}
+
+function escCloseMenu(e){
+    if(e.key === 'Escape' || e.key === 'Esc'){
+        closeMobileMenu();
+    }
+}
+
+// Close menu when any menu link is clicked (navigate)
+document.addEventListener('click', function(e){
+    const menu = document.getElementById('mobileMenu');
+    if(!menu) return;
+    const target = e.target;
+    if(menu.contains(target) && (target.tagName === 'A' || target.closest('a'))){
+        // let the navigation happen then close (small timeout)
+        setTimeout(closeMobileMenu, 100);
+    }
+});
+</script>

@@ -1,12 +1,115 @@
-{% extends "base.html" %}
-{% block title %}Configurar Semana - {{ data_inicio.strftime('%d/%m/%Y') }}{% endblock %}
-
-{% block content %}
-    <h1>Configurar Semana</h1>
-    <h2>{{ data_inicio.strftime('%d/%m/%Y') }} - {{ data_fim.strftime('%d/%m/%Y') }}</h2>
-
-    <div class="card-form">
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurar Semana - {{ data_inicio.strftime('%d/%m/%Y') }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            max-width: 100vw;
+            -webkit-overflow-scrolling: touch;
+            overscroll-behavior: none;
+        }
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: #000;
+            color: #fff;
+            line-height: 1.6;
+            letter-spacing: -0.5px;
+        }
+        
+        .navbar {
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1.2rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid rgba(74, 158, 255, 0.2);
+        }
+        
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+        }
+        
+        .nav-brand {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #4a9eff;
+            letter-spacing: -1px;
+        }
+        
+        .nav-link {
+            color: #fff;
+            text-decoration: none;
+            padding: 0.7rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            background: rgba(74, 158, 255, 0.1);
+            letter-spacing: -0.3px;
+        }
+        
+        .nav-link:hover {
+            background: #4a9eff;
+            transform: translateY(-2px);
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        
+        .hero-section {
+            text-align: center;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .hero-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            letter-spacing: -1.5px;
+            line-height: 1.2;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.1rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    
+    <div class="container">
+        <!-- Hero Section -->
+        <div class="hero-section">
+            <h1 class="hero-title">⚙️ Configurar Semana</h1>
+            <p class="hero-subtitle">{{ data_inicio.strftime('%d/%m/%Y') }} - {{ data_fim.strftime('%d/%m/%Y') }}</p>
+        </div>
+        
+        <div class="card-form">
         <form method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             {% for dia_codigo, dia_nome in dias_opcoes %}
                 {% set dia_config = config.get(dia_codigo, {'ativo': False, 'horarios': []}) %}
                 
@@ -170,120 +273,236 @@
     });
     </script>
 
+        <!-- Footer -->
+        <div class="footer">
+            Desenvolvido por <span class="footer-brand">BarberConnect</span>
+        </div>
+    </div>
+</body>
+</html>
+
     <style>
+    .card-form {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(74, 158, 255, 0.2);
+        border-radius: 16px;
+        padding: 2rem;
+    }
+    
     .dia-section {
-        margin-bottom: 35px;
-        padding: 20px;
-        border: 1px solid #dee2e6;
-        border-radius: 8px;
-        background: #f8f9fa;
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        border: 1px solid rgba(74, 158, 255, 0.2);
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.02);
+        transition: all 0.3s ease;
+    }
+    
+    .dia-section:hover {
+        background: rgba(74, 158, 255, 0.03);
+        border-color: rgba(74, 158, 255, 0.3);
     }
 
     .dia-header {
-        margin-bottom: 15px;
+        margin-bottom: 1rem;
     }
 
     .dia-toggle {
         display: flex;
         align-items: center;
         cursor: pointer;
-        font-size: 1.1em;
-        font-weight: 600;
+        font-size: 1.1rem;
+        font-weight: 700;
+        letter-spacing: -0.5px;
     }
 
     .dia-toggle input[type="checkbox"] {
         margin-right: 12px;
         transform: scale(1.3);
+        cursor: pointer;
+        accent-color: #4a9eff;
     }
 
     .dia-nome {
-        color: #2c3e50;
+        color: #fff;
     }
 
     .dia-horarios {
-        background: white;
-        padding: 15px;
-        border-radius: 6px;
-        border: 1px solid #e9ecef;
+        background: rgba(0, 0, 0, 0.3);
+        padding: 1.5rem;
+        border-radius: 8px;
+        border: 1px solid rgba(74, 158, 255, 0.15);
     }
 
     .horarios-info {
-        color: #666;
-        margin-bottom: 15px;
-        font-size: 0.95em;
+        color: rgba(255, 255, 255, 0.7);
+        margin-bottom: 1rem;
+        font-size: 0.95rem;
     }
 
     .horarios-container {
         display: grid;
-        gap: 10px;
-        margin-bottom: 15px;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
     }
 
     .horario-item {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 0.75rem;
     }
 
     .horario-input {
         flex: 1;
-        max-width: 120px;
+        max-width: 150px;
+        padding: 0.7rem 1rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(74, 158, 255, 0.2);
+        border-radius: 8px;
+        color: #fff;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        font-size: 0.95rem;
+        font-weight: 600;
+        letter-spacing: -0.3px;
+        transition: all 0.3s ease;
+    }
+    
+    .horario-input:focus {
+        outline: none;
+        border-color: #4a9eff;
+        background: rgba(74, 158, 255, 0.1);
+    }
+    
+    .horario-input::placeholder {
+        color: rgba(255, 255, 255, 0.4);
     }
 
     .btn-remove {
-        background: #dc3545;
-        color: white;
-        border: none;
-        border-radius: 50%;
-        width: 30px;
-        height: 30px;
+        background: rgba(255, 59, 48, 0.2);
+        color: #ff3b30;
+        border: 1px solid rgba(255, 59, 48, 0.3);
+        border-radius: 8px;
+        width: 35px;
+        height: 35px;
         display: flex;
         align-items: center;
         justify-content: center;
         cursor: pointer;
-        font-size: 18px;
+        font-size: 20px;
         line-height: 1;
-        transition: background-color 0.2s;
+        transition: all 0.3s ease;
+        font-weight: 700;
     }
 
     .btn-remove:hover {
-        background: #c82333;
+        background: #ff3b30;
+        color: #fff;
     }
 
-    .btn-small {
-        padding: 6px 12px;
-        font-size: 0.9em;
+    .btn-secondary {
+        display: inline-block;
+        padding: 0.7rem 1.2rem;
+        background: rgba(74, 158, 255, 0.1);
+        color: #4a9eff;
+        border: 1px solid rgba(74, 158, 255, 0.3);
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        letter-spacing: -0.3px;
+        cursor: pointer;
+    }
+    
+    .btn-secondary:hover {
+        background: rgba(74, 158, 255, 0.2);
+        border-color: #4a9eff;
+    }
+
+    .btn-primary {
+        display: inline-block;
+        padding: 0.9rem 2rem;
+        background: #4a9eff;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+        letter-spacing: -0.3px;
+        cursor: pointer;
+    }
+    
+    .btn-primary:hover {
+        background: #3a8eef;
+        transform: translateY(-2px);
     }
 
     .form-actions {
-        margin-top: 30px;
+        margin-top: 2rem;
         display: flex;
-        gap: 15px;
+        gap: 1rem;
         justify-content: center;
-        padding-top: 20px;
-        border-top: 1px solid #dee2e6;
+        padding-top: 2rem;
+        border-top: 1px solid rgba(74, 158, 255, 0.2);
+    }
+    
+    .footer {
+        text-align: center;
+        padding: 2rem;
+        margin-top: 3rem;
+        border-top: 1px solid rgba(74, 158, 255, 0.2);
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.9rem;
+    }
+    
+    .footer-brand {
+        color: #4a9eff;
+        font-weight: 700;
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 968px) {
+        .container {
+            padding: 1rem;
+        }
+        
+        .hero-section {
+            padding: 1.5rem 1rem;
+        }
+        
+        .hero-title {
+            font-size: 1.8rem;
+        }
+        
         .dia-section {
-            padding: 15px;
-            margin-bottom: 25px;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
         }
         
         .form-actions {
             flex-direction: column;
-            align-items: center;
+            align-items: stretch;
         }
         
+        .btn-primary, .btn-secondary {
+            width: 100%;
+            text-align: center;
+        }
+    }
+    
+    @media (max-width: 640px) {
         .horario-item {
             flex-direction: column;
             align-items: stretch;
-            gap: 8px;
+            gap: 0.5rem;
         }
         
         .horario-input {
             max-width: none;
         }
+        
+        .btn-remove {
+            width: 100%;
+        }
     }
     </style>
-{% endblock %}

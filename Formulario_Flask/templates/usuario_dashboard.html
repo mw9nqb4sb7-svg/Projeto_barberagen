@@ -676,6 +676,10 @@
                 <a href="{{ url_for('servicos', b=request.args.get('b', '')) }}" class="btn-secondary">
                     ⚙️ SERVIÇOS
                 </a>
+                {% else %}
+                <a href="{{ url_for('planos_mensais', slug=barbearia.slug) }}" class="btn-secondary">
+                    💎 PLANOS
+                </a>
                 {% endif %}
                 
                 <a href="{{ url_for('logout', slug=barbearia.slug if barbearia else 'principal') }}" class="btn-danger">
@@ -705,12 +709,81 @@
         <div class="dashboard-grid">
             <!-- Minhas Reservas -->
             <div class="card">
-                <div class="card-header">
+                <div class="card-header" style="{% if user_type == 'cliente' %}padding-bottom: 0.5rem;{% endif %}">
                     <h3 class="card-title">
                         {% if user_type == 'barbeiro' %}📋 Seus Atendimentos{% else %}📅 Suas Reservas{% endif %}
                     </h3>
-                    <span class="card-badge">{{ reservas|length }}</span>
+                    <span class="card-badge">{{ total_reservas }}</span>
                 </div>
+                
+                <!-- Botões de Filtro (apenas para clientes) -->
+                {% if user_type == 'cliente' %}
+                <div style="padding: 0 1.5rem 1.5rem; display: flex; gap: 0.5rem; justify-content: flex-start;">
+                    <button id="btn-pendentes" type="button" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.8rem 1.2rem; text-align: center; background: linear-gradient(135deg, #4a9eff 0%, #2563eb 100%); color: #fff; text-decoration: none; font-weight: 700; font-size: 0.85rem; border-radius: 12px; transition: all 0.3s ease; border: 2px solid transparent; box-shadow: 0 4px 15px rgba(74, 158, 255, 0.3); cursor:pointer;" >📋 A ATENDER</button>
+                    <button id="btn-atendidos" type="button" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.8rem 1.2rem; text-align: center; background: rgba(16, 185, 129, 0.1); color: rgba(16, 185, 129, 0.8); text-decoration: none; font-weight: 700; font-size: 0.85rem; border-radius: 12px; transition: all 0.3s ease; border: 2px solid rgba(16, 185, 129, 0.2); box-shadow: none; cursor:pointer;" >✅ ATENDIDOS</button>
+                </div>
+                <script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    const slug = '{{ barbearia.slug }}';
+                    const reservasList = document.querySelector('.reservas-list');
+                    const badge = document.querySelector('.card-badge');
+                    const btnPendentes = document.getElementById('btn-pendentes');
+                    const btnAtendidos = document.getElementById('btn-atendidos');
+                    function renderReservas(reservas) {
+                        let html = '';
+                        reservas.slice(0,5).forEach(function(r) {
+                            html += `<div class="reserva-item">
+                                <div class="reserva-header">
+                                    <strong class="reserva-servico">${r.servico}</strong>
+                                    <span class="reserva-preco">R$ ${r.preco.toFixed(2)}</span>
+                                </div>
+                                <div class="reserva-info">
+                                    <span>📅 ${r.data}</span>
+                                    <span>⏰ ${r.hora_inicio}</span>
+                                </div>
+                                <div class="reserva-footer">
+                                    <span class="status-badge status-${r.status}">` +
+                                        (r.status === 'agendada' ? '🕐 Agendada' : r.status === 'confirmada' ? '✅ Confirmada' : r.status === 'concluida' ? '✅ Concluída' : '❌ Cancelada') +
+                                    `</span>
+                                </div>
+                            </div>`;
+                        });
+                        if (reservas.length > 5) {
+                            html += `<div style="text-align: center; padding: 1rem; color: rgba(255,255,255,0.5); font-style: italic; font-size: 0.9rem;">E mais ${reservas.length-5} reservas...</div>`;
+                        }
+                        reservasList.innerHTML = html;
+                        badge.textContent = reservas.length;
+                    }
+                    function setActive(filtro) {
+                        if (filtro === 'atendidos') {
+                            btnAtendidos.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+                            btnAtendidos.style.color = '#fff';
+                            btnAtendidos.style.border = '2px solid transparent';
+                            btnPendentes.style.background = 'rgba(74, 158, 255, 0.1)';
+                            btnPendentes.style.color = 'rgba(74, 158, 255, 0.8)';
+                            btnPendentes.style.border = '2px solid rgba(74, 158, 255, 0.2)';
+                        } else {
+                            btnPendentes.style.background = 'linear-gradient(135deg, #4a9eff 0%, #2563eb 100%)';
+                            btnPendentes.style.color = '#fff';
+                            btnPendentes.style.border = '2px solid transparent';
+                            btnAtendidos.style.background = 'rgba(16, 185, 129, 0.1)';
+                            btnAtendidos.style.color = 'rgba(16, 185, 129, 0.8)';
+                            btnAtendidos.style.border = '2px solid rgba(16, 185, 129, 0.2)';
+                        }
+                    }
+                    function fetchReservas(filtro) {
+                        setActive(filtro);
+                        fetch(`/${slug}/api/reservas_cliente?filtro=${filtro}`)
+                            .then(r => r.json())
+                            .then(data => {
+                                renderReservas(data.reservas);
+                            });
+                    }
+                    btnPendentes.addEventListener('click', function() { fetchReservas('pendentes'); });
+                    btnAtendidos.addEventListener('click', function() { fetchReservas('atendidos'); });
+                });
+                </script>
+                {% endif %}
                 
                 <div class="card-body">
                     {% if reservas %}
@@ -740,11 +813,13 @@
                                     </span>
                                     
                                     {% if user_type == 'cliente' and reserva.status == 'agendada' %}
-                                    <a href="{{ url_for('cancelar_reserva', reserva_id=reserva.id) }}" 
-                                       onclick="return confirm('Tem certeza que deseja cancelar esta reserva?')"
-                                       class="btn-cancel">
-                                        ❌ Cancelar
-                                    </a>
+                                    <form method="POST" action="{{ url_for('cancelar_reserva', reserva_uuid=reserva.uuid) }}" style="display: inline;">
+                                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                        <button type="submit" class="btn-cancel"
+                                                onclick="return confirm('Tem certeza que deseja cancelar esta reserva?')">
+                                            ❌ Cancelar
+                                        </button>
+                                    </form>
                                     {% endif %}
                                 </div>
                             </div>
@@ -762,8 +837,11 @@
                             {% if user_type == 'barbeiro' %}
                                 <p class="empty-title">Nenhum atendimento agendado ainda</p>
                                 <small class="empty-subtitle">Os clientes verão seus horários disponíveis aqui</small>
+                            {% elif filtro == 'atendidos' %}
+                                <p class="empty-title">Nenhum atendimento concluído</p>
+                                <small class="empty-subtitle">Seus atendimentos concluídos aparecerão aqui</small>
                             {% else %}
-                                <p class="empty-title">Você ainda não tem reservas</p>
+                                <p class="empty-title">Você ainda não tem reservas pendentes</p>
                                 <a href="{{ url_for('nova_reserva', slug=barbearia.slug) }}" class="btn-primary" style="margin-top: 1rem;">
                                     📅 FAZER RESERVA
                                 </a>
@@ -807,29 +885,25 @@
         </div>
 
         <!-- Quick Actions -->
-        <div class="quick-actions">
-            <a href="{{ url_for('perfil') }}" class="action-card">
-                <span class="action-icon">👤</span>
-                <span class="action-title">Meu Perfil</span>
+        <!-- Removido bloco de ações rápidas do final do dashboard -->
+        
+        <div class="navbar-menu">
+            <a href="{{ url_for('nova_reserva', slug=barbearia.slug) }}" class="btn-primary">
+                📅 AGENDAR
             </a>
-            
             {% if user_type == 'barbeiro' %}
-            <a href="{{ url_for('admin_disponibilidade', b=request.args.get('b', '')) }}" class="action-card">
-                <span class="action-icon">📋</span>
-                <span class="action-title">Horários</span>
+            <a href="{{ url_for('servicos', b=request.args.get('b', '')) }}" class="btn-secondary">
+                ⚙️ SERVIÇOS
+            </a>
+            {% else %}
+            <a href="{{ url_for('planos_mensais', slug=barbearia.slug) }}" class="btn-secondary">
+                💎 PLANOS
             </a>
             {% endif %}
-            
-            <a href="{{ url_for('nova_reserva', slug=barbearia.slug) }}" class="action-card">
-                <span class="action-icon">📅</span>
-                <span class="action-title">Nova Reserva</span>
+            <a href="{{ url_for('perfil') }}" class="btn-secondary">👤 Meu Perfil</a>
+            <a href="{{ url_for('logout', slug=barbearia.slug if barbearia else 'principal') }}" class="btn-danger">
+                🚪 SAIR
             </a>
-            
-            <a href="{{ url_for('meus_agendamentos', slug=barbearia.slug) }}" class="action-card">
-                <span class="action-icon">📋</span>
-                <span class="action-title">Meus Agendamentos</span>
-            </a>
-        </div>
     </div>
 
     <!-- Footer -->
@@ -888,9 +962,7 @@
                     <a href="{{ url_for('servicos', slug=barbearia.slug) }}" class="footer-link">
                         ✂️ Serviços
                     </a>
-                    <a href="{{ url_for('meus_agendamentos', slug=barbearia.slug) }}" class="footer-link">
-                        📋 Meus Agendamentos
-                    </a>
+                    <!-- Removido link para Meus Agendamentos do footer -->
                 </div>
             </div>
             

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Editar Serviço - {{ servico.nome }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { box-sizing: border-box; margin:0; padding:0; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background:#000; color:#fff; }
+        .container { max-width: 900px; margin: 2rem auto; padding: 1rem; }
+        .card { background: rgba(255,255,255,0.03); border:1px solid rgba(74,158,255,0.12); padding:1.5rem; border-radius:12px; }
+        label { display:block; margin-bottom:0.5rem; color:rgba(255,255,255,0.9); font-weight:600 }
+        input { width:100%; padding:0.75rem; border-radius:8px; border:1px solid rgba(74,158,255,0.12); background:rgba(255,255,255,0.02); color:#fff }
+        .row { display:grid; grid-template-columns: 1fr 120px; gap:0.75rem; align-items:center }
+        button { margin-top:1rem; padding:0.75rem 1rem; border-radius:8px; border:none; cursor:pointer; font-weight:700 }
+        .btn-primary { background:#4a9eff; color:#000 }
+        .btn-cancel { background: transparent; border:1px solid rgba(255,255,255,0.06); color:#fff; margin-left:0.5rem }
+    </style>
+</head>
+<body>
+    {% set extra_nav_html %}
+        <a href="javascript:history.back();">← Voltar</a>
+        <a href="{{ url_for('dashboard', slug=barbearia.slug if barbearia else get_current_barbearia_slug()) }}">📊 Dashboard</a>
+    {% endset %}
+    {% include 'cliente/_navbar.html' %}
+
+    <div class="container">
+        <h1 style="color:#4a9eff; margin-bottom:1rem">Editar Serviço</h1>
+        <div class="card">
+            <form method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                <div class="form-group">
+                    <label for="nome">Nome do Serviço</label>
+                    <input id="nome" name="nome" type="text" value="{{ servico.nome }}" required />
+                </div>
+                <div class="form-group" style="margin-top:0.75rem">
+                    <label for="preco">Preço (R$)</label>
+                    <input id="preco" name="preco" type="text" value="{{ '%.2f'|format(servico.preco) }}" required />
+                </div>
+                <div style="margin-top:0.75rem">
+                    <label for="duracao">Duração (min)</label>
+                    <input id="duracao" name="duracao" type="number" value="{{ servico.duracao }}" />
+                </div>
+                <div style="display:flex; gap:0.5rem">
+                    <button type="submit" class="btn-primary">Salvar alterações</button>
+                    <a href="{{ url_for('servicos') }}" class="btn-cancel">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

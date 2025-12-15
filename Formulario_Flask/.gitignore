@@ -155,3 +155,20 @@ final_*.html
 real_*.html
 temp_*.py
 temp_*.html
+
+# Arquivos sensíveis e configurações locais
+.env
+.env.local
+.env.production
+.env.staging
+
+# Firebase credentials
+*.json
+!firebase-debug-info.json  # Manter apenas para referência
+
+# Logs locais
+logs/*.log
+*.log
+
+# Backups locais do banco
+meubanco.backup.*.db

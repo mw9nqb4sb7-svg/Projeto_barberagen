@@ -1,3 +1,32 @@
+/* ====== TÍTULOS CUSTOMIZADOS PARA PERFIL ====== */
+.titulo-perfil-custom {
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    text-transform: none !important;
+    color: #222 !important;
+    background: none !important;
+    letter-spacing: -1px !important;
+    font-weight: 800 !important;
+    font-size: 2.2rem !important;
+    margin-bottom: 2.2rem !important;
+    box-shadow: none !important;
+    filter: none !important;
+    -webkit-background-clip: initial !important;
+    -webkit-text-fill-color: initial !important;
+}
+.titulo-agendamentos-custom {
+    font-family: 'Plus Jakarta Sans', sans-serif !important;
+    text-transform: none !important;
+    color: #4a9eff !important;
+    background: none !important;
+    letter-spacing: -0.5px !important;
+    font-weight: 700 !important;
+    font-size: 1.5rem !important;
+    margin-bottom: 2.2rem !important;
+    box-shadow: none !important;
+    filter: none !important;
+    -webkit-background-clip: initial !important;
+    -webkit-text-fill-color: initial !important;
+}
 /* ================================================== */
 /* BARBEARIA PREMIUM - TEMA DARK ELEGANTE */
 /* Design Completamente Diferente - Teste */
@@ -171,46 +200,28 @@ body::before {
 }
 
 /* ========== TIPOGRAFIA ========== */
+/* Estilo padrão de títulos principais agora usa Plus Jakarta Sans e cor branca */
 h1 {
     font-size: 3.5rem;
-    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 50%, var(--gold) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #ffffff;
+    -webkit-text-fill-color: #ffffff;
+    background: none !important;
+    -webkit-background-clip: initial !important;
+    background-clip: initial !important;
     text-align: center;
     margin-bottom: 3rem;
-    text-transform: uppercase;
+    text-transform: none;
     letter-spacing: -0.5px;
     line-height: 1.2;
     position: relative;
-    font-weight: 900;
-    filter: drop-shadow(0 4px 8px rgba(74, 158, 255, 0.4));
-    font-family: var(--font-display);
-    font-optical-sizing: auto;
-    animation: titleGlow 3s ease-in-out infinite;
+    font-weight: 800;
+    text-shadow: 0 4px 12px rgba(0,0,0,0.6);
+    font-family: var(--font-main);
 }
 
-@keyframes titleGlow {
-    0%, 100% { filter: drop-shadow(0 4px 8px rgba(74, 158, 255, 0.4)); }
-    50% { filter: drop-shadow(0 8px 16px rgba(74, 158, 255, 0.6)); }
-}
-
+/* Remover a decoração padrão de h1 (linha/efeito) para evitar conflitos visuais */
 h1::after {
-    content: '';
-    position: absolute;
-    bottom: -20px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 200px;
-    height: 4px;
-    background: linear-gradient(90deg, transparent 0%, var(--gold) 50%, transparent 100%);
-    box-shadow: 0 0 20px rgba(74, 158, 255, 0.5);
-    animation: lineGlow 2s ease-in-out infinite;
-}
-
-@keyframes lineGlow {
-    0%, 100% { opacity: 0.6; box-shadow: 0 0 20px rgba(74, 158, 255, 0.5); }
-    50% { opacity: 1; box-shadow: 0 0 40px rgba(74, 158, 255, 0.8); }
+    display: none;
 }
 
 h2 {
@@ -329,6 +340,19 @@ select {
     background-position: right 1rem center;
     background-size: 20px;
     padding-right: 3rem;
+}
+
+/* Força contraste escuro/legível especificamente para o formulário de atribuição de planos */
+.assign-plan-form select[name="cliente_id"],
+.assign-plan-form select[name="plano_id"] {
+    background: #0b0b0b !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(74,158,255,0.12) !important;
+}
+.assign-plan-form select[name="cliente_id"] option,
+.assign-plan-form select[name="plano_id"] option {
+    background: #0b0b0b !important;
+    color: #ffffff !important;
 }
 
 /* ========== BOTÕES ========== */
@@ -1337,5 +1361,18 @@ select {
         border: 1px solid #ccc;
         box-shadow: none;
     }
+}
+
+/* Estilos para botões em formulários inline de cancelamento */
+form[method="POST"] button.btn-danger,
+form[method="POST"] button.btn-small {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+form[method="POST"] button.btn-danger:hover,
+form[method="POST"] button.btn-small:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
 }
 

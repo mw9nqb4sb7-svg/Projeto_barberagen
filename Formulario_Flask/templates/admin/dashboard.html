@@ -1,47 +1,218 @@
-{% extends "base.html" %}
-{% block title %}Dashboard Admin - {{ barbearia.nome }}{% endblock %}
-
-{% block content %}
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin - {{ barbearia.nome }}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
 <!-- Navbar Admin -->
-<nav style="background: var(--bg-dark); border-bottom: 2px solid var(--gold-dark); position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5); backdrop-filter: blur(10px);">
-    <div style="max-width: 1400px; margin: 0 auto; padding: 1.25rem 2rem; display: flex; justify-content: space-between; align-items: center; gap: 1.5rem; flex-wrap: wrap;">
-        <div style="display: flex; align-items: center; gap: 1.5rem;">
-            <div style="display: flex; flex-direction: column; gap: 0.25rem;">
-                <span style="font-size: 1.3rem; font-weight: 700; color: var(--gold); font-family: system-ui, -apple-system, sans-serif; letter-spacing: 0.5px;">{{ barbearia.nome }}</span>
-                <span style="font-size: 0.7rem; color: rgba(245, 245, 220, 0.5); font-family: system-ui, -apple-system, sans-serif; text-transform: uppercase; letter-spacing: 1px;">
-                    🔑 Administrador
-                </span>
-            </div>
+<nav class="navbar">
+    <div class="navbar-content">
+        <div class="navbar-brand">
+            {% set nome_parts = barbearia.nome.split() %}
+            {% if nome_parts|length >= 2 %}
+                <span style="color: #ffffff;">{{ nome_parts[0] }} {{ nome_parts[1] }}</span><span style="color: #4a9eff;">{{ ' '.join(nome_parts[2:]) if nome_parts|length > 2 else '' }}</span>
+            {% else %}
+                <span style="color: #ffffff;">{{ barbearia.nome }}</span>
+            {% endif %}
         </div>
         
-        <div style="display: flex; align-items: center; gap: 1rem;">
-            <a href="{{ url_for('clientes', slug=barbearia.slug) }}" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: transparent; color: var(--text-color); text-decoration: none; font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; border-radius: 4px; transition: all 0.3s ease; font-family: system-ui, -apple-system, sans-serif; border: 2px solid var(--gold-dark);" onmouseover="this.style.borderColor='var(--gold)'; this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--gold-dark)'; this.style.color='var(--text-color)'">
-                <span>👥</span> <span style="white-space: nowrap;">Clientes</span>
+        <!-- Botão Hamburguer (Mobile) -->
+        <button id="mobileMenuBtn" onclick="toggleMobileMenu()">☰</button>
+        
+        <!-- Menu Desktop -->
+        <div id="desktopMenu" class="navbar-menu">
+            <a href="{{ url_for('dashboard', slug=barbearia.slug) }}" class="btn btn-secondary">
+                🏠 DASHBOARD
             </a>
-            
-            <a href="{{ url_for('servicos', slug=barbearia.slug) }}" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; background: transparent; color: var(--text-color); text-decoration: none; font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; border-radius: 4px; transition: all 0.3s ease; font-family: system-ui, -apple-system, sans-serif; border: 2px solid var(--gold-dark);" onmouseover="this.style.borderColor='var(--gold)'; this.style.color='var(--gold)'" onmouseout="this.style.borderColor='var(--gold-dark)'; this.style.color='var(--text-color)'">
-                <span>✂️</span> <span style="white-space: nowrap;">Serviços</span>
+            <a href="{{ url_for('admin_agendamentos_slug', slug=barbearia.slug) }}" class="btn btn-secondary">
+                📅 AGENDAMENTOS
             </a>
-            
-            <div class="notification-bell" onclick="toggleNotifications()" style="position: relative; cursor: pointer; padding: 0.75rem; background: rgba(74, 158, 255, 0.1); border-radius: 50%; transition: all 0.3s ease; border: 2px solid var(--gold-dark);" onmouseover="this.style.borderColor='var(--gold)'" onmouseout="this.style.borderColor='var(--gold-dark)'">
-                <span style="font-size: 1.3rem;">🔔</span>
-                <span class="badge-notification" id="notifBadge" style="display: none; position: absolute; top: 0; right: 0; background: #ef4444; color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 0.7em; display: none; align-items: center; justify-content: center; font-weight: bold; animation: pulse 2s infinite; font-family: system-ui, -apple-system, sans-serif;">0</span>
-            </div>
-            
-            <a href="{{ url_for('logout', slug=barbearia.slug) }}" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.25rem; background: transparent; color: #ef4444; text-decoration: none; font-weight: 600; font-size: 0.85rem; text-transform: uppercase; border-radius: 4px; transition: all 0.3s ease; border: 2px solid rgba(239, 68, 68, 0.3); font-family: system-ui, -apple-system, sans-serif;" onmouseover="this.style.background='rgba(239, 68, 68, 0.1)'; this.style.borderColor='#ef4444'" onmouseout="this.style.background='transparent'; this.style.borderColor='rgba(239, 68, 68, 0.3)'">
-                <span>🚪</span> <span style="white-space: nowrap;">Sair</span>
+            <a href="{{ url_for('admin_faturamento', slug=barbearia.slug) }}" class="btn btn-secondary">
+                💰 FATURAMENTO
+            </a>
+            <a href="{{ url_for('admin_despesas', slug=barbearia.slug) }}" class="btn btn-secondary">
+                💳 DESPESAS
+            </a>
+            <a href="{{ url_for('admin_planos_ativos', slug=barbearia.slug) }}" class="btn btn-secondary">
+                📋 PLANOS
+            </a>
+            <a href="{{ url_for('admin_clientes', slug=barbearia.slug) }}" class="btn btn-secondary">
+                👥 CLIENTES
+            </a>
+            <a href="{{ url_for('servicos', slug=barbearia.slug) }}" class="btn btn-secondary">
+                ✂️ SERVIÇOS
+            </a>
+            <a href="{{ url_for('logout', slug=barbearia.slug) }}" class="btn btn-secondary" style="background: rgba(255, 59, 48, 0.1); color: #ff3b30; border: 1px solid rgba(255, 59, 48, 0.3);">
+                🚪 SAIR
+            </a>
+        </div>
+    </div>
+    
+    <!-- Menu Mobile (Dropdown) -->
+    <div id="mobileMenu" style="display: none; background: rgba(0, 0, 0, 0.98); border-top: 1px solid rgba(74, 158, 255, 0.2); padding: 1rem; margin-top: 1rem;">
+        <div style="display: flex; flex-direction: column; gap: 0.75rem; max-width: 1600px; margin: 0 auto;">
+            <a href="{{ url_for('dashboard', slug=barbearia.slug) }}" class="btn btn-secondary" style="width: 100%; justify-content: center; font-size: 1rem; padding: 1rem;">
+                🏠 DASHBOARD
+            </a>
+            <a href="{{ url_for('admin_agendamentos_slug', slug=barbearia.slug) }}" class="btn btn-secondary" style="width: 100%; justify-content: center; font-size: 1rem; padding: 1rem;">
+                📅 AGENDAMENTOS
+            </a>
+            <a href="{{ url_for('admin_faturamento', slug=barbearia.slug) }}" class="btn btn-secondary" style="width: 100%; justify-content: center; font-size: 1rem; padding: 1rem;">
+                💰 FATURAMENTO
+            </a>
+            <a href="{{ url_for('admin_despesas', slug=barbearia.slug) }}" class="btn btn-secondary" style="width: 100%; justify-content: center; font-size: 1rem; padding: 1rem;">
+                💳 DESPESAS
+            </a>
+            <a href="{{ url_for('admin_planos_ativos', slug=barbearia.slug) }}" class="btn btn-secondary" style="width: 100%; justify-content: center; font-size: 1rem; padding: 1rem;">
+                📋 PLANOS
+            </a>
+            <a href="{{ url_for('admin_clientes', slug=barbearia.slug) }}" class="btn btn-secondary" style="width: 100%; justify-content: center; font-size: 1rem; padding: 1rem;">
+                👥 CLIENTES
+            </a>
+            <a href="{{ url_for('servicos', slug=barbearia.slug) }}" class="btn btn-secondary" style="width: 100%; justify-content: center; font-size: 1rem; padding: 1rem;">
+                ✂️ SERVIÇOS
+            </a>
+            <a href="{{ url_for('logout', slug=barbearia.slug) }}" class="btn btn-secondary" style="width: 100%; justify-content: center; font-size: 1rem; padding: 1rem; background: rgba(255, 59, 48, 0.1); color: #ff3b30; border: 1px solid rgba(255, 59, 48, 0.3);">
+                🚪 SAIR
             </a>
         </div>
     </div>
 </nav>
 
-<div style="margin-top: 2.5rem;"></div>
-
-<!-- v2.0 - Atualizado em 28/11/2025 -->
+<!-- v3.0 - Modernizado com Plus Jakarta Sans e #4a9eff -->
 <style>
     * {
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+        font-family: 'Plus Jakarta Sans', sans-serif;
+        letter-spacing: -0.5px;
+        box-sizing: border-box;
     }
+
+    .navbar {
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.95) 0%, rgba(13, 13, 13, 0.98) 100%);
+        border-bottom: 3px solid #4a9eff;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        padding: 1.5rem 2rem;
+    }
+
+    .navbar-content {
+        max-width: 1600px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .navbar-brand {
+        font-size: 1.5rem;
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+
+    .navbar-menu {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .btn {
+        padding: 0.8rem 1.5rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 0.9rem;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        border: none;
+        cursor: pointer;
+    }
+
+    .btn-primary {
+        background: #4a9eff;
+        color: #000000;
+    }
+
+    .btn-primary:hover {
+        background: #3a8eef;
+        transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+        background: transparent;
+        color: #ffffff;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-secondary:hover {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    #mobileMenuBtn {
+        display: none;
+        background: rgba(74, 158, 255, 0.1);
+        border: 1px solid rgba(74, 158, 255, 0.3);
+        color: #4a9eff;
+        padding: 0.5rem 0.75rem;
+        border-radius: 8px;
+        cursor: pointer;
+        font-size: 1.5rem;
+        line-height: 1;
+    }
+    
+    html, body {
+        max-width: 100vw;
+        width: 100%;
+        position: relative;
+        margin: 0;
+        padding: 0;
+        -webkit-overflow-scrolling: touch; /* Melhora scroll no iOS */
+        overscroll-behavior: none; /* Previne bounce effect */
+    }
+    
+    body {
+        background: #000;
+        color: #fff;
+        padding-top: 120px; /* Espaço para navbar fixed */
+    }
+    
+    /* Mobile adjustments */
+    @media (max-width: 768px) {
+        body {
+            padding-top: 140px; /* Mais espaço para navbar mobile */
+        }
+    }
+    
+    /* Menu Mobile Responsivo */
+    #mobileMenu {
+        transition: all 0.3s ease;
+    }
+    
+    @media (max-width: 768px) {
+        #mobileMenuBtn {
+            display: block !important;
+        }
+        
+        #desktopMenu {
+            display: none !important;
+        }
+    }
+    
+    @media (min-width: 769px) {
+        #mobileMenu {
+            display: none !important;
+        }
+    }
+    
     /* Estilos responsivos para o dashboard */
     .admin-header {
         display: flex;
@@ -230,9 +401,40 @@
     
     /* Responsivo para cards inline */
     @media (max-width: 968px) {
+        * {
+            max-width: 100vw;
+        }
+        
+        nav > div {
+            flex-wrap: wrap !important;
+            padding: 1rem !important;
+        }
+        
+        nav > div > div:last-child {
+            gap: 0.5rem !important;
+            justify-content: center;
+            width: 100%;
+        }
+        
+        nav a, nav div.notification-bell {
+            padding: 0.6rem 1rem !important;
+            font-size: 0.8rem !important;
+            white-space: nowrap;
+        }
+        
         body > div > div[style*="grid-template-columns: repeat(3, 1fr)"] {
             grid-template-columns: repeat(2, 1fr) !important;
             gap: 12px !important;
+        }
+        
+        div[style*="grid-template-columns: repeat(4, 1fr)"] {
+            grid-template-columns: repeat(2, 1fr) !important;
+            padding: 0 1rem !important;
+            gap: 1rem !important;
+        }
+        
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
         }
     }
     
@@ -241,6 +443,12 @@
             grid-template-columns: 1fr !important;
             gap: 12px !important;
             max-width: 100% !important;
+            padding: 0 1rem !important;
+        }
+        
+        div[style*="grid-template-columns: repeat(4, 1fr)"] {
+            grid-template-columns: 1fr !important;
+            padding: 0 1rem !important;
         }
         
         body > div > div[style*="grid-template-columns"] > div {
@@ -251,6 +459,7 @@
         body > div > div[style*="grid-template-columns"] > div > div:nth-child(2) {
             font-size: 1.6em !important;
         }
+        
         .admin-header h1 {
             font-size: 1.5em !important;
         }
@@ -286,6 +495,58 @@
             width: 100% !important;
             height: auto !important;
         }
+        
+        /* Gráficos responsivos */
+        .row[style*="grid-template-columns: repeat(2, 1fr)"] {
+            grid-template-columns: 1fr !important;
+            padding: 0 1rem !important;
+        }
+        
+        .stats-grid {
+            grid-template-columns: 1fr !important;
+            padding: 0 1rem !important;
+        }
+        
+        nav {
+            padding: 1rem !important;
+        }
+        
+        nav > div {
+            gap: 0.5rem !important;
+        }
+        
+        nav a {
+            font-size: 0.75rem !important;
+            padding: 0.5rem 0.75rem !important;
+        }
+    }
+    
+    @media (max-width: 640px) {
+        div[style*="padding: 0 2rem"] {
+            padding: 0 1rem !important;
+        }
+        
+        div[style*="max-width: 1400px"] {
+            max-width: 100% !important;
+            padding-left: 1rem !important;
+            padding-right: 1rem !important;
+        }
+        
+        nav > div > div:first-child span {
+            font-size: 1rem !important;
+        }
+        
+        nav > div > div:last-child {
+            display: grid !important;
+            grid-template-columns: repeat(2, 1fr) !important;
+            gap: 0.5rem !important;
+            width: 100%;
+        }
+        
+        nav a, nav div.notification-bell {
+            width: 100%;
+            justify-content: center;
+        }
     }
     
     @media (max-width: 480px) {
@@ -295,87 +556,163 @@
         }
         
         .notification-bell {
-            position: absolute;
-            top: 10px;
-            right: 10px;
+            position: relative;
+            top: auto;
+            right: auto;
         }
+        
+        nav > div > div:last-child {
+            grid-template-columns: 1fr !important;
+        }
+    }
+    
+    /* Responsividade dos cards de estatísticas */
+    @media (max-width: 1200px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+        }
+    }
+    
+    @media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: 1fr !important;
+            padding: 0 1rem !important;
+        }
+        
+        /* Navbar mobile - scroll horizontal nos botões */
+        nav > div > div:last-child {
+            display: flex !important;
+            flex-wrap: nowrap !important;
+            overflow-x: auto !important;
+            gap: 0.5rem !important;
+            padding: 0.5rem 0 !important;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+        }
+        
+        nav > div > div:last-child::-webkit-scrollbar {
+            height: 4px;
+        }
+        
+        nav > div > div:last-child::-webkit-scrollbar-thumb {
+            background: rgba(74, 158, 255, 0.5);
+            border-radius: 2px;
+        }
+        
+        nav a, nav div.notification-bell {
+            flex-shrink: 0;
+            min-width: fit-content;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .navbar-content {
+            flex-direction: column;
+            gap: 1rem;
+            align-items: flex-start;
+        }
+
+        #mobileMenuBtn {
+            display: block !important;
+        }
+        
+        #desktopMenu {
+            display: none !important;
+        }
+        
+        .navbar-brand {
+            font-size: 1.2rem;
+        }
+    }
+
+    @media (min-width: 769px) {
+        #mobileMenu {
+            display: none !important;
+        }
+    }
+    
+    #mobileMenu {
+        transition: all 0.3s ease;
     }
 </style>
 
 <!-- Painel de Notificações -->
-<div id="notificationPanel" style="display: none; position: fixed; top: 80px; right: 20px; width: 350px; max-width: calc(100vw - 40px); max-height: 400px; overflow-y: auto; background: white; border-radius: 15px; box-shadow: 0 10px 40px rgba(0,0,0,0.2); z-index: 1000; padding: 20px; animation: slideIn 0.3s ease;">
-    <h3 style="margin-top: 0; color: #1e293b; font-family: system-ui, -apple-system, sans-serif;">🔔 Notificações</h3>
+<div id="notificationPanel" style="display: none; position: fixed; top: 80px; right: 20px; width: 350px; max-width: calc(100vw - 40px); max-height: 400px; overflow-y: auto; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(74, 158, 255, 0.2); border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); backdrop-filter: blur(10px); z-index: 1000; padding: 20px; animation: slideIn 0.3s ease;">
+    <h3 style="margin-top: 0; color: #4a9eff; font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; letter-spacing: -0.5px;">🔔 Notificações</h3>
     <div id="notificationList">
-        <p style="color: #94a3b8; text-align: center; font-family: system-ui, -apple-system, sans-serif;">Nenhuma notificação no momento</p>
+        <p style="color: rgba(255, 255, 255, 0.6); text-align: center; font-family: 'Plus Jakarta Sans', sans-serif;">Nenhuma notificação no momento</p>
     </div>
 </div>
 
 <!-- Cards de Estatísticas -->
-<div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px; max-width: 1400px; margin-left: auto; margin-right: auto; padding: 0 2rem;">
-    <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3); padding: 1.5rem; border-radius: 8px; color: white; position: relative; overflow: hidden; transition: transform 0.3s ease; min-height: 120px; display: flex; flex-direction: column; justify-content: space-between; border: 2px solid rgba(255,255,255,0.1);" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
-        <div style="font-size: 0.8rem; opacity: 0.9; line-height: 1.3; font-family: system-ui, -apple-system, sans-serif;">👥 Total de Clientes</div>
-        <div style="font-size: 2rem; font-weight: bold; position: relative; z-index: 1; line-height: 1; font-family: system-ui, -apple-system, sans-serif;">{{ usuarios|length }}</div>
-        <a href="{{ url_for('clientes', slug=barbearia.slug) }}" style="color: white !important; opacity: 0.9; text-decoration: none; font-size: 0.8rem; position: relative; z-index: 1; font-family: system-ui, -apple-system, sans-serif;">Gerenciar →</a>
+<div class="stats-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-bottom: 2rem; max-width: 1400px; margin-left: auto; margin-right: auto; padding: 0 2rem;">
+    <div style="background: rgba(74, 158, 255, 0.05); box-shadow: 0 4px 15px rgba(74, 158, 255, 0.1); padding: 1.5rem; border-radius: 16px; color: white; border: 1px solid rgba(74, 158, 255, 0.2); transition: all 0.3s ease; min-height: 120px; display: flex; flex-direction: column; justify-content: space-between;" onmouseover="this.style.transform='translateY(-5px)'; this.style.borderColor='#4a9eff'" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(74, 158, 255, 0.2)'">
+        <div style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.7); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-family: 'Plus Jakarta Sans', sans-serif;">👥 Total de Clientes</div>
+        <div style="font-size: 2.5rem; font-weight: 800; color: #4a9eff; letter-spacing: -1px; font-family: 'Plus Jakarta Sans', sans-serif;">{{ usuarios|length }}</div>
+        <a href="{{ url_for('clientes', slug=barbearia.slug) }}" style="color: #4a9eff !important; text-decoration: none; font-size: 0.85rem; font-weight: 600; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.3px;">Gerenciar →</a>
     </div>
 
-    <div style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%); box-shadow: 0 4px 15px rgba(245, 87, 108, 0.3); padding: 1.5rem; border-radius: 8px; color: white; position: relative; overflow: hidden; transition: transform 0.3s ease; min-height: 120px; display: flex; flex-direction: column; justify-content: space-between; border: 2px solid rgba(255,255,255,0.1);" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
-        <div style="font-size: 0.8rem; opacity: 0.9; line-height: 1.3; font-family: system-ui, -apple-system, sans-serif;">✂️ Serviços Ativos</div>
-        <div style="font-size: 2rem; font-weight: bold; position: relative; z-index: 1; line-height: 1; font-family: system-ui, -apple-system, sans-serif;">{{ servicos|length }}</div>
-        <a href="{{ url_for('servicos', slug=barbearia.slug) }}" style="color: white !important; opacity: 0.9; text-decoration: none; font-size: 0.8rem; position: relative; z-index: 1; font-family: system-ui, -apple-system, sans-serif;">Gerenciar →</a>
+    <div style="background: rgba(74, 158, 255, 0.05); box-shadow: 0 4px 15px rgba(74, 158, 255, 0.1); padding: 1.5rem; border-radius: 16px; color: white; border: 1px solid rgba(74, 158, 255, 0.2); transition: all 0.3s ease; min-height: 120px; display: flex; flex-direction: column; justify-content: space-between;" onmouseover="this.style.transform='translateY(-5px)'; this.style.borderColor='#4a9eff'" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(74, 158, 255, 0.2)'">
+        <div style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.7); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-family: 'Plus Jakarta Sans', sans-serif;">✂️ Serviços Ativos</div>
+        <div style="font-size: 2.5rem; font-weight: 800; color: #4a9eff; letter-spacing: -1px; font-family: 'Plus Jakarta Sans', sans-serif;">{{ servicos|length }}</div>
+        <a href="{{ url_for('servicos', slug=barbearia.slug) }}" style="color: #4a9eff !important; text-decoration: none; font-size: 0.85rem; font-weight: 600; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.3px;">Gerenciar →</a>
     </div>
 
-    <div style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%); box-shadow: 0 4px 15px rgba(250, 112, 154, 0.3); padding: 1.5rem; border-radius: 8px; color: white; position: relative; overflow: hidden; transition: transform 0.3s ease; min-height: 120px; display: flex; flex-direction: column; justify-content: space-between; border: 2px solid rgba(255,255,255,0.1);" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
-        <div style="font-size: 0.8rem; opacity: 0.9; line-height: 1.3; font-family: system-ui, -apple-system, sans-serif;">💰 Faturamento Hoje</div>
-        <div style="font-size: 2rem; font-weight: bold; position: relative; z-index: 1; line-height: 1; font-family: system-ui, -apple-system, sans-serif;" id="faturamentoHoje">R$ 0</div>
-        <span style="opacity: 0.9; font-size: 0.75rem; position: relative; z-index: 1; font-family: system-ui, -apple-system, sans-serif;">Estimado</span>
+    <div style="background: rgba(74, 158, 255, 0.05); box-shadow: 0 4px 15px rgba(74, 158, 255, 0.1); padding: 1.5rem; border-radius: 16px; color: white; border: 1px solid rgba(74, 158, 255, 0.2); transition: all 0.3s ease; min-height: 120px; display: flex; flex-direction: column; justify-content: space-between;" onmouseover="this.style.transform='translateY(-5px)'; this.style.borderColor='#4a9eff'" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(74, 158, 255, 0.2)'">
+        <div style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.7); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-family: 'Plus Jakarta Sans', sans-serif;">💰 Faturamento Hoje</div>
+        <div style="font-size: 2.5rem; font-weight: 800; color: #4a9eff; letter-spacing: -1px; font-family: 'Plus Jakarta Sans', sans-serif;" id="faturamentoHoje">R$ 0</div>
+        <span style="color: rgba(255, 255, 255, 0.6); font-size: 0.8rem; font-weight: 600; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.3px;">Estimado</span>
     </div>
     
-    <div style="background: linear-gradient(135deg, #30cfd0 0%, #330867 100%); box-shadow: 0 4px 15px rgba(48, 207, 208, 0.3); padding: 1.5rem; border-radius: 8px; color: white; position: relative; overflow: hidden; transition: transform 0.3s ease; min-height: 120px; display: flex; flex-direction: column; justify-content: space-between; border: 2px solid rgba(255,255,255,0.1);" onmouseover="this.style.transform='translateY(-5px)'" onmouseout="this.style.transform='translateY(0)'">
-        <div style="font-size: 0.8rem; opacity: 0.9; line-height: 1.3; font-family: system-ui, -apple-system, sans-serif;">⏰ Disponibilidade</div>
-        <div style="font-size: 1.3rem; font-weight: bold; position: relative; z-index: 1; line-height: 1; font-family: system-ui, -apple-system, sans-serif;">Horários</div>
-        <a href="{{ url_for('admin_disponibilidade', slug=barbearia.slug) }}" style="color: white !important; opacity: 0.9; text-decoration: none; font-size: 0.8rem; position: relative; z-index: 1; font-family: system-ui, -apple-system, sans-serif;">Configurar →</a>
+    <div style="background: rgba(74, 158, 255, 0.05); box-shadow: 0 4px 15px rgba(74, 158, 255, 0.1); padding: 1.5rem; border-radius: 16px; color: white; border: 1px solid rgba(74, 158, 255, 0.2); transition: all 0.3s ease; min-height: 120px; display: flex; flex-direction: column; justify-content: space-between;" onmouseover="this.style.transform='translateY(-5px)'; this.style.borderColor='#4a9eff'" onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='rgba(74, 158, 255, 0.2)'">
+        <div style="font-size: 0.85rem; color: rgba(255, 255, 255, 0.7); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-family: 'Plus Jakarta Sans', sans-serif;">⏰ Disponibilidade</div>
+        <div style="font-size: 1.5rem; font-weight: 700; color: #4a9eff; letter-spacing: -0.5px; font-family: 'Plus Jakarta Sans', sans-serif;">Horários</div>
+        <a href="{{ url_for('admin_disponibilidade', slug=barbearia.slug) }}" style="color: #4a9eff !important; text-decoration: none; font-size: 0.85rem; font-weight: 600; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.3px;">Configurar →</a>
     </div>
 </div>
 
 <!-- Agendamentos -->
-<div class="card-form" style="margin-bottom: 30px;">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
-        <h2 style="margin: 0; color: #1e293b;">📋 Agendamentos</h2>
-        <span id="dataHoje" style="color: #64748b; font-size: 0.95em;"></span>
+<div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(74, 158, 255, 0.2); border-radius: 16px; padding: 2rem; margin-bottom: 2rem; max-width: 1400px; margin-left: auto; margin-right: auto;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+        <h2 style="margin: 0; color: #4a9eff; font-size: 1.8rem; font-weight: 700; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.5px;">📋 Agendamentos</h2>
+        <span id="dataHoje" style="color: rgba(255, 255, 255, 0.6); font-size: 0.95rem; font-family: 'Plus Jakarta Sans', sans-serif;"></span>
     </div>
     
     <!-- Filtros Modernos -->
-    <div style="background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);">
+    <div style="background: rgba(74, 158, 255, 0.05); border: 1px solid rgba(74, 158, 255, 0.15); padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem;">
         <!-- Linha 1: Filtros rápidos -->
-        <div style="display: flex; gap: 10px; margin-bottom: 15px; flex-wrap: wrap;">
-            <button onclick="aplicarFiltroRapido('hoje')" id="filtroHoje" class="filtro-btn" style="padding: 8px 16px; background: white; border: 2px solid #3b82f6; color: #3b82f6; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; font-size: 0.9em;">
+        <div style="display: flex; gap: 0.75rem; margin-bottom: 1rem; flex-wrap: wrap;">
+            <button onclick="aplicarFiltroRapido('hoje')" id="filtroHoje" class="filtro-btn" style="padding: 0.7rem 1.2rem; background: rgba(74, 158, 255, 0.1); border: 1px solid #4a9eff; color: #4a9eff; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; font-size: 0.9rem; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.3px;">
                 📅 Hoje
             </button>
-            <button onclick="aplicarFiltroRapido('amanha')" id="filtroAmanha" class="filtro-btn" style="padding: 8px 16px; background: white; border: 2px solid #e2e8f0; color: #64748b; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; font-size: 0.9em;">
+            <button onclick="aplicarFiltroRapido('amanha')" id="filtroAmanha" class="filtro-btn" style="padding: 0.7rem 1.2rem; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(74, 158, 255, 0.2); color: rgba(255, 255, 255, 0.7); border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; font-size: 0.9rem; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.3px;">
                 🌅 Amanhã
             </button>
-            <button onclick="aplicarFiltroRapido('semana')" id="filtroSemana" class="filtro-btn" style="padding: 8px 16px; background: white; border: 2px solid #e2e8f0; color: #64748b; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; font-size: 0.9em;">
+            <button onclick="aplicarFiltroRapido('semana')" id="filtroSemana" class="filtro-btn" style="padding: 0.7rem 1.2rem; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(74, 158, 255, 0.2); color: rgba(255, 255, 255, 0.7); border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; font-size: 0.9rem; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.3px;">
                 📆 Esta Semana
             </button>
-            <button onclick="aplicarFiltroRapido('mes')" id="filtroMes" class="filtro-btn" style="padding: 8px 16px; background: white; border: 2px solid #e2e8f0; color: #64748b; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; font-size: 0.9em;">
+            <button onclick="aplicarFiltroRapido('mes')" id="filtroMes" class="filtro-btn" style="padding: 0.7rem 1.2rem; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(74, 158, 255, 0.2); color: rgba(255, 255, 255, 0.7); border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; font-size: 0.9rem; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.3px;">
                 🗓️ Este Mês
             </button>
-            <button onclick="aplicarFiltroRapido('todos')" id="filtroTodos" class="filtro-btn" style="padding: 8px 16px; background: white; border: 2px solid #e2e8f0; color: #64748b; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; font-size: 0.9em;">
+            <button onclick="aplicarFiltroRapido('todos')" id="filtroTodos" class="filtro-btn" style="padding: 0.7rem 1.2rem; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(74, 158, 255, 0.2); color: rgba(255, 255, 255, 0.7); border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; font-size: 0.9rem; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.3px;">
                 🌐 Todos
+            </button>
+            <button onclick="aplicarFiltroRapido('concluidos')" id="filtroConcluidos" class="filtro-btn" style="padding: 0.7rem 1.2rem; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(74, 158, 255, 0.2); color: rgba(255, 255, 255, 0.7); border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; font-size: 0.9rem; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.3px;">
+                ✅ Concluídos
             </button>
         </div>
         
         <!-- Linha 2: Busca e Status -->
-        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-            <input type="text" id="buscaCliente" placeholder="🔍 Buscar por nome do cliente..." onkeyup="aplicarFiltros()" style="flex: 1; min-width: 250px; padding: 10px 15px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 0.9em; transition: all 0.3s ease;">
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+            <input type="text" id="buscaCliente" placeholder="🔍 Buscar por nome do cliente..." onkeyup="aplicarFiltros()" style="flex: 1; min-width: 250px; padding: 0.8rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(74, 158, 255, 0.2); border-radius: 8px; font-size: 0.9rem; transition: all 0.3s ease; color: #fff; font-family: 'Plus Jakarta Sans', sans-serif;">
             
-            <select id="filtroStatus" onchange="aplicarFiltros()" style="padding: 10px 15px; border: 2px solid #e2e8f0; border-radius: 8px; cursor: pointer; font-size: 0.9em; font-weight: 600; color: #64748b; background: white;">
+            <select id="filtroStatus" onchange="aplicarFiltros()" style="padding: 0.8rem 1rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(74, 158, 255, 0.2); border-radius: 8px; cursor: pointer; font-size: 0.9rem; font-weight: 600; color: rgba(255, 255, 255, 0.9); font-family: 'Plus Jakarta Sans', sans-serif;">
                 <option value="todos">Todos os Status</option>
                 <option value="confirmada">✅ Confirmadas</option>
                 <option value="pendente">🕒 Pendentes</option>
             </select>
             
-            <button onclick="limparFiltros()" style="padding: 10px 15px; background: #ef4444; color: white; border: none; border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; font-size: 0.9em;">
+            <button onclick="limparFiltros()" style="padding: 0.8rem 1.2rem; background: rgba(255, 59, 48, 0.2); color: #ff3b30; border: 1px solid rgba(255, 59, 48, 0.3); border-radius: 8px; cursor: pointer; font-weight: 600; transition: all 0.3s ease; font-size: 0.9rem; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.3px;">
                 🗑️ Limpar
             </button>
         </div>
@@ -403,37 +740,48 @@
 </div>
 
 <!-- Gráfico de Agendamentos da Semana -->
-<div class="row" style="gap: 20px;">
-    <div class="col-half">
-        <div class="card-form">
-            <h3>📊 Agendamentos da Semana</h3>
-            <canvas id="chartSemana" style="max-height: 300px;"></canvas>
-        </div>
+<div class="row" style="gap: 1.5rem; max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: repeat(2, 1fr); padding: 0 2rem;">
+    <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(74, 158, 255, 0.2); border-radius: 16px; padding: 2rem;">
+        <h3 style="color: #4a9eff; font-size: 1.3rem; font-weight: 700; margin-bottom: 1.5rem; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.5px;">📊 Agendamentos da Semana</h3>
+        <canvas id="chartSemana" style="max-height: 300px;"></canvas>
     </div>
 
-    <div class="col-half">
-        <div class="card-form">
-            <h3 style="color: #1e293b;">🏆 Top Serviços</h3>
-            <div id="topServicos">
-                {% if servicos %}
-                    {% for servico in servicos[:5] %}
-                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: #f8fafc; border-radius: 10px; margin-bottom: 10px; transition: all 0.3s ease;">
-                        <div>
-                            <div style="font-weight: 600; color: #1e293b;">{{ servico.nome }}</div>
-                            <div style="color: #64748b; font-size: 0.85em;">{{ servico.duracao }}min</div>
-                        </div>
-                        <div style="font-weight: bold; color: #3b82f6; font-size: 1.2em;">R$ {{ "%.2f"|format(servico.preco) }}</div>
+    <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(74, 158, 255, 0.2); border-radius: 16px; padding: 2rem;">
+        <h3 style="color: #4a9eff; font-size: 1.3rem; font-weight: 700; margin-bottom: 1.5rem; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.5px;">🏆 Top Serviços</h3>
+        <div id="topServicos">
+            {% if servicos %}
+                {% for servico in servicos[:5] %}
+                <div style="display: flex; justify-content: space-between; align-items: center; padding: 1.2rem; background: rgba(74, 158, 255, 0.05); border: 1px solid rgba(74, 158, 255, 0.15); border-radius: 12px; margin-bottom: 0.75rem; transition: all 0.3s ease;" onmouseover="this.style.borderColor='#4a9eff'; this.style.background='rgba(74, 158, 255, 0.1)'" onmouseout="this.style.borderColor='rgba(74, 158, 255, 0.15)'; this.style.background='rgba(74, 158, 255, 0.05)'">
+                    <div>
+                        <div style="font-weight: 700; color: #fff; font-size: 1rem; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.3px;">{{ servico.nome }}</div>
+                        <div style="color: rgba(255, 255, 255, 0.6); font-size: 0.85rem; margin-top: 0.25rem; font-family: 'Plus Jakarta Sans', sans-serif;">{{ servico.duracao }}min</div>
                     </div>
-                    {% endfor %}
-                {% else %}
-                    <p style="text-align: center; color: #94a3b8; padding: 30px;">Nenhum serviço cadastrado</p>
-                {% endif %}
-            </div>
+                    <div style="font-weight: 800; color: #4a9eff; font-size: 1.3rem; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.5px;">R$ {{ "%.2f"|format(servico.preco) }}</div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p style="text-align: center; color: rgba(255, 255, 255, 0.5); padding: 2rem; font-family: 'Plus Jakarta Sans', sans-serif;">Nenhum serviço cadastrado</p>
+            {% endif %}
+        </div>
         </div>
     </div>
 </div>
 
 <script>
+// Menu Mobile Toggle
+function toggleMobileMenu() {
+    const mobileMenu = document.getElementById('mobileMenu');
+    const btn = document.getElementById('mobileMenuBtn');
+    
+    if (mobileMenu.style.display === 'none' || mobileMenu.style.display === '') {
+        mobileMenu.style.display = 'block';
+        btn.textContent = '✕';
+    } else {
+        mobileMenu.style.display = 'none';
+        btn.textContent = '☰';
+    }
+}
+
 // Data de hoje
 document.getElementById('dataHoje').textContent = new Date().toLocaleDateString('pt-BR', { 
     weekday: 'long', 
@@ -481,6 +829,19 @@ function tocarSomNotificacao() {
         } catch (e2) {
             console.log('Fallback de som também falhou');
         }
+    }
+}
+
+function toggleMobileMenu() {
+    const mobileMenu = document.getElementById('mobileMenu');
+    const btn = document.getElementById('mobileMenuBtn');
+    
+    if (mobileMenu.style.display === 'none' || mobileMenu.style.display === '') {
+        mobileMenu.style.display = 'block';
+        btn.textContent = '✕';
+    } else {
+        mobileMenu.style.display = 'none';
+        btn.textContent = '☰';
     }
 }
 
@@ -590,6 +951,15 @@ function aplicarFiltroRapido(tipo) {
 
 // Função principal de filtros
 function aplicarFiltros() {
+    console.log('🔍 Aplicando filtros... Total de agendamentos:', todosAgendamentos ? todosAgendamentos.length : 0);
+    
+    if (!todosAgendamentos || todosAgendamentos.length === 0) {
+        console.log('⚠️ Nenhum agendamento para filtrar');
+        agendamentosFiltrados = [];
+        exibirAgendamentosPaginados();
+        return;
+    }
+    
     const busca = document.getElementById('buscaCliente').value.toLowerCase();
     const status = document.getElementById('filtroStatus').value;
     
@@ -629,8 +999,10 @@ function aplicarFiltros() {
                 return dataAgendamento >= hoje && dataAgendamento <= fimSemana;
             case 'mes':
                 return dataAgendamento >= hoje && dataAgendamento <= fimMes;
+            case 'concluidos':
+                return r.status === 'concluida';
             case 'todos':
-                return true;
+                return r.status !== 'concluida';
             default:
                 return true;
         }
@@ -687,22 +1059,22 @@ function renderizarPaginacao() {
     
     // Botão anterior
     if (paginaAtual > 1) {
-        html += `<button onclick="mudarPagina(${paginaAtual - 1})" style="padding: 8px 12px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">← Anterior</button>`;
+        html += `<button onclick="mudarPagina(${paginaAtual - 1})" style="padding: 0.75rem 1.25rem; background: rgba(74, 158, 255, 0.1); color: #4a9eff; border: 1px solid rgba(74, 158, 255, 0.3); border-radius: 10px; cursor: pointer; font-weight: 600; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(74, 158, 255, 0.2)'; this.style.borderColor='#4a9eff'" onmouseout="this.style.background='rgba(74, 158, 255, 0.1)'; this.style.borderColor='rgba(74, 158, 255, 0.3)'">← Anterior</button>`;
     }
     
     // Números de página
     for (let i = 1; i <= totalPaginas; i++) {
         if (i === 1 || i === totalPaginas || (i >= paginaAtual - 1 && i <= paginaAtual + 1)) {
             const ativo = i === paginaAtual;
-            html += `<button onclick="mudarPagina(${i})" style="padding: 8px 12px; background: ${ativo ? '#3b82f6' : 'white'}; color: ${ativo ? 'white' : '#64748b'}; border: 2px solid ${ativo ? '#3b82f6' : '#e2e8f0'}; border-radius: 6px; cursor: pointer; font-weight: 600;">${i}</button>`;
+            html += `<button onclick="mudarPagina(${i})" style="padding: 0.75rem 1.25rem; background: ${ativo ? 'rgba(74, 158, 255, 0.2)' : 'rgba(255, 255, 255, 0.03)'}; color: ${ativo ? '#4a9eff' : 'rgba(255, 255, 255, 0.7)'}; border: 1px solid ${ativo ? '#4a9eff' : 'rgba(74, 158, 255, 0.2)'}; border-radius: 10px; cursor: pointer; font-weight: ${ativo ? '700' : '500'}; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.3s ease;" onmouseover="this.style.borderColor='#4a9eff'" onmouseout="this.style.borderColor='${ativo ? '#4a9eff' : 'rgba(74, 158, 255, 0.2)'}'">${i}</button>`;
         } else if (i === paginaAtual - 2 || i === paginaAtual + 2) {
-            html += '<span style="color: #94a3b8;">...</span>';
+            html += '<span style="color: rgba(255, 255, 255, 0.4); font-family: \'Plus Jakarta Sans\', sans-serif;">...</span>';
         }
     }
     
     // Botão próximo
     if (paginaAtual < totalPaginas) {
-        html += `<button onclick="mudarPagina(${paginaAtual + 1})" style="padding: 8px 12px; background: #3b82f6; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">Próximo →</button>`;
+        html += `<button onclick="mudarPagina(${paginaAtual + 1})" style="padding: 0.75rem 1.25rem; background: rgba(74, 158, 255, 0.1); color: #4a9eff; border: 1px solid rgba(74, 158, 255, 0.3); border-radius: 10px; cursor: pointer; font-weight: 600; font-family: 'Plus Jakarta Sans', sans-serif; transition: all 0.3s ease;" onmouseover="this.style.background='rgba(74, 158, 255, 0.2)'; this.style.borderColor='#4a9eff'" onmouseout="this.style.background='rgba(74, 158, 255, 0.1)'; this.style.borderColor='rgba(74, 158, 255, 0.3)'">Próximo →</button>`;
     }
     
     paginacao.innerHTML = html;
@@ -756,17 +1128,25 @@ function renderizarAgendamentos(agendamentos) {
         const statusColor = r.status === 'confirmada' ? '#10b981' : r.status === 'cancelada' ? '#ef4444' : '#f59e0b';
         const statusIcon = r.status === 'confirmada' ? '✅' : r.status === 'cancelada' ? '❌' : '🕒';
         
+        // Definir cores especiais para clientes com plano
+        const cardBorderColor = r.tem_plano ? '#fbbf24' : statusColor;
+        const cardBgColor = r.tem_plano ? 'rgba(251, 191, 36, 0.05)' : 'rgba(255, 255, 255, 0.05)';
+        const planoIcon = r.tem_plano ? '⭐' : '';
+        
         // Formatar data
         const dataObj = new Date(r.data + 'T00:00:00');
         const dataFormatada = dataObj.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
         
         return `
-            <div class="agendamento-card" style="border-left: 4px solid ${statusColor};">
+            <div class="agendamento-card" style="border-left: 4px solid ${cardBorderColor}; background: ${cardBgColor};">
                 <div style="flex: 1;">
                     <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
                         <span style="font-size: 1.5em;">${statusIcon}</span>
                         <div>
-                            <div style="font-weight: 600; color: #1e293b; font-size: 1.1em;">👤 ${r.cliente_nome}</div>
+                            <div style="font-weight: 600; color: #1e293b; font-size: 1.1em; display: flex; align-items: center; gap: 8px;">
+                                👤 ${r.cliente_nome}
+                                ${r.tem_plano ? `<span style="background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #000; padding: 3px 10px; border-radius: 12px; font-size: 0.7em; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 8px rgba(251, 191, 36, 0.3);">⭐ ${r.plano_nome}</span>` : ''}
+                            </div>
                             <div style="color: #64748b; font-size: 0.85em;">📞 ${r.cliente_telefone}</div>
                             <div style="color: #64748b; font-size: 0.85em; margin-top: 4px;">${r.servico_nome || 'Serviço N/A'}</div>
                             <div style="color: #3b82f6; font-size: 0.85em; margin-top: 4px;">📅 ${dataFormatada}</div>
@@ -779,12 +1159,22 @@ function renderizarAgendamentos(agendamentos) {
                         <div style="color: #64748b; font-size: 0.85em;">${r.servico_duracao || 30}min</div>
                         <div style="margin-top: 5px; padding: 4px 12px; background: ${statusColor}; color: white; border-radius: 20px; font-size: 0.75em; display: inline-block;">${r.status}</div>
                     </div>
-                    <button onclick="cancelarAgendamento(${r.id}, '${r.cliente_nome}')" 
+                    ${r.status !== 'concluida' ? `
+                    <button onclick="concluirAtendimentoDashboard('${r.uuid}', '${r.cliente_nome}')" 
+                            style="padding: 6px 12px; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85em; font-weight: 600; transition: all 0.3s ease; display: flex; align-items: center; gap: 5px; margin-bottom: 4px;"
+                            onmouseover="this.style.background='#059669'; this.style.transform='scale(1.05)'" 
+                            onmouseout="this.style.background='#10b981'; this.style.transform='scale(1)'">
+                        ✅ Concluir
+                    </button>
+                    ` : ''}
+                    ${r.status !== 'concluida' && r.status !== 'cancelada' ? `
+                    <button onclick="cancelarAgendamento('${r.uuid}', '${r.cliente_nome}')" 
                             style="padding: 6px 12px; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85em; font-weight: 600; transition: all 0.3s ease; display: flex; align-items: center; gap: 5px;"
                             onmouseover="this.style.background='#dc2626'; this.style.transform='scale(1.05)'" 
                             onmouseout="this.style.background='#ef4444'; this.style.transform='scale(1)'">
                         🚫 Cancelar
                     </button>
+                    ` : ''}
                 </div>
             </div>
         `;
@@ -794,15 +1184,26 @@ function renderizarAgendamentos(agendamentos) {
 // Carregar todos os agendamentos
 async function carregarTodosAgendamentos() {
     try {
+        console.log('🔄 Carregando agendamentos...');
         const response = await fetch('{{ url_for("api_agendamentos_todos", slug=barbearia.slug) }}');
+        
+        console.log('📡 Response status:', response.status);
+        
         if (!response.ok) {
-            throw new Error('Erro ao buscar agendamentos');
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
         
         const agendamentos = await response.json();
         console.log('📥 Agendamentos recebidos:', agendamentos.length);
-        console.log('📊 IDs atuais no servidor:', agendamentos.map(a => a.id));
-        console.log('💾 IDs já vistos:', Array.from(idsAgendamentosVistos));
+        
+        // Verificar se é um array válido
+        if (!Array.isArray(agendamentos)) {
+            console.error('❌ Resposta não é um array:', agendamentos);
+            throw new Error('Resposta inválida da API');
+        }
+        
+        console.log('📊 UUIDs atuais no servidor:', agendamentos.map(a => a.uuid));
+        console.log('💾 UUIDs já vistos:', Array.from(idsAgendamentosVistos));
         
         // Detectar novos agendamentos após primeira carga
         if (!primeiraVerificacao) {
@@ -810,9 +1211,9 @@ async function carregarTodosAgendamentos() {
             let novosDetectados = 0;
             
             agendamentos.forEach(agendamento => {
-                const id = agendamento.id;
-                const jaVisto = idsAgendamentosVistos.has(id);
-                console.log(`  ID ${id} - ${agendamento.cliente_nome}: ${jaVisto ? '✅ já visto' : '🆕 NOVO!'}`);
+                const uuid = agendamento.uuid;
+                const jaVisto = idsAgendamentosVistos.has(uuid);
+                console.log(`  UUID ${uuid} - ${agendamento.cliente_nome}: ${jaVisto ? '✅ já visto' : '🆕 NOVO!'}`);
                 
                 if (!jaVisto) {
                     // Novo agendamento detectado!
@@ -821,7 +1222,7 @@ async function carregarTodosAgendamentos() {
                     const mensagem = `🎉 Novo agendamento: ${agendamento.cliente_nome} às ${agendamento.hora_inicio}`;
                     console.log('📢 Chamando addNotification com:', mensagem);
                     addNotification(mensagem, 'success');
-                    idsAgendamentosVistos.add(id);
+                    idsAgendamentosVistos.add(uuid);
                     
                     // Tocar som de notificação usando Web Audio API
                     tocarSomNotificacao();
@@ -830,10 +1231,10 @@ async function carregarTodosAgendamentos() {
             
             console.log(`✅ Verificação completa: ${novosDetectados} novo(s) agendamento(s)`);
         } else {
-            // Primeira carga - apenas marcar os IDs existentes
+            // Primeira carga - apenas marcar os UUIDs existentes
             console.log('📋 Primeira carga - marcando', agendamentos.length, 'agendamentos existentes');
             agendamentos.forEach(agendamento => {
-                idsAgendamentosVistos.add(agendamento.id);
+                idsAgendamentosVistos.add(agendamento.uuid);
             });
             primeiraVerificacao = false;
             console.log('✅ IDs iniciais marcados:', Array.from(idsAgendamentosVistos));
@@ -841,17 +1242,35 @@ async function carregarTodosAgendamentos() {
         
         // Atualizar array global e aplicar filtros
         todosAgendamentos = agendamentos;
-        aplicarFiltros();
+        
+        // Se não houver agendamentos, mostrar mensagem amigável
+        if (agendamentos.length === 0) {
+            const container = document.getElementById('agendamentosTodos');
+            if (container) {
+                container.innerHTML = `
+                    <div style="text-align: center; padding: 40px; color: #94a3b8;">
+                        <div style="font-size: 3em; margin-bottom: 10px;">📭</div>
+                        <p>Nenhum agendamento encontrado</p>
+                        <p style="font-size: 0.9em; margin-top: 10px;">Os agendamentos aparecerão aqui assim que forem criados.</p>
+                    </div>
+                `;
+            }
+        } else {
+            aplicarFiltros();
+        }
         
     } catch (error) {
-        console.error('Erro ao carregar todos agendamentos:', error);
+        console.error('❌ Erro ao carregar todos agendamentos:', error);
         const container = document.getElementById('agendamentosTodos');
-        container.innerHTML = `
-            <div style="text-align: center; padding: 40px; color: #ef4444;">
-                <div style="font-size: 3em; margin-bottom: 10px;">⚠️</div>
-                <p>Erro ao carregar agendamentos</p>
-            </div>
-        `;
+        if (container) {
+            container.innerHTML = `
+                <div style="text-align: center; padding: 40px; color: #ef4444;">
+                    <div style="font-size: 3em; margin-bottom: 10px;">⚠️</div>
+                    <p>Erro ao carregar agendamentos</p>
+                    <p style="font-size: 0.9em; color: #94a3b8; margin-top: 10px;">${error.message}</p>
+                </div>
+            `;
+        }
     }
 }
 
@@ -976,10 +1395,7 @@ document.addEventListener('DOMContentLoaded', () => {
     carregarTodosAgendamentos(); // Carregar todos os agendamentos na inicialização
     criarGraficoSemana();
     
-    // Simular notificação de boas-vindas
-    setTimeout(() => {
-        addNotification('Bem-vindo ao painel administrativo! 👋', 'success');
-    }, 1000);
+    // Notificação de boas-vindas removida para evitar mensagens automáticas no login
     
     // Recarregar a cada 10 segundos para notificações em tempo real
     setInterval(() => {
@@ -995,10 +1411,11 @@ async function cancelarAgendamento(reservaId, clienteNome) {
     }
     
     try {
-        const response = await fetch(`{{ url_for('admin_cancelar_agendamento', slug=barbearia.slug, reserva_id=0) }}`.replace('/0', `/${reservaId}`), {
+        const response = await fetch(`{{ url_for('admin_cancelar_agendamento', slug=barbearia.slug, reserva_uuid='PLACEHOLDER') }}`.replace('PLACEHOLDER', reservaId), {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token() }}'
             }
         });
         
@@ -1007,13 +1424,45 @@ async function cancelarAgendamento(reservaId, clienteNome) {
         if (data.success) {
             addNotification(`✅ ${data.message}`, 'success');
             // Recarregar agendamentos imediatamente
-            await carregarTodosAgendamentos();
+            carregarAgendamentosHoje();
+            carregarTodosAgendamentos();
         } else {
-            addNotification(`❌ Erro: ${data.message}`, 'warning');
+            addNotification(`❌ ${data.message}`, 'error');
         }
     } catch (error) {
-        console.error('Erro ao cancelar agendamento:', error);
-        addNotification('❌ Erro ao cancelar agendamento', 'warning');
+        console.error('Erro ao cancelar:', error);
+        addNotification('❌ Erro ao cancelar agendamento', 'error');
+    }
+}
+
+// Função para concluir atendimento no dashboard
+async function concluirAtendimentoDashboard(reservaId, clienteNome) {
+    if (!confirm(`Confirmar conclusão do atendimento de ${clienteNome}?`)) {
+        return;
+    }
+    
+    try {
+        const response = await fetch(`{{ url_for('admin_concluir_atendimento', slug=barbearia.slug, reserva_uuid='PLACEHOLDER') }}`.replace('PLACEHOLDER', reservaId), {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token() }}'
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            addNotification(`✅ ${data.message}`, 'success');
+            // Recarregar agendamentos imediatamente
+            carregarAgendamentosHoje();
+            carregarTodosAgendamentos();
+        } else {
+            addNotification(`❌ ${data.message}`, 'error');
+        }
+    } catch (error) {
+        console.error('Erro ao concluir atendimento:', error);
+        addNotification('❌ Erro ao concluir atendimento', 'error');
     }
 }
 
@@ -1027,4 +1476,11 @@ document.addEventListener('click', (e) => {
 });
 </script>
 
-{% endblock %}
+<footer style="background: rgba(255, 255, 255, 0.03); border-top: 1px solid rgba(74, 158, 255, 0.2); padding: 2rem; text-align: center; margin-top: 4rem;">
+    <p style="color: rgba(255, 255, 255, 0.6); font-size: 0.9rem; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.3px;">
+        Desenvolvido por <span style="color: #4a9eff; font-weight: 700;">BarberConnect</span> ✂️
+    </p>
+</footer>
+
+</body>
+</html>

@@ -228,9 +228,10 @@
                 {% endif %}
             </div>
             <ul style="display: flex; gap: 2rem; list-style: none; margin: 0; padding: 0;">
-                <li><a href="/" style="color: #ffffff; text-decoration: none; padding: 0.5rem 1rem;">início</a></li>
-                <li><a href="{{ url_for('login', slug=barbearia.slug) }}" style="color: #ffffff; text-decoration: none; padding: 0.5rem 1rem;">login</a></li>
-                <li><a href="{{ url_for('cadastro', slug=barbearia.slug) }}" style="color: #ffffff; text-decoration: none; padding: 0.5rem 1rem;">cadastro</a></li>
+                <li><a href="/" style="color: #ffffff; text-decoration: none; padding: 0.5rem 1rem;">Início</a></li>
+                <li><a href="#servicos" style="color: #ffffff; text-decoration: none; padding: 0.5rem 1rem;">Serviços</a></li>
+                <li><a href="{{ url_for('login', slug=barbearia.slug) }}" style="color: #ffffff; text-decoration: none; padding: 0.5rem 1rem;">Login</a></li>
+                <li><a href="{{ url_for('cadastro', slug=barbearia.slug) }}" style="color: #ffffff; text-decoration: none; padding: 0.5rem 1rem;">Cadastro</a></li>
             </ul>
         </div>
     </nav>
@@ -263,11 +264,11 @@
                 <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
                     <a href="{{ url_for('cadastro', slug=barbearia.slug) }}" 
                        style="display: inline-flex; align-items: center; gap: 0.5rem; font-size: 1rem; font-weight: 600; padding: 1rem 2rem; border-radius: 50px; text-decoration: none; background: #4a9eff; color: #000000;">
-                        ✂️ agendar horário
+                        ✂️ Agendar horário
                     </a>
-                    <a href="#servicos" 
+                    <a href="{{ url_for('login', slug=barbearia.slug) }}" 
                        style="display: inline-flex; align-items: center; gap: 0.5rem; font-size: 1rem; font-weight: 600; padding: 1rem 2rem; border-radius: 50px; text-decoration: none; background: transparent; color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.3);">
-                        💼 ver serviços
+                        Já possui uma conta? Entrar
                     </a>
                 </div>
             </div>
@@ -305,10 +306,10 @@
         <div style="max-width: 1200px; margin: 0 auto;">
             <div style="text-align: center; margin-bottom: 4rem;">
                 <h2 style="font-size: 2.5rem; font-weight: 700; color: #ffffff; margin-bottom: 1rem; letter-spacing: -0.5px;">
-                    nossos <span style="color: #4a9eff;">serviços</span>
+                    Nossos <span style="color: #4a9eff;">serviços</span>
                 </h2>
                 <p style="color: rgba(255, 255, 255, 0.7); font-size: 1.1rem;">
-                    qualidade e profissionalismo em cada atendimento
+                    Qualidade e profissionalismo em cada atendimento
                 </p>
             </div>
 
@@ -342,10 +343,10 @@
 
                 <!-- Card 4 -->
                 <div style="background: rgba(74, 158, 255, 0.05); padding: 2.5rem; border-radius: 20px; border: 1px solid rgba(74, 158, 255, 0.2); transition: all 0.3s ease;">
-                    <div style="font-size: 3rem; margin-bottom: 1.5rem;">🎨</div>
-                    <h3 style="font-size: 1.5rem; font-weight: 700; color: #4a9eff; margin-bottom: 1rem;">Desenhos artísticos</h3>
+                    <div style="font-size: 3rem; margin-bottom: 1.5rem;">📅</div>
+                    <h3 style="font-size: 1.5rem; font-weight: 700; color: #4a9eff; margin-bottom: 1rem;">Agendamento fácil</h3>
                     <p style="color: rgba(255, 255, 255, 0.7); line-height: 1.6;">
-                        Degradês, riscos e desenhos personalizados para você se destacar
+                        Reserve seu horário online de forma rápida e prática, sem complicação
                     </p>
                 </div>
             </div>
@@ -358,20 +359,91 @@
             <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 3rem; text-align: center;">
                 <div>
                     <div style="font-size: 3.5rem; font-weight: 800; color: #4a9eff; margin-bottom: 0.5rem;">5+</div>
-                    <div style="color: rgba(255, 255, 255, 0.7); font-size: 1.1rem;">anos de experiência</div>
+                    <div style="color: rgba(255, 255, 255, 0.7); font-size: 1.1rem;">Anos de experiência</div>
                 </div>
                 <div>
                     <div style="font-size: 3.5rem; font-weight: 800; color: #4a9eff; margin-bottom: 0.5rem;">1000+</div>
-                    <div style="color: rgba(255, 255, 255, 0.7); font-size: 1.1rem;">clientes satisfeitos</div>
+                    <div style="color: rgba(255, 255, 255, 0.7); font-size: 1.1rem;">Clientes satisfeitos</div>
                 </div>
                 <div>
                     <div style="font-size: 3.5rem; font-weight: 800; color: #4a9eff; margin-bottom: 0.5rem;">100%</div>
-                    <div style="color: rgba(255, 255, 255, 0.7); font-size: 1.1rem;">profissionais qualificados</div>
+                    <div style="color: rgba(255, 255, 255, 0.7); font-size: 1.1rem;">Profissionais qualificados</div>
                 </div>
                 <div>
                     <div style="font-size: 3.5rem; font-weight: 800; color: #4a9eff; margin-bottom: 0.5rem;">★★★★★</div>
-                    <div style="color: rgba(255, 255, 255, 0.7); font-size: 1.1rem;">avaliação dos clientes</div>
+                    <div style="color: rgba(255, 255, 255, 0.7); font-size: 1.1rem;">Avaliação dos clientes</div>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Seção de Planos -->
+    <section id="planos" style="padding: 6rem 2rem; background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);">
+        <div style="max-width: 1200px; margin: 0 auto;">
+            <div style="text-align: center; margin-bottom: 4rem;">
+                <h2 style="font-size: 2.5rem; font-weight: 700; color: #ffffff; margin-bottom: 1rem; letter-spacing: -0.5px;">
+                    💎 Planos <span style="color: #4a9eff;">Mensais</span>
+                </h2>
+                <p style="color: rgba(255, 255, 255, 0.7); font-size: 1.1rem;">
+                    Economize e tenha benefícios exclusivos com nossos planos
+                </p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-bottom: 2rem;">
+                <!-- Plano Básico -->
+                <div style="background: rgba(74, 158, 255, 0.05); padding: 2.5rem; border-radius: 20px; border: 1px solid rgba(74, 158, 255, 0.2); text-align: center;">
+                    <h3 style="font-size: 1.5rem; font-weight: 700; color: #4a9eff; margin-bottom: 1rem;">Plano Básico</h3>
+                    <div style="font-size: 3rem; font-weight: 800; color: #ffffff; margin: 1rem 0;">R$ 79,90</div>
+                    <div style="color: rgba(255, 255, 255, 0.6); margin-bottom: 1.5rem;">por mês</div>
+                    <div style="background: rgba(74, 158, 255, 0.1); padding: 0.8rem; border-radius: 10px; margin-bottom: 1.5rem; font-weight: 600;">
+                        2 atendimentos/mês
+                    </div>
+                    <ul style="list-style: none; padding: 0; text-align: left; color: rgba(255, 255, 255, 0.8);">
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">✓ Corte incluso</li>
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">✓ 10% off em produtos</li>
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">✓ Agendamento prioritário</li>
+                    </ul>
+                </div>
+
+                <!-- Plano Premium -->
+                <div style="background: rgba(74, 158, 255, 0.1); padding: 2.5rem; border-radius: 20px; border: 2px solid #4a9eff; text-align: center; position: relative; transform: scale(1.05);">
+                    <div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: #4a9eff; color: #000; padding: 0.5rem 1.5rem; border-radius: 50px; font-weight: 700; font-size: 0.9rem;">MAIS POPULAR</div>
+                    <h3 style="font-size: 1.5rem; font-weight: 700; color: #4a9eff; margin-bottom: 1rem;">Plano Premium</h3>
+                    <div style="font-size: 3rem; font-weight: 800; color: #ffffff; margin: 1rem 0;">R$ 149,90</div>
+                    <div style="color: rgba(255, 255, 255, 0.6); margin-bottom: 1.5rem;">por mês</div>
+                    <div style="background: rgba(74, 158, 255, 0.2); padding: 0.8rem; border-radius: 10px; margin-bottom: 1.5rem; font-weight: 600;">
+                        4 atendimentos/mês
+                    </div>
+                    <ul style="list-style: none; padding: 0; text-align: left; color: rgba(255, 255, 255, 0.9);">
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">✓ Corte + Barba</li>
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">✓ 20% off em produtos</li>
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">✓ Agendamento VIP</li>
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">✓ Toalha quente</li>
+                    </ul>
+                </div>
+
+                <!-- Plano Black -->
+                <div style="background: rgba(74, 158, 255, 0.05); padding: 2.5rem; border-radius: 20px; border: 1px solid rgba(74, 158, 255, 0.2); text-align: center;">
+                    <h3 style="font-size: 1.5rem; font-weight: 700; color: #4a9eff; margin-bottom: 1rem;">Plano Black</h3>
+                    <div style="font-size: 3rem; font-weight: 800; color: #ffffff; margin: 1rem 0;">R$ 249,90</div>
+                    <div style="color: rgba(255, 255, 255, 0.6); margin-bottom: 1.5rem;">por mês</div>
+                    <div style="background: rgba(74, 158, 255, 0.1); padding: 0.8rem; border-radius: 10px; margin-bottom: 1.5rem; font-weight: 600;">
+                        8 atendimentos/mês
+                    </div>
+                    <ul style="list-style: none; padding: 0; text-align: left; color: rgba(255, 255, 255, 0.8);">
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">✓ Serviços ilimitados</li>
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">✓ 30% off em produtos</li>
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">✓ Prioridade Black</li>
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">✓ Eventos exclusivos</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 3rem;">
+                <a href="{{ url_for('login', slug=barbearia.slug) }}" 
+                   style="display: inline-flex; align-items: center; gap: 0.5rem; font-size: 1rem; font-weight: 600; padding: 1rem 2rem; border-radius: 50px; text-decoration: none; background: #4a9eff; color: #000000;">
+                    Ver todos os planos →
+                </a>
             </div>
         </div>
     </section>
@@ -380,14 +452,14 @@
     <section style="padding: 5rem 2rem; background: linear-gradient(135deg, #4a9eff 0%, #2563eb 100%);">
         <div style="max-width: 900px; margin: 0 auto; text-align: center;">
             <h2 style="font-size: 3rem; font-weight: 700; color: #000000; margin-bottom: 1.5rem; letter-spacing: -0.5px;">
-                agende seu horário
+                Agende seu horário
             </h2>
             <p style="font-size: 1.2rem; color: rgba(0, 0, 0, 0.8); margin-bottom: 2.5rem; line-height: 1.7;">
-                reserve seu horário online de forma rápida e prática. estamos prontos para te atender!
+                Reserve seu horário online de forma rápida e prática. Estamos prontos para te atender!
             </p>
             <a href="{{ url_for('cadastro', slug=barbearia.slug) }}" 
                style="display: inline-flex; align-items: center; gap: 0.5rem; font-size: 1.1rem; font-weight: 700; padding: 1.2rem 3rem; border-radius: 50px; text-decoration: none; background: #000000; color: #ffffff; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);">
-                fazer agendamento →
+                Fazer agendamento →
             </a>
         </div>
     </section>
@@ -407,7 +479,7 @@
                         {% endif %}
                     </div>
                     <p style="color: rgba(255, 255, 255, 0.6); line-height: 1.6; margin-bottom: 1.5rem;">
-                        tradição e modernidade em cortes masculinos. agende seu horário e venha nos visitar!
+                        Tradição e modernidade em cortes masculinos. Agende seu horário e venha nos visitar!
                     </p>
                     {% if barbearia.telefone %}
                     <div style="color: rgba(255, 255, 255, 0.7); margin-bottom: 0.5rem;">
@@ -423,33 +495,33 @@
 
                 <!-- Coluna 2 - Links -->
                 <div>
-                    <h4 style="color: #4a9eff; font-size: 1rem; font-weight: 700; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">links</h4>
+                    <h4 style="color: #4a9eff; font-size: 1rem; font-weight: 700; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Links</h4>
                     <ul style="list-style: none; padding: 0;">
                         <li style="margin-bottom: 0.8rem;">
-                            <a href="/" style="color: rgba(255, 255, 255, 0.7); text-decoration: none;">início</a>
+                            <a href="/" style="color: rgba(255, 255, 255, 0.7); text-decoration: none;">Início</a>
                         </li>
                         <li style="margin-bottom: 0.8rem;">
-                            <a href="{{ url_for('login', slug=barbearia.slug) }}" style="color: rgba(255, 255, 255, 0.7); text-decoration: none;">login</a>
+                            <a href="{{ url_for('login', slug=barbearia.slug) }}" style="color: rgba(255, 255, 255, 0.7); text-decoration: none;">Login</a>
                         </li>
                         <li style="margin-bottom: 0.8rem;">
-                            <a href="{{ url_for('cadastro', slug=barbearia.slug) }}" style="color: rgba(255, 255, 255, 0.7); text-decoration: none;">cadastro</a>
+                            <a href="{{ url_for('cadastro', slug=barbearia.slug) }}" style="color: rgba(255, 255, 255, 0.7); text-decoration: none;">Cadastro</a>
                         </li>
                     </ul>
                 </div>
 
                 <!-- Coluna 3 - Recursos -->
                 <div>
-                    <h4 style="color: #4a9eff; font-size: 1rem; font-weight: 700; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">serviços</h4>
+                    <h4 style="color: #4a9eff; font-size: 1rem; font-weight: 700; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Serviços</h4>
                     <ul style="list-style: none; padding: 0;">
-                        <li style="margin-bottom: 0.8rem; color: rgba(255, 255, 255, 0.7);">corte masculino</li>
-                        <li style="margin-bottom: 0.8rem; color: rgba(255, 255, 255, 0.7);">barba completa</li>
-                        <li style="margin-bottom: 0.8rem; color: rgba(255, 255, 255, 0.7);">combo premium</li>
+                        <li style="margin-bottom: 0.8rem; color: rgba(255, 255, 255, 0.7);">Corte masculino</li>
+                        <li style="margin-bottom: 0.8rem; color: rgba(255, 255, 255, 0.7);">Barba completa</li>
+                        <li style="margin-bottom: 0.8rem; color: rgba(255, 255, 255, 0.7);">Combo premium</li>
                     </ul>
                 </div>
 
                 <!-- Coluna 4 - Redes Sociais -->
                 <div>
-                    <h4 style="color: #4a9eff; font-size: 1rem; font-weight: 700; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">social</h4>
+                    <h4 style="color: #4a9eff; font-size: 1rem; font-weight: 700; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Social</h4>
                     <div style="display: flex; gap: 1rem;">
                         <a href="#" style="width: 40px; height: 40px; background: rgba(74, 158, 255, 0.1); border: 1px solid rgba(74, 158, 255, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.2rem;">📘</a>
                         <a href="#" style="width: 40px; height: 40px; background: rgba(74, 158, 255, 0.1); border: 1px solid rgba(74, 158, 255, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.2rem;">📷</a>
@@ -460,8 +532,11 @@
 
             <!-- Copyright -->
             <div style="border-top: 1px solid rgba(74, 158, 255, 0.1); padding-top: 2rem; text-align: center;">
-                <p style="color: rgba(255, 255, 255, 0.5); font-size: 0.9rem;">
-                    © 2025 {{ barbearia.nome }}. todos os direitos reservados.
+                <p style="color: rgba(255, 255, 255, 0.5); font-size: 0.9rem; margin-bottom: 0.5rem;">
+                    © 2025 {{ barbearia.nome }}. Todos os direitos reservados.
+                </p>
+                <p style="color: rgba(255, 255, 255, 0.6); font-size: 1rem; margin-top: 0.75rem; font-family: 'Plus Jakarta Sans', sans-serif;">
+                    Desenvolvido por <a href="http://127.0.0.1:5001" target="_blank" style="text-decoration: none;"><span style="color: #ffffff; font-weight: 700;">Barber</span><span style="color: #4a9eff; font-weight: 700;">Connect</span></a>
                 </p>
             </div>
         </div>

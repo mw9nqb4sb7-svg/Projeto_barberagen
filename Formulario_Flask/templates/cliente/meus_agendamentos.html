@@ -2,55 +2,85 @@
 {% block title %}Meus Agendamentos - {{ barbearia.nome }}{% endblock %}
 
 {% block content %}
-<!-- Navegação -->
-<nav class="custom-nav">
-    <div class="nav-content">
-        <div class="nav-brand" style="display: flex; align-items: center; gap: 1rem;">
-            {% if barbearia.logo %}
-            <img src="{{ url_for('static', filename='uploads/logos/' + barbearia.logo) }}" 
-                 alt="{{ barbearia.nome }}" 
-                 style="height: 90px; width: auto; 
-                        filter: drop-shadow(0 0 15px rgba(0, 150, 255, 0.5)) drop-shadow(0 2px 10px rgba(0, 150, 255, 0.3)) brightness(1.1); 
-                        transition: all 0.3s ease;"
-                 onmouseover="this.style.transform='scale(1.1) rotate(5deg)'; this.style.filter='drop-shadow(0 0 25px rgba(0, 150, 255, 0.8)) drop-shadow(0 5px 20px rgba(0, 150, 255, 0.5)) brightness(1.2)'"
-                 onmouseout="this.style.transform='scale(1) rotate(0deg)'; this.style.filter='drop-shadow(0 0 15px rgba(0, 150, 255, 0.5)) drop-shadow(0 2px 10px rgba(0, 150, 255, 0.3)) brightness(1.1)'">
-            {% endif %}
-            <span>{{ barbearia.nome|upper }}</span>
+<style>
+    .nav {
+        position: fixed;
+        top: 0; left: 0; right: 0;
+        background: rgba(0,0,0,0.95);
+        border-bottom: 2px solid rgba(74,158,255,0.3);
+        padding: 1.2rem 1.5rem;
+        z-index: 1000;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+    }
+    .nav-container {
+        max-width: 1100px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+    .nav-logo {
+        font-size: 1.7rem;
+        font-weight: 800;
+        color: #fff;
+        letter-spacing: -0.5px;
+        text-decoration: none;
+        word-break: break-word;
+    }
+    .nav-logo span { color: #4a9eff; }
+    .nav-links { display: flex; gap: 1.2rem; align-items: center; flex-wrap: wrap; }
+    .nav-link { color: rgba(255,255,255,0.8); text-decoration: none; font-weight: 600; transition: color 0.3s; padding: 0.5rem 0.7rem; border-radius: 8px; }
+    .nav-link:hover { color: #4a9eff; background: rgba(74,158,255,0.08); }
+    .btn-primary {
+        background: linear-gradient(135deg, #4a9eff 0%, #2563eb 100%);
+        color: #000;
+        padding: 0.8rem 2rem;
+        border-radius: 50px;
+        text-decoration: none;
+        font-weight: 700;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s;
+        display: inline-block;
+        font-size: 1rem;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(74,158,255,0.4); }
+    @media (max-width: 600px) {
+        .nav { padding: 0.25rem 0.3rem !important; min-height: 38px; }
+        .nav-logo { font-size: 1rem !important; }
+        .nav-links { gap: 0.2rem !important; }
+        .nav-link, .btn-primary { padding: 0.4rem 0.7rem !important; font-size: 0.92rem !important; }
+    }
+</style>
+{% set extra_nav_html %}
+    <a href="{{ url_for('perfil', slug=barbearia.slug if barbearia else 'principal') }}">Editar Perfil</a>
+{% endset %}
+{% include 'cliente/_navbar.html' %}
+<div class="custom-container" style="margin-top: 90px;">
+    <div style="max-width: 700px; margin: 0 auto 2.5rem auto; padding: 2.5rem 2rem; background: rgba(74,158,255,0.07); border-radius: 22px; box-shadow: 0 2px 16px rgba(74,158,255,0.10); display: flex; flex-direction: column; align-items: stretch; font-family: 'Plus Jakarta Sans', sans-serif;">
+        <div style="display: flex; align-items: center; gap: 2rem; flex-wrap: wrap;">
+            <div style="background: linear-gradient(135deg, #4a9eff 0%, #2563eb 100%); color: #fff; border-radius: 50%; width: 90px; height: 90px; display: flex; align-items: center; justify-content: center; font-size: 2.7rem; font-weight: 800; box-shadow: 0 2px 10px rgba(74,158,255,0.15);">
+                {{ session['usuario_nome'][0]|upper if session['usuario_nome'] else '👤' }}
+            </div>
+            <div style="flex: 1; min-width: 220px;">
+                <div style="font-size: 2rem; font-weight: 800; color: #222; margin-bottom: 0.2rem; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -1px;">{{ session['usuario_nome'] }}</div>
+                <div style="font-size: 1.1rem; color: #4a9eff; font-weight: 600; margin-bottom: 0.3rem;">{{ session['usuario_email'] if session['usuario_email'] else '' }}</div>
+                {% if session['usuario_telefone'] %}
+                <div style="font-size: 1rem; color: #666; margin-bottom: 0.3rem;">📱 {{ session['usuario_telefone'] }}</div>
+                {% endif %}
+                <div style="font-size: 0.98rem; color: #aaa;">Membro desde: {{ session['usuario_data_cadastro'] if session['usuario_data_cadastro'] else '' }}</div>
+            </div>
+            <div style="display: flex; align-items: center;">
+                <a href="{{ url_for('perfil') }}" class="btn btn-primary" style="padding: 0.9rem 2.2rem; font-size: 1.1rem; font-weight: 700; border-radius: 12px;">✏️ Editar perfil</a>
+            </div>
         </div>
-        
-        <!-- Botão Hambúrguer -->
-        <div class="nav-toggle">
-            <span></span>
-            <span></span>
-            <span></span>
-        </div>
-        
-        <ul class="nav-list">
-            <li><a href="{{ url_for('nova_reserva', slug=barbearia.slug) }}" class="nav-link">NOVO AGENDAMENTO</a></li>
-            <li><a href="{{ url_for('dashboard', slug=barbearia.slug) }}" class="nav-link">DASHBOARD</a></li>
-            <li><a href="{{ url_for('logout', slug=barbearia.slug) }}" class="nav-link">SAIR</a></li>
-        </ul>
     </div>
-</nav>
-
-<div class="custom-container">
-    <h1 style="text-align: center; margin-bottom: 3rem;">📅 MEUS AGENDAMENTOS</h1>
-
-    {% if reservas %}
-        <div class="grid" style="gap: 2rem;">
-            {% for reserva in reservas %}
-            <div class="dashboard-card" style="border-left: 5px solid var(--gold);">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
-                    <div style="font-size: 1.5rem; font-weight: 700; color: var(--gold);">
-                        {% if reserva.data is string %}
-                            {{ reserva.data }}
-                        {% else %}
-                            {{ reserva.data.strftime('%d/%m/%Y') }}
-                        {% endif %}
+{% endblock %}
+                        ✓ AGENDADO
                     </div>
-                    <div class="status-badge status-ok">
-                        ✓ CONFIRMADO
-                    </div>
+                    {% endif %}
                 </div>
 
                 <div style="display: grid; gap: 1rem; margin-bottom: 1.5rem;">
@@ -80,11 +110,19 @@
                 </div>
 
                 <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(74, 158, 255, 0.2);">
-                    <a href="{{ url_for('cancelar_reserva', reserva_id=reserva.id) }}" 
-                       class="btn btn-danger btn-small"
-                       onclick="return confirm('⚠️ Tem certeza que deseja cancelar este agendamento?')">
-                        🗑️ CANCELAR AGENDAMENTO
-                    </a>
+                    {% if reserva.status != 'concluida' %}
+                    <form method="POST" action="{{ url_for('cancelar_reserva', reserva_uuid=reserva.uuid) }}" style="display: inline;">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                        <button type="submit" class="btn btn-danger btn-small"
+                                onclick="return confirm('⚠️ Tem certeza que deseja cancelar este agendamento?')">
+                            🗑️ CANCELAR AGENDAMENTO
+                        </button>
+                    </form>
+                    {% else %}
+                    <div style="color: rgba(16, 185, 129, 0.8); font-size: 1rem; text-align: center; padding: 0.5rem;">
+                        ✅ Atendimento concluído com sucesso!
+                    </div>
+                    {% endif %}
                 </div>
             </div>
             {% endfor %}
@@ -92,13 +130,20 @@
     {% else %}
         <div class="card-form" style="text-align: center; padding: 4rem 2rem;">
             <div style="font-size: 5rem; margin-bottom: 2rem; opacity: 0.3;">📅</div>
-            <h2 style="color: var(--gold-light); margin-bottom: 1rem;">Nenhum Agendamento Encontrado</h2>
+            {% if filtro == 'atendidos' %}
+            <h2 style="color: var(--gold-light); margin-bottom: 1rem;">Nenhum Atendimento Concluído</h2>
             <p style="color: rgba(245, 245, 220, 0.7); margin-bottom: 2rem; font-size: 1.1rem;">
-                Você ainda não tem agendamentos nesta barbearia.
+                Você ainda não tem atendimentos concluídos nesta barbearia.
+            </p>
+            {% else %}
+            <h2 style="color: var(--gold-light); margin-bottom: 1rem;">Nenhum Agendamento Pendente</h2>
+            <p style="color: rgba(245, 245, 220, 0.7); margin-bottom: 2rem; font-size: 1.1rem;">
+                Você não tem agendamentos pendentes nesta barbearia.
             </p>
             <a href="{{ url_for('nova_reserva', slug=barbearia.slug) }}" class="btn btn-primary">
-                ➕ FAZER PRIMEIRO AGENDAMENTO
+                ➕ FAZER NOVO AGENDAMENTO
             </a>
+            {% endif %}
         </div>
     {% endif %}
 </div>

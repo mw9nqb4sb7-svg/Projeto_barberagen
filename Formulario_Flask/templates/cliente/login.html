@@ -262,6 +262,7 @@
             
             <!-- Formulário de Login -->
             <form method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <div class="form-group">
                     <label for="email" class="form-label">📧 Email ou usuário</label>
                     <input type="text" class="form-input" id="email" name="email" 
@@ -294,5 +295,6 @@
             <a href="{{ url_for('barbearia_publica', slug=barbearia.slug) }}">← Voltar para página inicial</a>
         </div>
     </div>
+        <!-- Script de integração Firebase removido; formulário usa autenticação no servidor -->
 </body>
 </html>
