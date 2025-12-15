@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify, g, abort, send_from_directory
-from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify, g, abort, send_from_directory
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -12,17 +11,6 @@ from pathlib import Path
 from jinja2 import ChoiceLoader, FileSystemLoader
 import smtplib
 from email.message import EmailMessage
-from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify, g, abort, send_from_directory
-from flask_sqlalchemy import SQLAlchemy
-from flask_wtf.csrf import CSRFProtect
-from werkzeug.security import generate_password_hash, check_password_hash
-from werkzeug.utils import secure_filename
-import os
-import sys
-import json
-import uuid
-from pathlib import Path
-from jinja2 import ChoiceLoader, FileSystemLoader
 from datetime import datetime
 
 # Importar módulo de segurança
