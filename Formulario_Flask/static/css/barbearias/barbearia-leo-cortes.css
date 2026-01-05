@@ -4,8 +4,8 @@
    ======================================== */
 
 :root {
-    --leo-blue: #4a9eff;
-    --leo-blue-dark: #2563eb;
+    --leo-blue: #8b5cf6;
+    --leo-blue-dark: #7c3aed;
     --leo-gold: #d4af37;
     --leo-gold-dark: #b8941f;
     --leo-white: #ffffff;
@@ -80,7 +80,7 @@ h1.hero-title .title-line-2,
 h1 .title-line-2 {
     color: var(--leo-white) !important;
     -webkit-text-fill-color: var(--leo-white) !important;
-    text-shadow: 0 0 20px rgba(74, 158, 255, 0.3) !important;
+    text-shadow: 0 0 20px rgba(139, 92, 246, 0.3) !important;
     background: transparent !important;
     -webkit-background-clip: unset !important;
 }
@@ -103,7 +103,7 @@ h1 .title-line-4 {
     -webkit-background-clip: unset !important;
 }
     -webkit-text-fill-color: var(--leo-blue) !important;
-    text-shadow: 0 0 20px rgba(74, 158, 255, 0.6) !important;
+    text-shadow: 0 0 20px rgba(139, 92, 246, 0.6) !important;
     background: transparent !important;
     -webkit-background-clip: unset !important;
 }
@@ -149,7 +149,7 @@ h1 .title-line-3 {
 .btn-primary-cta {
     background: linear-gradient(135deg, var(--leo-blue) 0%, var(--leo-blue-dark) 100%) !important;
     color: #000000 !important;
-    box-shadow: 0 10px 30px rgba(74, 158, 255, 0.4), 0 0 20px rgba(74, 158, 255, 0.2) !important;
+    box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4), 0 0 20px rgba(139, 92, 246, 0.2) !important;
     position: relative !important;
     overflow: hidden !important;
     transform: translateY(0) !important;
@@ -168,7 +168,7 @@ h1 .title-line-3 {
 
 .btn-primary-cta:hover {
     background: linear-gradient(135deg, var(--leo-blue-dark) 0%, var(--leo-blue) 100%) !important;
-    box-shadow: 0 16px 48px rgba(74, 158, 255, 0.6), 0 0 40px rgba(74, 158, 255, 0.4) !important;
+    box-shadow: 0 16px 48px rgba(139, 92, 246, 0.6), 0 0 40px rgba(139, 92, 246, 0.4) !important;
     transform: translateY(-5px) scale(1.05) !important;
     filter: brightness(1.2) !important;
 }
@@ -208,7 +208,7 @@ h1 .title-line-3 {
     border-color: var(--leo-blue) !important;
     color: #000000 !important;
     transform: translateY(-5px) scale(1.05) !important;
-    box-shadow: 0 10px 30px rgba(74, 158, 255, 0.5), 0 0 20px rgba(74, 158, 255, 0.3) !important;
+    box-shadow: 0 10px 30px rgba(139, 92, 246, 0.5), 0 0 20px rgba(139, 92, 246, 0.3) !important;
 }
 
 .btn-secondary-cta:hover::before {
@@ -224,15 +224,15 @@ h1 .title-line-3 {
    LOGO E ELEMENTOS DECORATIVOS
    ======================================== */
 .logo-img {
-    filter: drop-shadow(0 0 15px rgba(74, 158, 255, 0.5)) brightness(1.1) !important;
+    filter: drop-shadow(0 0 15px rgba(139, 92, 246, 0.5)) brightness(1.1) !important;
 }
 
 .logo-img:hover {
-    filter: drop-shadow(0 0 25px rgba(74, 158, 255, 0.8)) brightness(1.2) !important;
+    filter: drop-shadow(0 0 25px rgba(139, 92, 246, 0.8)) brightness(1.2) !important;
 }
 
 .hero-logo {
-    filter: drop-shadow(0 20px 60px rgba(74, 158, 255, 0.3)) !important;
+    filter: drop-shadow(0 20px 60px rgba(139, 92, 246, 0.3)) !important;
 }
 
 .deco-shape-1 {
@@ -240,15 +240,15 @@ h1 .title-line-3 {
 }
 
 .deco-shape-2 {
-    background: linear-gradient(135deg, rgba(74, 158, 255, 0.3) 0%, rgba(37, 99, 235, 0.2) 100%) !important;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(37, 99, 235, 0.2) 100%) !important;
 }
 
 .logo-fallback {
-    background: linear-gradient(135deg, rgba(74, 158, 255, 0.2) 0%, rgba(255, 255, 255, 0.05) 100%) !important;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(255, 255, 255, 0.05) 100%) !important;
 }
 
 .fallback-icon {
-    filter: drop-shadow(0 10px 30px rgba(74, 158, 255, 0.5)) !important;
+    filter: drop-shadow(0 10px 30px rgba(139, 92, 246, 0.5)) !important;
 }
 
 /* ========================================
@@ -263,7 +263,7 @@ h2, h3 {
    ======================================== */
 .grid > div:hover {
     border-color: var(--leo-blue) !important;
-    box-shadow: 0 10px 40px rgba(74, 158, 255, 0.3) !important;
+    box-shadow: 0 10px 40px rgba(139, 92, 246, 0.3) !important;
 }
 
 /* ========================================
@@ -282,7 +282,7 @@ footer a:hover {
 }
 
 footer a[style*="border-radius: 50%"]:hover {
-    background: rgba(74, 158, 255, 0.3) !important;
+    background: rgba(139, 92, 246, 0.3) !important;
     border-color: var(--leo-blue) !important;
 }
 
@@ -291,7 +291,7 @@ footer a[style*="border-radius: 50%"]:hover {
    ======================================== */
 .service-card {
     background: rgba(26, 26, 26, 0.6) !important;
-    border: 2px solid rgba(74, 158, 255, 0.2) !important;
+    border: 2px solid rgba(139, 92, 246, 0.2) !important;
     border-radius: 20px !important;
     padding: 2.5rem !important;
     text-align: center !important;
@@ -302,7 +302,7 @@ footer a[style*="border-radius: 50%"]:hover {
 .service-card:hover {
     transform: translateY(-5px) !important;
     border-color: var(--leo-blue) !important;
-    box-shadow: 0 10px 40px rgba(74, 158, 255, 0.3) !important;
+    box-shadow: 0 10px 40px rgba(139, 92, 246, 0.3) !important;
 }
 
 /* ========================================
@@ -312,7 +312,7 @@ footer a[style*="border-radius: 50%"]:hover {
     text-align: center !important;
     padding: 2rem !important;
     background: rgba(26, 26, 26, 0.4) !important;
-    border: 2px solid rgba(74, 158, 255, 0.15) !important;
+    border: 2px solid rgba(139, 92, 246, 0.15) !important;
     border-radius: 15px !important;
     transition: all 0.3s ease !important;
 }
@@ -320,5 +320,5 @@ footer a[style*="border-radius: 50%"]:hover {
 .feature-card:hover {
     transform: translateY(-5px) !important;
     border-color: var(--leo-blue) !important;
-    box-shadow: 0 5px 20px rgba(74, 158, 255, 0.2) !important;
+    box-shadow: 0 5px 20px rgba(139, 92, 246, 0.2) !important;
 }

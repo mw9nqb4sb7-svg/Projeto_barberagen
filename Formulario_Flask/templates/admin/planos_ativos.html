@@ -29,21 +29,21 @@
     }
     
     body {
-        background: #000;
-        color: #fff;
+        background: #ffffff;
+        color: #1f2937;
         padding: 0;
         margin: 0;
     }
 
     .navbar {
         background: linear-gradient(180deg, rgba(0, 0, 0, 0.95) 0%, rgba(13, 13, 13, 0.98) 100%);
-        border-bottom: 3px solid #4a9eff;
+        border-bottom: 3px solid #8b5cf6;
         position: fixed;
         top: 0;
         left: 0;
         right: 0;
         z-index: 1000;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
         padding: 1.5rem 2rem;
     }
 
@@ -82,7 +82,7 @@
     }
 
     .btn-primary {
-        background: #4a9eff;
+        background: #8b5cf6;
         color: #000000;
     }
 
@@ -93,19 +93,19 @@
 
     .btn-secondary {
         background: transparent;
-        color: #ffffff;
+        color: #1f2937;
         border: 1px solid rgba(255, 255, 255, 0.3);
     }
 
     .btn-secondary:hover {
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(139, 92, 246, 0.05);
     }
 
     #mobileMenuBtn {
         display: none;
-        background: rgba(74, 158, 255, 0.1);
-        border: 1px solid rgba(74, 158, 255, 0.3);
-        color: #4a9eff;
+        background: rgba(139, 92, 246, 0.1);
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        color: #8b5cf6;
         padding: 0.5rem 0.75rem;
         border-radius: 8px;
         cursor: pointer;
@@ -153,7 +153,7 @@
     
     .page-subtitle {
         font-size: 1rem;
-        color: rgba(255, 255, 255, 0.6);
+        color: rgba(31, 41, 55, 0.6);
         font-weight: 400;
     }
     
@@ -166,7 +166,7 @@
     
     .stat-card {
         background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(74, 158, 255, 0.2);
+        border: 1px solid rgba(139, 92, 246, 0.2);
         border-radius: 16px;
         padding: 1.5rem;
         backdrop-filter: blur(10px);
@@ -174,7 +174,7 @@
     
     .stat-label {
         font-size: 0.85rem;
-        color: rgba(255, 255, 255, 0.5);
+        color: rgba(31, 41, 55, 0.5);
         text-transform: uppercase;
         letter-spacing: 1px;
         margin-bottom: 0.5rem;
@@ -183,12 +183,12 @@
     .stat-value {
         font-size: 2rem;
         font-weight: 700;
-        color: #4a9eff;
+        color: #8b5cf6;
     }
     
     .table-container {
         background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(74, 158, 255, 0.2);
+        border: 1px solid rgba(139, 92, 246, 0.2);
         border-radius: 16px;
         padding: 2rem;
         backdrop-filter: blur(10px);
@@ -200,14 +200,14 @@
     }
     
     .table thead {
-        border-bottom: 2px solid rgba(74, 158, 255, 0.3);
+        border-bottom: 2px solid rgba(139, 92, 246, 0.3);
     }
     
     .table th {
         padding: 1rem;
         text-align: left;
         font-weight: 600;
-        color: #4a9eff;
+        color: #8b5cf6;
         text-transform: uppercase;
         font-size: 0.8rem;
         letter-spacing: 1px;
@@ -219,7 +219,7 @@
     }
     
     .table tr:hover {
-        background: rgba(74, 158, 255, 0.05);
+        background: rgba(139, 92, 246, 0.05);
     }
     
     .badge {
@@ -254,7 +254,7 @@
         width: 40px;
         height: 40px;
         border-radius: 50%;
-        background: linear-gradient(135deg, #4a9eff, #357abd);
+        background: linear-gradient(135deg, #8b5cf6, #357abd);
         display: flex;
         align-items: center;
         justify-content: center;
@@ -274,7 +274,7 @@
     
     .cliente-email {
         font-size: 0.8rem;
-        color: rgba(255, 255, 255, 0.5);
+        color: rgba(31, 41, 55, 0.5);
     }
     
     .plano-info {
@@ -284,19 +284,19 @@
     
     .plano-nome {
         font-weight: 600;
-        color: #4a9eff;
+        color: #8b5cf6;
         font-size: 0.9rem;
     }
     
     .plano-atendimentos {
         font-size: 0.8rem;
-        color: rgba(255, 255, 255, 0.5);
+        color: rgba(31, 41, 55, 0.5);
     }
     
     .empty-state {
         text-align: center;
         padding: 4rem 2rem;
-        color: rgba(255, 255, 255, 0.5);
+        color: rgba(31, 41, 55, 0.5);
     }
     
     .empty-icon {
@@ -378,13 +378,13 @@
     <div class="page-header" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
         <div>
             <h1 class="page-title">
-                📋 Planos <span style="color: #4a9eff;">Mensais Ativos</span>
+                📋 Planos <span style="color: #8b5cf6;">Mensais Ativos</span>
             </h1>
             <p class="page-subtitle">
                 Clientes com assinaturas de planos mensais ativas
             </p>
         </div>
-        <button onclick="location.reload()" style="padding: 0.75rem 1.5rem; background: #4a9eff; color: #fff; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease; font-family: 'Plus Jakarta Sans', sans-serif;" onmouseover="this.style.background='#357abd'" onmouseout="this.style.background='#4a9eff'">
+        <button onclick="location.reload()" style="padding: 0.75rem 1.5rem; background: #8b5cf6; color: #1f2937; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease; font-family: 'Plus Jakarta Sans', sans-serif;" onmouseover="this.style.background='#357abd'" onmouseout="this.style.background='#8b5cf6'">
             🔄 Atualizar Dados
         </button>
     </div>
@@ -393,19 +393,19 @@
     <div class="assign-plan-form" style="margin-bottom: 1.5rem;">
         <form method="POST" action="{{ url_for('admin_adicionar_assinatura', slug=barbearia.slug) }}" style="display:flex; gap:0.75rem; flex-wrap:wrap; align-items:center;">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-            <select name="cliente_id" required style="padding:0.75rem 1rem; border-radius:8px; background: rgba(255,255,255,0.03); color:#fff; border:1px solid rgba(74,158,255,0.12);">
+            <select name="cliente_id" required style="padding:0.75rem 1rem; border-radius:8px; background: rgba(249, 250, 251, 0.8); color: #1f2937; border:1px solid rgba(139, 92, 246,0.12);">
                 <option value="">— Selecionar cliente —</option>
                 {% for c in clientes %}
                 <option value="{{ c.id }}">{{ c.nome }} — {{ c.email }}</option>
                 {% endfor %}
             </select>
-            <select name="plano_id" required style="padding:0.75rem 1rem; border-radius:8px; background: rgba(255,255,255,0.03); color:#fff; border:1px solid rgba(74,158,255,0.12);">
+            <select name="plano_id" required style="padding:0.75rem 1rem; border-radius:8px; background: rgba(249, 250, 251, 0.8); color: #1f2937; border:1px solid rgba(139, 92, 246,0.12);">
                 <option value="">— Selecionar plano —</option>
                 {% for p in planos %}
                 <option value="{{ p.id }}">{{ p.nome }} — R$ {{ '%.2f'|format(p.preco) }}</option>
                 {% endfor %}
             </select>
-            <button type="submit" style="padding:0.75rem 1rem; background:#4a9eff; color:#fff; border:none; border-radius:8px; font-weight:700">➕ Adicionar assinatura</button>
+            <button type="submit" style="padding:0.75rem 1rem; background:#8b5cf6; color: #1f2937; border:none; border-radius:8px; font-weight:700">➕ Adicionar assinatura</button>
         </form>
     </div>
 
@@ -484,7 +484,7 @@
                         {% endif %}
                     </td>
                     <td>
-                        <span style="font-weight: 600; color: #4a9eff;">R$ {{ "%.2f"|format(assinatura.plano.preco) }}</span>
+                        <span style="font-weight: 600; color: #8b5cf6;">R$ {{ "%.2f"|format(assinatura.plano.preco) }}</span>
                     </td>
                     <td>
                         <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">

@@ -16,7 +16,7 @@
 .titulo-agendamentos-custom {
     font-family: 'Plus Jakarta Sans', sans-serif !important;
     text-transform: none !important;
-    color: #4a9eff !important;
+    color: #8b5cf6 !important;
     background: none !important;
     letter-spacing: -0.5px !important;
     font-weight: 700 !important;
@@ -27,26 +27,35 @@
     -webkit-background-clip: initial !important;
     -webkit-text-fill-color: initial !important;
 }
+
+/* ====== OVERRIDE PARA SUPER ADMIN - FUNDO PRETO ====== */
+body:has([data-page="super-admin"]),
+body.super-admin-page {
+    background: #000000 !important;
+    background-color: #000000 !important;
+}
+/* ======================================================= */
+
 /* ================================================== */
 /* BARBEARIA PREMIUM - TEMA DARK ELEGANTE */
 /* Design Completamente Diferente - Teste */
 /* ================================================== */
 
 :root {
-    /* Paleta Azul Premium */
-    --gold: #4a9eff;
-    --gold-light: #70b4ff;
-    --gold-dark: #2563eb;
+    /* Paleta Roxo Premium */
+    --gold: #8b5cf6;
+    --gold-light: #a78bfa;
+    --gold-dark: #7c3aed;
     
-    /* Tons Escuros Sofisticados */
-    --bg-dark: #0d0d0d;
-    --bg-card: #1a1a1a;
-    --bg-hover: #252525;
+    /* Tons Claros Sofisticados */
+    --bg-dark: #ffffff;
+    --bg-card: #f9fafb;
+    --bg-hover: #f3f4f6;
     
     /* Acentos Premium */
-    --accent-blue: #4a9eff;
-    --accent-cream: #f5f5dc;
-    --accent-silver: #C0C0C0;
+    --accent-blue: #8b5cf6;
+    --accent-cream: #1f2937;
+    --accent-silver: #6b7280;
     
     /* Status */
     --success: #10b981;
@@ -63,7 +72,7 @@
     --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.4);
     --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.5);
     --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.6);
-    --shadow-gold: 0 8px 32px rgba(74, 158, 255, 0.3);
+    --shadow-gold: 0 8px 32px rgba(139, 92, 246, 0.3);
     
     /* Transições */
     --transition-fast: 0.2s ease;
@@ -79,8 +88,8 @@
 
 body {
     font-family: var(--font-main);
-    background: #000;
-    color: var(--accent-cream);
+    background: #ffffff;
+    color: #1f2937;
     line-height: 1.8;
     min-height: 100vh;
     position: relative;
@@ -100,15 +109,15 @@ body::before {
             0deg,
             transparent,
             transparent 2px,
-            rgba(74, 158, 255, 0.02) 2px,
-            rgba(74, 158, 255, 0.02) 4px
+            rgba(139, 92, 246, 0.02) 2px,
+            rgba(139, 92, 246, 0.02) 4px
         ),
         repeating-linear-gradient(
             90deg,
             transparent,
             transparent 2px,
-            rgba(74, 158, 255, 0.02) 2px,
-            rgba(74, 158, 255, 0.02) 4px
+            rgba(139, 92, 246, 0.02) 2px,
+            rgba(139, 92, 246, 0.02) 4px
         );
     pointer-events: none;
     z-index: 0;
@@ -129,7 +138,7 @@ body::before {
     left: 0;
     right: 0;
     z-index: 1000;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.9), 0 2px 16px rgba(74, 158, 255, 0.2);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.9), 0 2px 16px rgba(139, 92, 246, 0.2);
     backdrop-filter: blur(20px);
 }
 
@@ -151,7 +160,7 @@ body::before {
     background-clip: text;
     text-transform: uppercase;
     letter-spacing: 4px;
-    text-shadow: 0 0 30px rgba(74, 158, 255, 0.5);
+    text-shadow: 0 0 30px rgba(139, 92, 246, 0.5);
     font-family: var(--font-display);
     font-optical-sizing: auto;
     animation: goldShimmer 3s ease-in-out infinite;
@@ -187,7 +196,7 @@ body::before {
     background: rgba(212, 175, 55, 0.1);
     color: var(--gold);
     transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(74, 158, 255, 0.2);
+    box-shadow: 0 5px 15px rgba(139, 92, 246, 0.2);
 }
 
 /* ========== CONTAINER ========== */
@@ -260,7 +269,7 @@ p {
     max-width: 700px;
     box-shadow: 
         0 10px 50px rgba(0, 0, 0, 0.8),
-        0 0 80px rgba(74, 158, 255, 0.1),
+        0 0 80px rgba(139, 92, 246, 0.1),
         inset 0 1px 0 rgba(212, 175, 55, 0.1);
     position: relative;
     backdrop-filter: blur(20px);
@@ -270,7 +279,7 @@ p {
 .card-form:hover {
     box-shadow: 
         0 15px 60px rgba(0, 0, 0, 0.9),
-        0 0 100px rgba(74, 158, 255, 0.15),
+        0 0 100px rgba(139, 92, 246, 0.15),
         inset 0 1px 0 rgba(212, 175, 55, 0.15);
     transform: translateY(-5px);
 }
@@ -289,7 +298,7 @@ p {
 
 @keyframes shimmer {
     0%, 100% { opacity: 0.8; }
-    50% { opacity: 1; box-shadow: 0 0 20px rgba(74, 158, 255, 0.5); }
+    50% { opacity: 1; box-shadow: 0 0 20px rgba(139, 92, 246, 0.5); }
 }
 
 /* ========== FORMULÁRIOS ========== */
@@ -347,7 +356,7 @@ select {
 .assign-plan-form select[name="plano_id"] {
     background: #0b0b0b !important;
     color: #ffffff !important;
-    border: 1px solid rgba(74,158,255,0.12) !important;
+    border: 1px solid rgba(139, 92, 246,0.12) !important;
 }
 .assign-plan-form select[name="cliente_id"] option,
 .assign-plan-form select[name="plano_id"] option {
@@ -359,7 +368,7 @@ select {
 .btn {
     padding: 1.2rem 3rem;
     border: 3px solid var(--gold);
-    background: linear-gradient(135deg, transparent 0%, rgba(74, 158, 255, 0.1) 100%);
+    background: linear-gradient(135deg, transparent 0%, rgba(139, 92, 246, 0.1) 100%);
     color: var(--gold);
     text-transform: uppercase;
     font-weight: 800;
@@ -373,7 +382,7 @@ select {
     font-family: var(--font-accent);
     text-decoration: none;
     display: inline-block;
-    box-shadow: 0 4px 20px rgba(74, 158, 255, 0.2), inset 0 0 20px rgba(74, 158, 255, 0.05);
+    box-shadow: 0 4px 20px rgba(139, 92, 246, 0.2), inset 0 0 20px rgba(139, 92, 246, 0.05);
 }
 
 .btn::before {
@@ -384,7 +393,7 @@ select {
     width: 0;
     height: 0;
     border-radius: 50%;
-    background: radial-gradient(circle, var(--gold) 0%, rgba(74, 158, 255, 0.8) 100%);
+    background: radial-gradient(circle, var(--gold) 0%, rgba(139, 92, 246, 0.8) 100%);
     transition: width 0.6s ease, height 0.6s ease;
     transform: translate(-50%, -50%);
     z-index: -1;
@@ -395,9 +404,9 @@ select {
     border-color: var(--gold-light);
     transform: translateY(-4px) scale(1.02);
     box-shadow: 
-        0 12px 40px rgba(74, 158, 255, 0.5),
-        0 0 60px rgba(74, 158, 255, 0.3),
-        inset 0 0 40px rgba(74, 158, 255, 0.1);
+        0 12px 40px rgba(139, 92, 246, 0.5),
+        0 0 60px rgba(139, 92, 246, 0.3),
+        inset 0 0 40px rgba(139, 92, 246, 0.1);
 }
 
 .btn:hover::before {
@@ -414,14 +423,14 @@ select {
     color: #000;
     border-color: var(--gold-light);
     font-weight: 900;
-    box-shadow: 0 8px 32px rgba(74, 158, 255, 0.4);
+    box-shadow: 0 8px 32px rgba(139, 92, 246, 0.4);
 }
 
 .btn-primary:hover {
-    background: linear-gradient(135deg, var(--gold-light) 0%, #a3d5ff 100%);
+    background: linear-gradient(135deg, var(--gold-light) 0%, #c4b5fd 100%);
     box-shadow: 
-        0 16px 48px rgba(74, 158, 255, 0.6),
-        0 0 80px rgba(74, 158, 255, 0.4);
+        0 16px 48px rgba(139, 92, 246, 0.6),
+        0 0 80px rgba(139, 92, 246, 0.4);
 }
 
 .btn-secondary {
@@ -538,7 +547,7 @@ select {
 
 .custom-table td {
     padding: 1.2rem 1rem;
-    border-bottom: 1px solid rgba(74, 158, 255, 0.2);
+    border-bottom: 1px solid rgba(139, 92, 246, 0.2);
     color: var(--accent-cream);
 }
 
@@ -547,9 +556,9 @@ select {
 }
 
 .custom-table tr:hover {
-    background: linear-gradient(90deg, rgba(74, 158, 255, 0.08) 0%, rgba(74, 158, 255, 0.12) 50%, rgba(74, 158, 255, 0.08) 100%);
+    background: linear-gradient(90deg, rgba(139, 92, 246, 0.08) 0%, rgba(139, 92, 246, 0.12) 50%, rgba(139, 92, 246, 0.08) 100%);
     transform: scale(1.01);
-    box-shadow: 0 4px 15px rgba(74, 158, 255, 0.15);
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.15);
 }
 
 /* ========== BARBEARIAS GRID ========== */
@@ -573,7 +582,7 @@ select {
     content: '✂';
     position: absolute;
     font-size: 4rem;
-    color: rgba(74, 158, 255, 0.15);
+    color: rgba(139, 92, 246, 0.15);
     opacity: 0.5;
 }
 
@@ -637,7 +646,7 @@ select {
 .barbearia-card-modern:hover {
     transform: translateY(-15px) scale(1.02);
     border-color: var(--gold);
-    box-shadow: 0 25px 60px rgba(74, 158, 255, 0.5), 0 0 40px rgba(74, 158, 255, 0.2);
+    box-shadow: 0 25px 60px rgba(139, 92, 246, 0.5), 0 0 40px rgba(139, 92, 246, 0.2);
     background: linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(42, 42, 42, 0.9) 100%);
 }
 
@@ -655,7 +664,7 @@ select {
 
 .barbearia-card-modern:hover .barbearia-card-icon {
     transform: scale(1.15) rotate(5deg);
-    filter: grayscale(0%) contrast(130%) drop-shadow(0 0 20px rgba(74, 158, 255, 0.6));
+    filter: grayscale(0%) contrast(130%) drop-shadow(0 0 20px rgba(139, 92, 246, 0.6));
     animation: iconPulse 1s ease-in-out infinite;
 }
 
@@ -774,7 +783,7 @@ select {
     right: 0;
     width: 100px;
     height: 100px;
-    background: radial-gradient(circle, rgba(74, 158, 255, 0.1) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
     border-radius: 50%;
     transform: translate(30%, -30%);
 }
@@ -783,8 +792,8 @@ select {
     transform: translateX(10px) translateY(-5px) scale(1.02);
     border-left-width: 8px;
     box-shadow: 
-        -10px 10px 40px rgba(74, 158, 255, 0.4),
-        0 0 60px rgba(74, 158, 255, 0.2);
+        -10px 10px 40px rgba(139, 92, 246, 0.4),
+        0 0 60px rgba(139, 92, 246, 0.2);
     background: linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(42, 42, 42, 0.85) 100%);
 }
 
@@ -913,7 +922,7 @@ select {
     background: rgba(10, 10, 10, 0.5);
     padding: 1.5rem;
     border-radius: 4px;
-    border: 1px solid rgba(74, 158, 255, 0.2);
+    border: 1px solid rgba(139, 92, 246, 0.2);
 }
 
 .horarios-container {
@@ -996,7 +1005,7 @@ select {
 }
 
 .status-pending {
-    background: rgba(74, 158, 255, 0.2);
+    background: rgba(139, 92, 246, 0.2);
     border: 1px solid var(--gold);
     color: var(--gold-light);
 }
@@ -1053,7 +1062,7 @@ select {
     display: flex;
     justify-content: space-between;
     padding: 0.5rem 0;
-    border-bottom: 1px solid rgba(74, 158, 255, 0.2);
+    border-bottom: 1px solid rgba(139, 92, 246, 0.2);
 }
 
 .mobile-card-item:last-child {
@@ -1083,7 +1092,7 @@ select {
     content: '';
     width: 18px;
     height: 18px;
-    border: 2px solid rgba(74, 158, 255, 0.3);
+    border: 2px solid rgba(139, 92, 246, 0.3);
     border-top: 2px solid var(--gold);
     border-radius: 50%;
     animation: spin 1s linear infinite;
@@ -1197,7 +1206,7 @@ select {
 
     .nav-link:hover {
         transform: scale(1.05);
-        background: rgba(74, 158, 255, 0.1);
+        background: rgba(139, 92, 246, 0.1);
     }
 
     /* Hero Section Mobile */

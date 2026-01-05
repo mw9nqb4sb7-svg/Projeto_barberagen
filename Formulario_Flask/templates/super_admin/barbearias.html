@@ -1,27 +1,147 @@
 {% extends "base.html" %}
 {% block title %}Super Admin - Barbearias{% endblock %}
+{% block body_class %} class="super-admin-page"{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}?v=1.0">
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+    
+    html {
+        background: #000000 !important;
+        background-color: #000000 !important;
+    }
+    
+    body {
+        background: #000000 !important;
+        background-color: #000000 !important;
+        background-image: 
+            radial-gradient(circle at 10% 20%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+            radial-gradient(circle at 90% 80%, rgba(16, 185, 129, 0.15) 0%, transparent 50%) !important;
+        min-height: 100vh;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+    
+    .custom-container {
+        background: transparent !important;
+        background-color: transparent !important;
+        min-height: 100vh;
+    }
+    
+    #app, main, .wrapper {
+        background: transparent !important;
+        background-color: transparent !important;
+    }
+    
+    .barbearia-card {
+        background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(22, 33, 62, 0.9));
+        border: 2px solid rgba(139, 92, 246, 0.4);
+        border-radius: 20px;
+        padding: 2rem;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    }
+    
+    .barbearia-card::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(139, 92, 246, 0.1) 0%, transparent 70%);
+        opacity: 0;
+        transition: opacity 0.4s ease;
+    }
+    
+    .barbearia-card:hover {
+        transform: translateY(-10px);
+        border-color: #8b5cf6;
+        box-shadow: 0 20px 60px rgba(139, 92, 246, 0.4);
+    }
+    
+    .barbearia-card:hover::before {
+        opacity: 1;
+    }
+    
+    .btn-action {
+        background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(99, 102, 241, 0.2));
+        border: 2px solid #8b5cf6;
+        color: #a78bfa;
+        padding: 0.75rem 1.5rem;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        position: relative;
+        overflow: hidden;
+    }
+    
+    .btn-action::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        border-radius: 50%;
+        background: rgba(139, 92, 246, 0.3);
+        transition: width 0.6s, height 0.6s, top 0.6s, left 0.6s;
+        transform: translate(-50%, -50%);
+        z-index: 0;
+    }
+    
+    .btn-action:hover::before {
+        width: 300px;
+        height: 300px;
+    }
+    
+    .btn-action:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
+        border-color: #a78bfa;
+    }
+    
+    .btn-action span {
+        position: relative;
+        z-index: 1;
+    }
+</style>
+{% endblock %}
 
 {% block content %}
 <!-- Header -->
-<div style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); padding: 3rem 2rem; margin-bottom: 3rem; border: 3px solid var(--gold); border-radius: 4px;">
-    <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem;">
+<div style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(16, 185, 129, 0.3) 100%); padding: 4rem 2rem; margin-bottom: 3rem; border: 3px solid #8b5cf6; border-radius: 20px; box-shadow: 0 20px 60px rgba(139, 92, 246, 0.3), inset 0 0 100px rgba(139, 92, 246, 0.1); position: relative; overflow: hidden;">
+    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: repeating-linear-gradient(45deg, transparent, transparent 30px, rgba(139, 92, 246, 0.05) 30px, rgba(139, 92, 246, 0.05) 60px);"></div>
+    <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem; position: relative; z-index: 1;">
         <div>
-            <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(0, 0, 0, 0.3); padding: 0.5rem 1.5rem; border: 2px solid var(--gold); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 2px;">
-                <span style="font-size: 1.2rem;">⚡</span>
-                <span style="color: var(--gold); font-weight: 700; font-size: 0.9rem;">SUPER ADMIN</span>
+            <div style="display: inline-flex; align-items: center; gap: 0.75rem; background: linear-gradient(135deg, #8b5cf6, #6366f1); padding: 0.75rem 2rem; border-radius: 50px; margin-bottom: 1.5rem; box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);">
+                <span style="font-size: 1.5rem;">⚡</span>
+                <span style="color: white; font-weight: 800; font-size: 1rem; letter-spacing: 2px;">SUPER ADMIN</span>
             </div>
-            <h1 style="font-size: 2.5rem; font-weight: 800; color: var(--text-color); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 2px;">Gerenciamento de Barbearias</h1>
-            <p style="color: rgba(245, 245, 220, 0.7); font-size: 1.1rem;">Visualize e gerencie todas as barbearias do sistema</p>
+            <h1 style="font-size: 3rem; font-weight: 900; color: #ffffff; margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 3px;">🏪 BARBEARIAS</h1>
+            <p style="color: rgba(167, 139, 250, 0.9); font-size: 1.2rem; font-weight: 600;">Gerencie todas as barbearias do sistema</p>
         </div>
         
         <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-            <a href="{{ url_for('super_admin_nova_barbearia') }}" style="display: flex; align-items: center; gap: 0.5rem; background: rgba(16, 185, 129, 0.2); color: var(--gold); padding: 1rem 1.5rem; border: 2px solid #10b981; text-decoration: none; font-weight: 600; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px;">
-                <span style="font-size: 1.2rem;">➕</span>
-                Nova Barbearia
+            <a href="{{ url_for('super_admin_nova_barbearia') }}" class="btn-action" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(5, 150, 105, 0.3)); border-color: #10b981; color: #6ee7b7;">
+                <span style="font-size: 1.3rem;">➕</span>
+                <span>Nova Barbearia</span>
             </a>
-            <a href="{{ url_for('super_admin_dashboard') }}" style="display: flex; align-items: center; gap: 0.5rem; background: rgba(0, 0, 0, 0.3); color: var(--text-color); padding: 1rem 1.5rem; border: 2px solid var(--gold-dark); text-decoration: none; font-weight: 600; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px;">
-                <span style="font-size: 1.2rem;">🏠</span>
-                Dashboard
+            <a href="{{ url_for('super_admin_dashboard') }}" class="btn-action">
+                <span style="font-size: 1.3rem;">🏠</span>
+                <span>Dashboard</span>
             </a>
         </div>
     </div>
@@ -29,64 +149,84 @@
 
 <!-- Lista de Barbearias -->
 <div style="max-width: 1200px; margin: 0 auto; padding: 0 2rem 3rem;">
-    <div style="display: grid; gap: 1.5rem;">
+    <div style="display: grid; gap: 2rem;">
         {% for barbearia in barbearias %}
-        <div style="background: var(--bg-dark); padding: 2rem; border: 2px solid {{ 'var(--gold-dark)' if barbearia.ativa else 'rgba(245, 245, 220, 0.2)' }}; border-radius: 4px; transition: all 0.3s ease; {{ 'opacity: 0.5;' if not barbearia.ativa else '' }}">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+        <div class="barbearia-card" style="position: relative; {{ 'opacity: 0.6; border-color: rgba(239, 68, 68, 0.5);' if not barbearia.ativa else '' }}">
+            <div style="position: absolute; top: 1rem; right: 1rem; z-index: 10;">
+                <span style="padding: 0.5rem 1.25rem; background: {{ 'linear-gradient(135deg, #10b981, #059669)' if barbearia.ativa else 'linear-gradient(135deg, #ef4444, #dc2626)' }}; color: white; border-radius: 50px; font-size: 0.85rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);">
+                    {{ '✅ ATIVA' if barbearia.ativa else '❌ INATIVA' }}
+                </span>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; position: relative; z-index: 1;">
                 <div style="flex: 1;">
-                    <h3 style="font-size: 1.5rem; font-weight: 700; color: var(--gold); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 1px;">{{ barbearia.nome }}</h3>
-                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 0.75rem; color: rgba(245, 245, 220, 0.6); font-size: 0.9rem;">
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                            <span style="font-size: 1.1rem;">🔗</span>
-                            <span>Slug: <code style="background: rgba(0, 0, 0, 0.4); padding: 2px 8px; border: 1px solid var(--gold-dark); font-family: 'Courier New', monospace; color: var(--gold-light);">{{ barbearia.slug }}</code></span>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                            <span style="font-size: 1.1rem;">🆔</span>
-                            <span>ID: {{ barbearia.id }}</span>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                            <span style="font-size: 1.1rem;">📞</span>
-                            <span>{{ barbearia.telefone or 'N/A' }}</span>
-                        </div>
-                        <div style="display: flex; align-items: center; gap: 0.5rem;">
-                            <span style="font-size: 1.1rem;">📅</span>
-                            <span>Criada em: {{ barbearia.data_criacao.strftime('%d/%m/%Y') if barbearia.data_criacao else 'N/A' }}</span>
+                    <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem;">
+                        {% if barbearia.logo %}
+                        <img src="{{ url_for('static', filename='uploads/logos/' + barbearia.logo) }}" alt="Logo" style="width: 80px; height: 80px; object-fit: cover; border-radius: 50%; border: 3px solid #8b5cf6; box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);">
+                        {% else %}
+                        <div style="width: 80px; height: 80px; background: linear-gradient(135deg, #8b5cf6, #6366f1); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; border: 3px solid #a78bfa; box-shadow: 0 0 20px rgba(139, 92, 246, 0.5);">✂️</div>
+                        {% endif %}
+                        <div>
+                            <h3 style="font-size: 2rem; font-weight: 800; color: #a78bfa; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 2px;">{{ barbearia.nome }}</h3>
+                            <div style="display: inline-block; background: rgba(139, 92, 246, 0.2); padding: 0.4rem 1rem; border-radius: 8px; border: 1px solid #8b5cf6;">
+                                <span style="color: #a78bfa; font-family: 'Courier New', monospace; font-weight: 700; font-size: 0.95rem;">🔗 {{ barbearia.slug }}</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-                
-                <div>
-                    <div style="display: flex; align-items: center; gap: 0.5rem; padding: 0.75rem 1.5rem; border-radius: 4px; font-weight: 600; font-size: 0.9rem; background: {{ 'rgba(16, 185, 129, 0.2)' if barbearia.ativa else 'rgba(239, 68, 68, 0.2)' }}; border: 2px solid {{ '#10b981' if barbearia.ativa else '#ef4444' }}; color: {{ '#10b981' if barbearia.ativa else '#ef4444' }}; text-transform: uppercase; letter-spacing: 1px;">
-                        <span style="font-size: 1.2rem;">{{ '✅' if barbearia.ativa else '❌' }}</span>
-                        <span>{{ 'Ativa' if barbearia.ativa else 'Inativa' }}</span>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 1.5rem;">
+                        <div style="background: rgba(139, 92, 246, 0.1); padding: 1rem; border-radius: 12px; border: 1px solid rgba(139, 92, 246, 0.3);">
+                            <div style="color: #a78bfa; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; margin-bottom: 0.5rem;">🆔 ID</div>
+                            <div style="color: white; font-size: 1.2rem; font-weight: 700;">{{ barbearia.id }}</div>
+                        </div>
+                        {% if barbearia.telefone %}
+                        <div style="background: rgba(16, 185, 129, 0.1); padding: 1rem; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.3);">
+                            <div style="color: #6ee7b7; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; margin-bottom: 0.5rem;">📞 TELEFONE</div>
+                            <div style="color: white; font-size: 1.1rem; font-weight: 600;">{{ barbearia.telefone }}</div>
+                        </div>
+                        {% endif %}
+                        {% if barbearia.cnpj %}
+                        <div style="background: rgba(245, 158, 11, 0.1); padding: 1rem; border-radius: 12px; border: 1px solid rgba(245, 158, 11, 0.3);">
+                            <div style="color: #fbbf24; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; margin-bottom: 0.5rem;">🏢 CNPJ</div>
+                            <div style="color: white; font-size: 1rem; font-weight: 600;">{{ barbearia.cnpj }}</div>
+                        </div>
+                        {% endif %}
+                        {% if barbearia.data_criacao %}
+                        <div style="background: rgba(99, 102, 241, 0.1); padding: 1rem; border-radius: 12px; border: 1px solid rgba(99, 102, 241, 0.3);">
+                            <div style="color: #818cf8; font-size: 0.85rem; font-weight: 600; text-transform: uppercase; margin-bottom: 0.5rem;">📅 DATA</div>
+                            <div style="color: white; font-size: 1rem; font-weight: 600;">{{ barbearia.data_criacao.strftime('%d/%m/%Y') }}</div>
+                        </div>
+                        {% endif %}
+                    </div>
+                    
+                    {% if barbearia.endereco %}
+                    <div style="display: flex; align-items: center; gap: 1rem; background: rgba(99, 102, 241, 0.1); padding: 1.25rem; border-radius: 12px; margin-bottom: 1.5rem; color: rgba(167, 139, 250, 0.9); border-left: 4px solid #6366f1;">
+                        <span style="font-size: 1.5rem;">📍</span>
+                        <span style="font-weight: 600;">{{ barbearia.endereco }}</span>
+                    </div>
+                    {% endif %}
+                    
+                    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+                        <a href="{{ url_for('super_admin_editar_barbearia', barbearia_uuid=barbearia.uuid) }}" class="btn-action" style="background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(217, 119, 6, 0.2)); border-color: #f59e0b; color: #fbbf24;">
+                            <span style="font-size: 1.2rem;">✏️</span>
+                            <span>Editar</span>
+                        </a>
+                        <a href="/teste-isolamento?b={{ barbearia.slug }}" class="btn-action">
+                            <span style="font-size: 1.2rem;">🔍</span>
+                            <span>Detalhes</span>
+                        </a>
+                        <a href="/{{ barbearia.slug }}" class="btn-action" style="background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(79, 70, 229, 0.2)); border-color: #6366f1; color: #818cf8;">
+                            <span style="font-size: 1.2rem;">🏠</span>
+                            <span>Site</span>
+                        </a>
+                        {% if barbearia.ativa %}
+                        <a href="{{ url_for('super_admin_login_as', slug=barbearia.slug) }}" class="btn-action" style="background: linear-gradient(135deg, rgba(236, 72, 153, 0.2), rgba(219, 39, 119, 0.2)); border-color: #ec4899; color: #f9a8d4;">
+                            <span style="font-size: 1.2rem;">🔑</span>
+                            <span>Admin</span>
+                        </a>
+                        {% endif %}
                     </div>
                 </div>
-            </div>
-            
-            <div style="display: flex; align-items: center; gap: 0.75rem; background: rgba(0, 0, 0, 0.3); padding: 1rem; border-radius: 4px; margin-bottom: 1.5rem; color: rgba(245, 245, 220, 0.6); border-left: 4px solid var(--gold);">
-                <span style="font-size: 1.3rem;">📍</span>
-                <span>{{ barbearia.endereco or 'Endereço não informado' }}</span>
-            </div>
-            
-            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-                <a href="{{ url_for('super_admin_editar_barbearia', barbearia_uuid=barbearia.uuid) }}" style="display: flex; align-items: center; gap: 0.5rem; color: var(--gold); text-decoration: none; font-size: 0.9rem; font-weight: 600; padding: 0.75rem 1.25rem; border: 2px solid #f59e0b; background: rgba(245, 158, 11, 0.1); transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px;">
-                    <span style="font-size: 1.1rem;">✏️</span>
-                    Editar
-                </a>
-                <a href="/teste-isolamento?b={{ barbearia.slug }}" style="display: flex; align-items: center; gap: 0.5rem; color: var(--gold); text-decoration: none; font-size: 0.9rem; font-weight: 600; padding: 0.75rem 1.25rem; border: 2px solid var(--gold-dark); background: rgba(74, 158, 255, 0.1); transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px;">
-                    <span style="font-size: 1.1rem;">🔍</span>
-                    Ver Detalhes
-                </a>
-                <a href="/{{ barbearia.slug }}" style="display: flex; align-items: center; gap: 0.5rem; color: var(--gold); text-decoration: none; font-size: 0.9rem; font-weight: 600; padding: 0.75rem 1.25rem; border: 2px solid var(--gold-dark); background: rgba(74, 158, 255, 0.1); transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px;">
-                    <span style="font-size: 1.1rem;">🏠</span>
-                    Visitar Site
-                </a>
-                {% if barbearia.ativa %}
-                <a href="{{ url_for('super_admin_login_as', slug=barbearia.slug) }}" style="display: flex; align-items: center; gap: 0.5rem; color: var(--gold); text-decoration: none; font-size: 0.9rem; font-weight: 600; padding: 0.75rem 1.25rem; border: 2px solid var(--gold-dark); background: rgba(74, 158, 255, 0.1); transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px;">
-                    <span style="font-size: 1.1rem;">🔑</span>
-                    Login como Admin
-                </a>
-                {% endif %}
             </div>
         </div>
         {% endfor %}
@@ -96,7 +236,7 @@
 <style>
 a[href]:hover {
     border-color: var(--gold) !important;
-    background: rgba(74, 158, 255, 0.2) !important;
+    background: rgba(139, 92, 246, 0.2) !important;
     transform: translateY(-2px);
 }
 

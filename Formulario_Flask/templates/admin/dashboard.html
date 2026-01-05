@@ -8,10 +8,18 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
-<!-- Navbar Admin -->
-<nav class="navbar">
-    <div class="navbar-content">
-        <div class="navbar-brand">
+<!-- Sidebar Lateral Moderna -->
+<button id="sidebarToggle" class="sidebar-toggle" onclick="openSidebar()">
+    <span></span>
+    <span></span>
+    <span></span>
+</button>
+
+<div id="sidebarOverlay" class="sidebar-overlay" onclick="closeSidebar()"></div>
+
+<aside id="sidebar" class="sidebar">
+    <div class="sidebar-header">
+        <div class="sidebar-brand">
             {% set nome_parts = barbearia.nome.split() %}
             {% if nome_parts|length >= 2 %}
                 <span style="color: #ffffff;">{{ nome_parts[0] }} {{ nome_parts[1] }}</span><span style="color: #4a9eff;">{{ ' '.join(nome_parts[2:]) if nome_parts|length > 2 else '' }}</span>
@@ -19,154 +27,270 @@
                 <span style="color: #ffffff;">{{ barbearia.nome }}</span>
             {% endif %}
         </div>
-        
-        <!-- Botão Hamburguer (Mobile) -->
-        <button id="mobileMenuBtn" onclick="toggleMobileMenu()">☰</button>
-        
-        <!-- Menu Desktop -->
-        <div id="desktopMenu" class="navbar-menu">
-            <a href="{{ url_for('dashboard', slug=barbearia.slug) }}" class="btn btn-secondary">
-                🏠 DASHBOARD
-            </a>
-            <a href="{{ url_for('admin_agendamentos_slug', slug=barbearia.slug) }}" class="btn btn-secondary">
-                📅 AGENDAMENTOS
-            </a>
-            <a href="{{ url_for('admin_faturamento', slug=barbearia.slug) }}" class="btn btn-secondary">
-                💰 FATURAMENTO
-            </a>
-            <a href="{{ url_for('admin_despesas', slug=barbearia.slug) }}" class="btn btn-secondary">
-                💳 DESPESAS
-            </a>
-            <a href="{{ url_for('admin_planos_ativos', slug=barbearia.slug) }}" class="btn btn-secondary">
-                📋 PLANOS
-            </a>
-            <a href="{{ url_for('admin_clientes', slug=barbearia.slug) }}" class="btn btn-secondary">
-                👥 CLIENTES
-            </a>
-            <a href="{{ url_for('servicos', slug=barbearia.slug) }}" class="btn btn-secondary">
-                ✂️ SERVIÇOS
-            </a>
-            <a href="{{ url_for('logout', slug=barbearia.slug) }}" class="btn btn-secondary" style="background: rgba(255, 59, 48, 0.1); color: #ff3b30; border: 1px solid rgba(255, 59, 48, 0.3);">
-                🚪 SAIR
-            </a>
-        </div>
+        <button id="sidebarClose" class="sidebar-close" onclick="closeSidebar()">✕</button>
     </div>
     
-    <!-- Menu Mobile (Dropdown) -->
-    <div id="mobileMenu" style="display: none; background: rgba(0, 0, 0, 0.98); border-top: 1px solid rgba(74, 158, 255, 0.2); padding: 1rem; margin-top: 1rem;">
-        <div style="display: flex; flex-direction: column; gap: 0.75rem; max-width: 1600px; margin: 0 auto;">
-            <a href="{{ url_for('dashboard', slug=barbearia.slug) }}" class="btn btn-secondary" style="width: 100%; justify-content: center; font-size: 1rem; padding: 1rem;">
-                🏠 DASHBOARD
-            </a>
-            <a href="{{ url_for('admin_agendamentos_slug', slug=barbearia.slug) }}" class="btn btn-secondary" style="width: 100%; justify-content: center; font-size: 1rem; padding: 1rem;">
-                📅 AGENDAMENTOS
-            </a>
-            <a href="{{ url_for('admin_faturamento', slug=barbearia.slug) }}" class="btn btn-secondary" style="width: 100%; justify-content: center; font-size: 1rem; padding: 1rem;">
-                💰 FATURAMENTO
-            </a>
-            <a href="{{ url_for('admin_despesas', slug=barbearia.slug) }}" class="btn btn-secondary" style="width: 100%; justify-content: center; font-size: 1rem; padding: 1rem;">
-                💳 DESPESAS
-            </a>
-            <a href="{{ url_for('admin_planos_ativos', slug=barbearia.slug) }}" class="btn btn-secondary" style="width: 100%; justify-content: center; font-size: 1rem; padding: 1rem;">
-                📋 PLANOS
-            </a>
-            <a href="{{ url_for('admin_clientes', slug=barbearia.slug) }}" class="btn btn-secondary" style="width: 100%; justify-content: center; font-size: 1rem; padding: 1rem;">
-                👥 CLIENTES
-            </a>
-            <a href="{{ url_for('servicos', slug=barbearia.slug) }}" class="btn btn-secondary" style="width: 100%; justify-content: center; font-size: 1rem; padding: 1rem;">
-                ✂️ SERVIÇOS
-            </a>
-            <a href="{{ url_for('logout', slug=barbearia.slug) }}" class="btn btn-secondary" style="width: 100%; justify-content: center; font-size: 1rem; padding: 1rem; background: rgba(255, 59, 48, 0.1); color: #ff3b30; border: 1px solid rgba(255, 59, 48, 0.3);">
-                🚪 SAIR
-            </a>
-        </div>
-    </div>
-</nav>
+    <nav class="sidebar-menu">
+        <a href="{{ url_for('dashboard', slug=barbearia.slug) }}" class="sidebar-item active">
+            <span class="sidebar-icon">🏠</span>
+            <span class="sidebar-text">Dashboard</span>
+        </a>
+        <a href="{{ url_for('admin_agendamentos_slug', slug=barbearia.slug) }}" class="sidebar-item">
+            <span class="sidebar-icon">📅</span>
+            <span class="sidebar-text">Agendamentos</span>
+        </a>
+        <a href="{{ url_for('admin_faturamento', slug=barbearia.slug) }}" class="sidebar-item">
+            <span class="sidebar-icon">💰</span>
+            <span class="sidebar-text">Faturamento</span>
+        </a>
+        <a href="{{ url_for('admin_despesas', slug=barbearia.slug) }}" class="sidebar-item">
+            <span class="sidebar-icon">💳</span>
+            <span class="sidebar-text">Despesas</span>
+        </a>
+        <a href="{{ url_for('admin_planos_ativos', slug=barbearia.slug) }}" class="sidebar-item">
+            <span class="sidebar-icon">📋</span>
+            <span class="sidebar-text">Planos</span>
+        </a>
+        <a href="{{ url_for('admin_clientes', slug=barbearia.slug) }}" class="sidebar-item">
+            <span class="sidebar-icon">👥</span>
+            <span class="sidebar-text">Clientes</span>
+        </a>
+        <a href="{{ url_for('servicos', slug=barbearia.slug) }}" class="sidebar-item">
+            <span class="sidebar-icon">✂️</span>
+            <span class="sidebar-text">Serviços</span>
+        </a>
+        
+        <div class="sidebar-divider"></div>
+        
+        <a href="{{ url_for('admin_suporte', slug=barbearia.slug) }}" class="sidebar-item">
+            <span class="sidebar-icon">🆘</span>
+            <span class="sidebar-text">Suporte</span>
+        </a>
+        <a href="{{ url_for('admin_chamados', slug=barbearia.slug) }}" class="sidebar-item">
+            <span class="sidebar-icon">📞</span>
+            <span class="sidebar-text">Meus Chamados</span>
+        </a>
+        
+        <div class="sidebar-divider"></div>
+        
+        <a href="{{ url_for('logout', slug=barbearia.slug) }}" class="sidebar-item sidebar-logout">
+            <span class="sidebar-icon">🚪</span>
+            <span class="sidebar-text">Sair</span>
+        </a>
+    </nav>
+</aside>
 
 <!-- v3.0 - Modernizado com Plus Jakarta Sans e #4a9eff -->
 <style>
+    :root {
+        --cor-primaria: {{ barbearia.cor_primaria or '#4a9eff' }};
+        --cor-secundaria: {{ barbearia.cor_secundaria or '#3a8eef' }};
+        --cor-texto: {{ barbearia.cor_texto or '#1f2937' }};
+    }
+    
     * {
         font-family: 'Plus Jakarta Sans', sans-serif;
         letter-spacing: -0.5px;
         box-sizing: border-box;
     }
 
-    .navbar {
-        background: linear-gradient(180deg, rgba(0, 0, 0, 0.95) 0%, rgba(13, 13, 13, 0.98) 100%);
-        border-bottom: 3px solid #4a9eff;
+    /* ============ SIDEBAR LATERAL ============ */
+    .sidebar-toggle {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        z-index: 1100;
+        background: linear-gradient(135deg, #4a9eff 0%, #3a8eef 100%);
+        border: none;
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        cursor: pointer;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        box-shadow: 0 4px 20px rgba(74, 158, 255, 0.4);
+        transition: all 0.3s ease;
+    }
+
+    .sidebar-toggle:hover {
+        transform: scale(1.05);
+        box-shadow: 0 6px 25px rgba(74, 158, 255, 0.6);
+    }
+
+    .sidebar-toggle span {
+        width: 25px;
+        height: 3px;
+        background: white;
+        border-radius: 2px;
+        transition: all 0.3s ease;
+    }
+
+    .sidebar-toggle:hover span {
+        width: 30px;
+    }
+
+    .sidebar-overlay {
         position: fixed;
         top: 0;
         left: 0;
         right: 0;
-        z-index: 1000;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-        padding: 1.5rem 2rem;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(4px);
+        z-index: 999;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
     }
 
-    .navbar-content {
-        max-width: 1600px;
-        margin: 0 auto;
+    .sidebar-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 320px;
+        height: 100vh;
+        background: linear-gradient(180deg, rgba(0, 0, 0, 0.98) 0%, rgba(13, 13, 13, 0.98) 100%);
+        border-right: 3px solid #4a9eff;
+        box-shadow: 4px 0 30px rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+        overflow-y: auto;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar.active {
+        transform: translateX(0) !important;
+    }
+
+    .sidebar-header {
+        padding: 2rem 1.5rem;
+        border-bottom: 1px solid rgba(74, 158, 255, 0.2);
         display: flex;
         justify-content: space-between;
         align-items: center;
+        position: sticky;
+        top: 0;
+        background: rgba(0, 0, 0, 0.95);
+        z-index: 10;
     }
 
-    .navbar-brand {
-        font-size: 1.5rem;
+    .sidebar-brand {
+        font-size: 1.3rem;
         font-weight: 700;
         letter-spacing: -0.5px;
     }
 
-    .navbar-menu {
-        display: flex;
-        gap: 1rem;
-        align-items: center;
-    }
-
-    .btn {
-        padding: 0.8rem 1.5rem;
-        border-radius: 50px;
-        text-decoration: none;
-        font-weight: 600;
-        font-size: 0.9rem;
-        transition: all 0.3s ease;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        border: none;
-        cursor: pointer;
-    }
-
-    .btn-primary {
-        background: #4a9eff;
-        color: #000000;
-    }
-
-    .btn-primary:hover {
-        background: #3a8eef;
-        transform: translateY(-2px);
-    }
-
-    .btn-secondary {
-        background: transparent;
-        color: #ffffff;
-        border: 1px solid rgba(255, 255, 255, 0.3);
-    }
-
-    .btn-secondary:hover {
-        background: rgba(255, 255, 255, 0.1);
-    }
-
-    #mobileMenuBtn {
-        display: none;
-        background: rgba(74, 158, 255, 0.1);
-        border: 1px solid rgba(74, 158, 255, 0.3);
-        color: #4a9eff;
-        padding: 0.5rem 0.75rem;
+    .sidebar-close {
+        background: rgba(255, 59, 48, 0.1);
+        border: 1px solid rgba(255, 59, 48, 0.3);
+        color: #ff3b30;
+        width: 35px;
+        height: 35px;
         border-radius: 8px;
         cursor: pointer;
-        font-size: 1.5rem;
-        line-height: 1;
+        font-size: 1.2rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+        z-index: 100;
+        position: relative;
+        pointer-events: auto;
+        flex-shrink: 0;
+    }
+
+    .sidebar-close:hover {
+        background: rgba(255, 59, 48, 0.2);
+        transform: rotate(90deg);
+    }
+
+    .sidebar-menu {
+        padding: 1.5rem 0;
+    }
+
+    .sidebar-item {
+        display: flex;
+        align-items: center;
+        padding: 1rem 1.5rem;
+        color: rgba(255, 255, 255, 0.7);
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border-left: 3px solid transparent;
+        gap: 1rem;
+    }
+
+    .sidebar-item:hover {
+        background: rgba(74, 158, 255, 0.1);
+        color: #ffffff;
+        border-left-color: #4a9eff;
+        padding-left: 2rem;
+    }
+
+    .sidebar-item.active {
+        background: rgba(74, 158, 255, 0.15);
+        color: #4a9eff;
+        border-left-color: #4a9eff;
+        font-weight: 600;
+    }
+
+    .sidebar-icon {
+        font-size: 1.3rem;
+        width: 30px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .sidebar-text {
+        font-size: 1rem;
+        font-weight: 500;
+    }
+
+    .sidebar-divider {
+        height: 1px;
+        background: rgba(74, 158, 255, 0.15);
+        margin: 1rem 1.5rem;
+    }
+
+    .sidebar-logout {
+        color: rgba(255, 59, 48, 0.8);
+    }
+
+    .sidebar-logout:hover {
+        background: rgba(255, 59, 48, 0.1);
+        border-left-color: #ff3b30;
+        color: #ff3b30;
+    }
+
+    /* Desktop: Sidebar fechada por padrão, abre ao clicar */
+    @media (min-width: 1024px) {
+        body {
+            transition: padding-left 0.3s ease;
+        }
+        
+        /* Quando sidebar aberta, ajustar padding */
+        body:has(.sidebar.active) {
+            padding-left: 320px;
+        }
+        
+        .sidebar-overlay {
+            display: none; /* Sem overlay no desktop */
+        }
+    }
+
+    /* Mobile: Sidebar fechada por padrão */
+    @media (max-width: 1023px) {
+        body {
+            padding-left: 0;
+        }
     }
     
     html, body {
@@ -175,42 +299,14 @@
         position: relative;
         margin: 0;
         padding: 0;
-        -webkit-overflow-scrolling: touch; /* Melhora scroll no iOS */
-        overscroll-behavior: none; /* Previne bounce effect */
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: none;
     }
     
     body {
         background: #000;
         color: #fff;
-        padding-top: 120px; /* Espaço para navbar fixed */
-    }
-    
-    /* Mobile adjustments */
-    @media (max-width: 768px) {
-        body {
-            padding-top: 140px; /* Mais espaço para navbar mobile */
-        }
-    }
-    
-    /* Menu Mobile Responsivo */
-    #mobileMenu {
-        transition: all 0.3s ease;
-    }
-    
-    @media (max-width: 768px) {
-        #mobileMenuBtn {
-            display: block !important;
-        }
-        
-        #desktopMenu {
-            display: none !important;
-        }
-    }
-    
-    @media (min-width: 769px) {
-        #mobileMenu {
-            display: none !important;
-        }
+        padding-top: 20px;
     }
     
     /* Estilos responsivos para o dashboard */
@@ -386,17 +482,349 @@
     .agendamento-card {
         display: flex;
         justify-content: space-between;
-        align-items: center;
-        padding: 20px;
-        background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-        border-radius: 12px;
+        align-items: stretch;
+        padding: 0;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(74, 158, 255, 0.2);
+        border-radius: 16px;
         margin-bottom: 15px;
         transition: all 0.3s ease;
+        overflow: hidden;
     }
     
     .agendamento-card:hover {
-        transform: translateX(5px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        transform: translateY(-4px);
+        box-shadow: 0 8px 24px rgba(74, 158, 255, 0.2);
+        border-color: #4a9eff;
+        background: rgba(255, 255, 255, 0.05);
+    }
+    
+    .card-left-accent {
+        width: 5px;
+        min-height: 100%;
+    }
+    
+    .card-content-wrapper {
+        flex: 1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem;
+        gap: 1rem;
+    }
+    
+    .card-main-info {
+        flex: 1;
+    }
+    
+    .card-cliente-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .card-status-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        background: rgba(74, 158, 255, 0.1);
+    }
+    
+    .card-cliente-nome {
+        font-weight: 700;
+        color: #fff;
+        font-size: 1.15rem;
+        margin-bottom: 0.25rem;
+        letter-spacing: -0.3px;
+    }
+    
+    .card-plano-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        background: linear-gradient(135deg, #fbbf24, #f59e0b);
+        color: #000;
+        padding: 0.3rem 0.75rem;
+        border-radius: 10px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        box-shadow: 0 2px 8px rgba(251, 191, 36, 0.3);
+        margin-left: 0.5rem;
+    }
+    
+    .card-info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+    }
+    
+    .card-info-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.85rem;
+    }
+    
+    .card-info-icon {
+        color: #4a9eff;
+        font-size: 1rem;
+    }
+    
+    .card-info-text {
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .card-right-section {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 1rem;
+        min-width: 160px;
+    }
+    
+    .card-time-box {
+        text-align: right;
+    }
+    
+    .card-hora {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #4a9eff;
+        line-height: 1;
+        letter-spacing: -1px;
+    }
+    
+    .card-duracao {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+        font-weight: 600;
+    }
+    
+    .card-status-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        text-align: center;
+    }
+    
+    .card-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        width: 100%;
+    }
+    
+    .card-action-btn {
+        padding: 0.6rem 1rem;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        white-space: nowrap;
+    }
+    
+    .btn-concluir {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+        border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    
+    .btn-concluir:hover {
+        background: #10b981;
+        color: #000;
+        transform: translateY(-2px);
+    }
+    
+    .btn-cancelar {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+        border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    
+    .btn-cancelar:hover {
+        background: #ef4444;
+        color: #fff;
+        transform: translateY(-2px);
+    }
+    
+    .card-left-accent {
+        width: 5px;
+        min-height: 100%;
+    }
+    
+    .card-content-wrapper {
+        flex: 1;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem;
+        gap: 1rem;
+    }
+    
+    .card-main-info {
+        flex: 1;
+    }
+    
+    .card-cliente-header {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .card-status-icon {
+        width: 42px;
+        height: 42px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.3rem;
+        background: rgba(74, 158, 255, 0.1);
+    }
+    
+    .card-cliente-nome {
+        font-weight: 700;
+        color: #fff;
+        font-size: 1.15rem;
+        margin-bottom: 0.25rem;
+        letter-spacing: -0.3px;
+    }
+    
+    .card-plano-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        background: linear-gradient(135deg, #fbbf24, #f59e0b);
+        color: #000;
+        padding: 0.3rem 0.75rem;
+        border-radius: 10px;
+        font-size: 0.7rem;
+        font-weight: 700;
+        box-shadow: 0 2px 8px rgba(251, 191, 36, 0.3);
+        margin-left: 0.5rem;
+    }
+    
+    .card-info-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+    }
+    
+    .card-info-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.85rem;
+    }
+    
+    .card-info-icon {
+        color: #4a9eff;
+        font-size: 1rem;
+    }
+    
+    .card-info-text {
+        color: rgba(255, 255, 255, 0.7);
+    }
+    
+    .card-right-section {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-end;
+        gap: 1rem;
+        min-width: 160px;
+    }
+    
+    .card-time-box {
+        text-align: right;
+    }
+    
+    .card-hora {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #4a9eff;
+        line-height: 1;
+        letter-spacing: -1px;
+    }
+    
+    .card-duracao {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.85rem;
+        margin-top: 0.25rem;
+        font-weight: 600;
+    }
+    
+    .card-status-badge {
+        padding: 0.5rem 1rem;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        text-align: center;
+    }
+    
+    .card-actions {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        width: 100%;
+    }
+    
+    .card-action-btn {
+        padding: 0.6rem 1rem;
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        font-size: 0.85rem;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        white-space: nowrap;
+    }
+    
+    .btn-concluir {
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
+        border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+    
+    .btn-concluir:hover {
+        background: #10b981;
+        color: #000;
+        transform: translateY(-2px);
+    }
+    
+    .btn-cancelar {
+        background: rgba(239, 68, 68, 0.1);
+        color: #ef4444;
+        border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+    
+    .btn-cancelar:hover {
+        background: #ef4444;
+        color: #fff;
+        transform: translateY(-2px);
     }
     
     /* Responsivo para cards inline */
@@ -435,6 +863,40 @@
         
         .stats-grid {
             grid-template-columns: repeat(2, 1fr) !important;
+        }
+        
+        .agendamento-card {
+            flex-direction: column;
+        }
+        
+        .card-content-wrapper {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .card-right-section {
+            align-items: stretch;
+            min-width: 100%;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(74, 158, 255, 0.2);
+        }
+        
+        .card-time-box {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .card-hora {
+            font-size: 1.5rem;
+        }
+        
+        .card-actions {
+            flex-direction: row;
+        }
+        
+        .card-info-grid {
+            grid-template-columns: 1fr;
         }
     }
     
@@ -1125,56 +1587,86 @@ function renderizarAgendamentos(agendamentos) {
         if (dataCompare !== 0) return dataCompare;
         return b.hora_inicio.localeCompare(a.hora_inicio);
     }).map(r => {
-        const statusColor = r.status === 'confirmada' ? '#10b981' : r.status === 'cancelada' ? '#ef4444' : '#f59e0b';
-        const statusIcon = r.status === 'confirmada' ? '✅' : r.status === 'cancelada' ? '❌' : '🕒';
+        // Cores baseadas no status
+        const statusColors = {
+            'confirmada': { bg: 'rgba(16, 185, 129, 0.15)', text: '#10b981', icon: '✅', accent: '#10b981' },
+            'cancelada': { bg: 'rgba(239, 68, 68, 0.15)', text: '#ef4444', icon: '❌', accent: '#ef4444' },
+            'concluida': { bg: 'rgba(52, 199, 89, 0.15)', text: '#34c759', icon: '✨', accent: '#34c759' },
+            'default': { bg: 'rgba(251, 191, 36, 0.15)', text: '#fbbf24', icon: '🕒', accent: '#fbbf24' }
+        };
         
-        // Definir cores especiais para clientes com plano
-        const cardBorderColor = r.tem_plano ? '#fbbf24' : statusColor;
-        const cardBgColor = r.tem_plano ? 'rgba(251, 191, 36, 0.05)' : 'rgba(255, 255, 255, 0.05)';
-        const planoIcon = r.tem_plano ? '⭐' : '';
+        const statusStyle = statusColors[r.status] || statusColors.default;
+        const accentColor = r.tem_plano ? '#fbbf24' : statusStyle.accent;
         
         // Formatar data
         const dataObj = new Date(r.data + 'T00:00:00');
-        const dataFormatada = dataObj.toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+        const dataFormatada = dataObj.toLocaleDateString('pt-BR', { 
+            day: '2-digit', 
+            month: 'short', 
+            year: 'numeric' 
+        });
         
         return `
-            <div class="agendamento-card" style="border-left: 4px solid ${cardBorderColor}; background: ${cardBgColor};">
-                <div style="flex: 1;">
-                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
-                        <span style="font-size: 1.5em;">${statusIcon}</span>
-                        <div>
-                            <div style="font-weight: 600; color: #1e293b; font-size: 1.1em; display: flex; align-items: center; gap: 8px;">
-                                👤 ${r.cliente_nome}
-                                ${r.tem_plano ? `<span style="background: linear-gradient(135deg, #fbbf24, #f59e0b); color: #000; padding: 3px 10px; border-radius: 12px; font-size: 0.7em; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 2px 8px rgba(251, 191, 36, 0.3);">⭐ ${r.plano_nome}</span>` : ''}
+            <div class="agendamento-card">
+                <div class="card-left-accent" style="background: linear-gradient(180deg, ${accentColor}, ${accentColor}cc);"></div>
+                
+                <div class="card-content-wrapper">
+                    <div class="card-main-info">
+                        <div class="card-cliente-header">
+                            <div class="card-status-icon">${statusStyle.icon}</div>
+                            <div>
+                                <div class="card-cliente-nome">
+                                    ${r.cliente_nome}
+                                    ${r.tem_plano ? `<span class="card-plano-badge">⭐ ${r.plano_nome}</span>` : ''}
+                                </div>
                             </div>
-                            <div style="color: #64748b; font-size: 0.85em;">📞 ${r.cliente_telefone}</div>
-                            <div style="color: #64748b; font-size: 0.85em; margin-top: 4px;">${r.servico_nome || 'Serviço N/A'}</div>
-                            <div style="color: #3b82f6; font-size: 0.85em; margin-top: 4px;">📅 ${dataFormatada}</div>
+                        </div>
+                        
+                        <div class="card-info-grid">
+                            <div class="card-info-item">
+                                <span class="card-info-icon">📞</span>
+                                <span class="card-info-text">${r.cliente_telefone}</span>
+                            </div>
+                            <div class="card-info-item">
+                                <span class="card-info-icon">✂️</span>
+                                <span class="card-info-text">${r.servico_nome || 'Serviço N/A'}</span>
+                            </div>
+                            <div class="card-info-item">
+                                <span class="card-info-icon">📅</span>
+                                <span class="card-info-text">${dataFormatada}</span>
+                            </div>
+                            <div class="card-info-item">
+                                <span class="card-info-icon">⏱️</span>
+                                <span class="card-info-text">${r.servico_duracao || 30}min</span>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 8px;">
-                    <div>
-                        <div style="font-size: 1.3em; font-weight: bold; color: #3b82f6;">${r.hora_inicio}</div>
-                        <div style="color: #64748b; font-size: 0.85em;">${r.servico_duracao || 30}min</div>
-                        <div style="margin-top: 5px; padding: 4px 12px; background: ${statusColor}; color: white; border-radius: 20px; font-size: 0.75em; display: inline-block;">${r.status}</div>
+                    
+                    <div class="card-right-section">
+                        <div class="card-time-box">
+                            <div class="card-hora">${r.hora_inicio}</div>
+                            <div class="card-status-badge" style="background: ${statusStyle.bg}; color: ${statusStyle.text};">
+                                ${r.status}
+                            </div>
+                        </div>
+                        
+                        ${r.status !== 'concluida' || r.status !== 'cancelada' ? `
+                        <div class="card-actions">
+                            ${r.status !== 'concluida' ? `
+                            <button class="card-action-btn btn-concluir" 
+                                    onclick="concluirAtendimentoDashboard('${r.uuid}', '${r.cliente_nome}')">
+                                ✅ Concluir
+                            </button>
+                            ` : ''}
+                            ${r.status !== 'concluida' && r.status !== 'cancelada' ? `
+                            <button class="card-action-btn btn-cancelar" 
+                                    onclick="cancelarAgendamento('${r.uuid}', '${r.cliente_nome}')">
+                                🚫 Cancelar
+                            </button>
+                            ` : ''}
+                        </div>
+                        ` : ''}
                     </div>
-                    ${r.status !== 'concluida' ? `
-                    <button onclick="concluirAtendimentoDashboard('${r.uuid}', '${r.cliente_nome}')" 
-                            style="padding: 6px 12px; background: #10b981; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85em; font-weight: 600; transition: all 0.3s ease; display: flex; align-items: center; gap: 5px; margin-bottom: 4px;"
-                            onmouseover="this.style.background='#059669'; this.style.transform='scale(1.05)'" 
-                            onmouseout="this.style.background='#10b981'; this.style.transform='scale(1)'">
-                        ✅ Concluir
-                    </button>
-                    ` : ''}
-                    ${r.status !== 'concluida' && r.status !== 'cancelada' ? `
-                    <button onclick="cancelarAgendamento('${r.uuid}', '${r.cliente_nome}')" 
-                            style="padding: 6px 12px; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 0.85em; font-weight: 600; transition: all 0.3s ease; display: flex; align-items: center; gap: 5px;"
-                            onmouseover="this.style.background='#dc2626'; this.style.transform='scale(1.05)'" 
-                            onmouseout="this.style.background='#ef4444'; this.style.transform='scale(1)'">
-                        🚫 Cancelar
-                    </button>
-                    ` : ''}
                 </div>
             </div>
         `;
@@ -1473,6 +1965,72 @@ document.addEventListener('click', (e) => {
     if (panel.style.display === 'block' && !panel.contains(e.target) && !bell.contains(e.target)) {
         panel.style.display = 'none';
     }
+});
+
+// ============ SIDEBAR - SOLUÇÃO DEFINITIVA ============
+function openSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    const body = document.body;
+    
+    sidebar.classList.add('active');
+    overlay.classList.add('active');
+    body.classList.remove('sidebar-closed');
+}
+
+function closeSidebar() {
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    const body = document.body;
+    
+    // Remover classe
+    sidebar.classList.remove('active');
+    overlay.classList.remove('active');
+    
+    // Forçar reflow para garantir que a transição aconteça
+    void sidebar.offsetWidth;
+    
+    // No desktop, ajustar padding do body
+    if (window.innerWidth >= 1024) {
+        body.classList.add('sidebar-closed');
+    }
+    
+    // Garantir que o transform seja aplicado
+    requestAnimationFrame(() => {
+        sidebar.style.transform = 'translateX(-100%)';
+        setTimeout(() => {
+            sidebar.style.transform = '';
+        }, 300);
+    });
+}
+
+// Fechar com ESC
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeSidebar();
+    }
+});
+
+// Ajustar ao redimensionar
+window.addEventListener('resize', function() {
+    const sidebar = document.getElementById('sidebar');
+    
+    // Se mudar para mobile, fechar sidebar
+    if (window.innerWidth < 1024) {
+        closeSidebar();
+    }
+});
+
+// Marcar item ativo baseado na URL atual
+document.addEventListener('DOMContentLoaded', function() {
+    const currentPath = window.location.pathname;
+    const sidebarItems = document.querySelectorAll('.sidebar-item');
+    
+    sidebarItems.forEach(item => {
+        if (item.getAttribute('href') === currentPath) {
+            item.classList.add('active');
+        }
+    });
 });
 </script>
 

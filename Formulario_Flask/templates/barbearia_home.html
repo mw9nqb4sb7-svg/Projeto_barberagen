@@ -6,6 +6,12 @@
     <title>{{ barbearia.nome }}</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --cor-primaria: {{ barbearia.cor_primaria or '#8B5CF6' }};
+            --cor-secundaria: {{ barbearia.cor_secundaria or '#A78BFA' }};
+            --cor-texto: {{ barbearia.cor_texto or '#1f2937' }};
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -13,9 +19,9 @@
         }
         
         body {
-            background: #000;
+            background: #ffffff;
             font-family: 'Plus Jakarta Sans', sans-serif;
-            color: #fff;
+            color: #2d2d2d;
             overflow-x: hidden;
         }
         
@@ -107,8 +113,44 @@
                 gap: 1.5rem !important;
             }
             
+            /* Cards de Planos com Scroll Horizontal */
+            div[style*="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-bottom: 2rem"] {
+                display: flex !important;
+                overflow-x: auto !important;
+                scroll-snap-type: x mandatory !important;
+                gap: 1.5rem !important;
+                padding-bottom: 1rem !important;
+                -webkit-overflow-scrolling: touch !important;
+            }
+            
+            div[style*="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-bottom: 2rem"] > div {
+                min-width: 280px !important;
+                max-width: 280px !important;
+                scroll-snap-align: start !important;
+                flex-shrink: 0 !important;
+            }
+            
+            div[style*="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-bottom: 2rem"]::-webkit-scrollbar {
+                height: 8px;
+            }
+            
+            div[style*="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-bottom: 2rem"]::-webkit-scrollbar-track {
+                background: rgba(139, 92, 246, 0.1);
+                border-radius: 10px;
+            }
+            
+            div[style*="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-bottom: 2rem"]::-webkit-scrollbar-thumb {
+                background: var(--cor-primaria);
+                border-radius: 10px;
+            }
+            
             /* Footer Grid */
             footer div[style*="display: grid; grid-template-columns: repeat(4, 1fr)"] {
+                grid-template-columns: 1fr !important;
+                gap: 2rem !important;
+            }
+            
+            footer div[style*="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr"] {
                 grid-template-columns: 1fr !important;
                 gap: 2rem !important;
             }
@@ -217,21 +259,21 @@
 </head>
 <body>
     <!-- Navegação -->
-    <nav style="background: linear-gradient(180deg, rgba(0, 0, 0, 0.95) 0%, rgba(13, 13, 13, 0.98) 100%); border-bottom: 3px solid #4a9eff; position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);">
+    <nav style="background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(250, 250, 250, 0.95) 100%); border-bottom: 3px solid var(--cor-primaria); position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 4px 20px rgba(139, 92, 246, 0.15);">
         <div style="max-width: 1400px; margin: 0 auto; padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center;">
             <div style="font-family: 'Plus Jakarta Sans', sans-serif; font-size: 1.5rem; font-weight: 700;">
                 {% set nome_parts = barbearia.nome.split() %}
                 {% if nome_parts|length >= 2 %}
-                    <span style="color: #ffffff;">{{ nome_parts[0] }} {{ nome_parts[1] }}</span><span style="color: #4a9eff;">{{ ' '.join(nome_parts[2:]) if nome_parts|length > 2 else '' }}</span>
+                    <span style="color: var(--cor-texto);">{{ nome_parts[0] }} {{ nome_parts[1] }}</span><span style="color: var(--cor-primaria);">{{ ' '.join(nome_parts[2:]) if nome_parts|length > 2 else '' }}</span>
                 {% else %}
-                    <span style="color: #ffffff;">{{ barbearia.nome }}</span>
+                    <span style="color: var(--cor-texto);">{{ barbearia.nome }}</span>
                 {% endif %}
             </div>
             <ul style="display: flex; gap: 2rem; list-style: none; margin: 0; padding: 0;">
-                <li><a href="/" style="color: #ffffff; text-decoration: none; padding: 0.5rem 1rem;">Início</a></li>
-                <li><a href="#servicos" style="color: #ffffff; text-decoration: none; padding: 0.5rem 1rem;">Serviços</a></li>
-                <li><a href="{{ url_for('login', slug=barbearia.slug) }}" style="color: #ffffff; text-decoration: none; padding: 0.5rem 1rem;">Login</a></li>
-                <li><a href="{{ url_for('cadastro', slug=barbearia.slug) }}" style="color: #ffffff; text-decoration: none; padding: 0.5rem 1rem;">Cadastro</a></li>
+                <li><a href="/" style="color: var(--cor-texto); text-decoration: none; padding: 0.5rem 1rem; transition: color 0.3s;">Início</a></li>
+                <li><a href="#servicos" style="color: var(--cor-texto); text-decoration: none; padding: 0.5rem 1rem; transition: color 0.3s;">Serviços</a></li>
+                <li><a href="{{ url_for('login', slug=barbearia.slug) }}" style="color: var(--cor-texto); text-decoration: none; padding: 0.5rem 1rem; transition: color 0.3s;">Login</a></li>
+                <li><a href="{{ url_for('cadastro', slug=barbearia.slug) }}" style="color: var(--cor-texto); text-decoration: none; padding: 0.5rem 1rem; transition: color 0.3s;">Cadastro</a></li>
             </ul>
         </div>
     </nav>
@@ -242,32 +284,37 @@
             <!-- Conteúdo à esquerda -->
             <div class="hero-content">
                 <h1 class="hero-title" style="font-size: 4rem; font-weight: 700; margin-bottom: 1.5rem; line-height: 1.1;">
-                    <span style="color: #4a9eff;">Seu visual</span>
-                    <span style="color: #ffffff;"> no nível máximo</span>
+                    {% set titulo_partes = (barbearia.hero_titulo or 'Seu visual|no nível máximo').split('|') %}
+                    {% if titulo_partes|length > 1 %}
+                        <span style="color: var(--cor-primaria);">{{ titulo_partes[0] }}</span>
+                        <span style="color: var(--cor-texto);">{{ titulo_partes[1] }}</span>
+                    {% else %}
+                        <span style="color: var(--cor-primaria);">{{ titulo_partes[0] }}</span>
+                    {% endif %}
                 </h1>
                 
-                <p class="hero-text" style="font-size: 1.1rem; line-height: 1.6; color: rgba(255, 255, 255, 0.85); margin-bottom: 2rem; font-weight: 400;">
-                    Mais que um corte de cabelo, uma experiência completa. Profissionais qualificados, ambiente moderno e atendimento premium.
+                <p class="hero-text" style="font-size: 1.1rem; line-height: 1.6; color: {{ barbearia.cor_texto or '#1f2937' }}; margin-bottom: 2rem; font-weight: 400;">
+                    {{ barbearia.hero_subtitulo or 'Mais que um corte de cabelo, uma experiência completa. Profissionais qualificados, ambiente moderno e atendimento premium.' }}
                 </p>
                 
                 {% if barbearia.endereco or barbearia.telefone %}
                 <div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 2.5rem;">
                     {% if barbearia.endereco %}
-                    <span style="background: rgba(74, 158, 255, 0.15); padding: 0.6rem 1.2rem; border-radius: 50px; font-size: 0.95rem; border: 1px solid #4a9eff; color: #ffffff;">📍 {{ barbearia.endereco }}</span>
+                    <span style="background: rgba(139, 92, 246, 0.1); padding: 0.6rem 1.2rem; border-radius: 50px; font-size: 0.95rem; border: 1px solid var(--cor-primaria); color: var(--cor-texto);">📍 {{ barbearia.endereco }}</span>
                     {% endif %}
                     {% if barbearia.telefone %}
-                    <span style="background: rgba(74, 158, 255, 0.15); padding: 0.6rem 1.2rem; border-radius: 50px; font-size: 0.95rem; border: 1px solid #4a9eff; color: #ffffff;">📞 {{ barbearia.telefone }}</span>
+                    <span style="background: rgba(139, 92, 246, 0.1); padding: 0.6rem 1.2rem; border-radius: 50px; font-size: 0.95rem; border: 1px solid var(--cor-primaria); color: var(--cor-texto);">📞 {{ barbearia.telefone }}</span>
                     {% endif %}
                 </div>
                 {% endif %}
                 
                 <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
                     <a href="{{ url_for('cadastro', slug=barbearia.slug) }}" 
-                       style="display: inline-flex; align-items: center; gap: 0.5rem; font-size: 1rem; font-weight: 600; padding: 1rem 2rem; border-radius: 50px; text-decoration: none; background: #4a9eff; color: #000000;">
+                       style="display: inline-flex; align-items: center; gap: 0.5rem; font-size: 1rem; font-weight: 600; padding: 1rem 2rem; border-radius: 50px; text-decoration: none; background: var(--cor-primaria); color: #ffffff; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3); transition: all 0.3s;">
                         ✂️ Agendar horário
                     </a>
                     <a href="{{ url_for('login', slug=barbearia.slug) }}" 
-                       style="display: inline-flex; align-items: center; gap: 0.5rem; font-size: 1rem; font-weight: 600; padding: 1rem 2rem; border-radius: 50px; text-decoration: none; background: transparent; color: #ffffff; border: 1px solid rgba(255, 255, 255, 0.3);">
+                       style="display: inline-flex; align-items: center; gap: 0.5rem; font-size: 1rem; font-weight: 600; padding: 1rem 2rem; border-radius: 50px; text-decoration: none; background: transparent; color: var(--cor-texto); border: 2px solid var(--cor-primaria); transition: all 0.3s;">
                         Já possui uma conta? Entrar
                     </a>
                 </div>
@@ -276,13 +323,13 @@
             <!-- Imagem à direita com formas -->
             <div style="position: relative; height: 600px; display: flex; align-items: center; justify-content: center;">
                 <!-- Forma 1 -->
-                <div style="position: absolute; width: 280px; height: 480px; top: 10%; left: 5%; border-radius: 50% 50% 0 50%; background: #7dd3fc; z-index: 1; transform: rotate(-15deg);"></div>
+                <div style="position: absolute; width: 280px; height: 480px; top: 10%; left: 5%; border-radius: 50% 50% 0 50%; background: #c4b5fd; z-index: 1; transform: rotate(-15deg);"></div>
                 
                 <!-- Forma 2 -->
-                <div style="position: absolute; width: 320px; height: 520px; top: 5%; left: 25%; border-radius: 50% 50% 0 50%; background: #4a9eff; z-index: 1; transform: rotate(10deg);"></div>
+                <div style="position: absolute; width: 320px; height: 520px; top: 5%; left: 25%; border-radius: 50% 50% 0 50%; background: var(--cor-primaria); z-index: 1; transform: rotate(10deg);"></div>
                 
                 <!-- Forma 3 -->
-                <div style="position: absolute; width: 420px; height: 420px; top: 15%; right: -5%; border-radius: 50%; background: #000000; z-index: 1;"></div>
+                <div style="position: absolute; width: 420px; height: 420px; top: 15%; right: -5%; border-radius: 50%; background: #f5f5f5; z-index: 1;"></div>
                 
                 {% if barbearia.logo %}
                 <div style="position: relative; z-index: 3;">
@@ -302,51 +349,51 @@
     </section>
 
     <!-- Seção de Recursos -->
-    <section id="servicos" style="padding: 5rem 2rem; background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);">
+    <section id="servicos" style="padding: 5rem 2rem; background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);">
         <div style="max-width: 1200px; margin: 0 auto;">
             <div style="text-align: center; margin-bottom: 4rem;">
-                <h2 style="font-size: 2.5rem; font-weight: 700; color: #ffffff; margin-bottom: 1rem; letter-spacing: -0.5px;">
-                    Nossos <span style="color: #4a9eff;">serviços</span>
+                <h2 style="font-size: 2.5rem; font-weight: 700; color: var(--cor-texto); margin-bottom: 1rem; letter-spacing: -0.5px;">
+                    Nossos <span style="color: var(--cor-primaria);">serviços</span>
                 </h2>
-                <p style="color: rgba(255, 255, 255, 0.7); font-size: 1.1rem;">
+                <p style="color: rgba(31, 31, 31, 0.7); font-size: 1.1rem;">
                     Qualidade e profissionalismo em cada atendimento
                 </p>
             </div>
 
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem;">
                 <!-- Card 1 -->
-                <div style="background: rgba(74, 158, 255, 0.05); padding: 2.5rem; border-radius: 20px; border: 1px solid rgba(74, 158, 255, 0.2); transition: all 0.3s ease;">
-                    <div style="font-size: 3rem; margin-bottom: 1.5rem;">✂️</div>
-                    <h3 style="font-size: 1.5rem; font-weight: 700; color: #4a9eff; margin-bottom: 1rem;">Corte masculino</h3>
-                    <p style="color: rgba(255, 255, 255, 0.7); line-height: 1.6;">
-                        Cortes modernos e clássicos com acabamento perfeito, realizado por barbeiros experientes
+                <div style="background: #ffffff; padding: 2.5rem; border-radius: 20px; border: 2px solid rgba(139, 92, 246, 0.2); transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.1);">
+                    <div style="font-size: 3rem; margin-bottom: 1.5rem;">{{ barbearia.card1_icone or '✂️' }}</div>
+                    <h3 style="font-size: 1.5rem; font-weight: 700; color: var(--cor-primaria); margin-bottom: 1rem;">{{ barbearia.card1_titulo or 'Corte masculino' }}</h3>
+                    <p style="color: rgba(31, 31, 31, 0.7); line-height: 1.6;">
+                        {{ barbearia.card1_descricao or 'Cortes modernos e clássicos com acabamento perfeito, realizado por barbeiros experientes' }}
                     </p>
                 </div>
 
                 <!-- Card 2 -->
-                <div style="background: rgba(74, 158, 255, 0.05); padding: 2.5rem; border-radius: 20px; border: 1px solid rgba(74, 158, 255, 0.2); transition: all 0.3s ease;">
-                    <div style="font-size: 3rem; margin-bottom: 1.5rem;">🧔</div>
-                    <h3 style="font-size: 1.5rem; font-weight: 700; color: #4a9eff; margin-bottom: 1rem;">Barba completa</h3>
-                    <p style="color: rgba(255, 255, 255, 0.7); line-height: 1.6;">
-                        Design, aparação e tratamento completo para sua barba ficar impecável
+                <div style="background: #ffffff; padding: 2.5rem; border-radius: 20px; border: 2px solid rgba(139, 92, 246, 0.2); transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.1);">
+                    <div style="font-size: 3rem; margin-bottom: 1.5rem;">{{ barbearia.card2_icone or '🧔' }}</div>
+                    <h3 style="font-size: 1.5rem; font-weight: 700; color: var(--cor-primaria); margin-bottom: 1rem;">{{ barbearia.card2_titulo or 'Barba completa' }}</h3>
+                    <p style="color: rgba(31, 31, 31, 0.7); line-height: 1.6;">
+                        {{ barbearia.card2_descricao or 'Design, aparação e tratamento completo para sua barba ficar impecável' }}
                     </p>
                 </div>
 
                 <!-- Card 3 -->
-                <div style="background: rgba(74, 158, 255, 0.05); padding: 2.5rem; border-radius: 20px; border: 1px solid rgba(74, 158, 255, 0.2); transition: all 0.3s ease;">
-                    <div style="font-size: 3rem; margin-bottom: 1.5rem;">💈</div>
-                    <h3 style="font-size: 1.5rem; font-weight: 700; color: #4a9eff; margin-bottom: 1rem;">Combo premium</h3>
-                    <p style="color: rgba(255, 255, 255, 0.7); line-height: 1.6;">
-                        Corte + barba + finalização, o pacote completo para você sair renovado
+                <div style="background: #ffffff; padding: 2.5rem; border-radius: 20px; border: 2px solid rgba(139, 92, 246, 0.2); transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.1);">
+                    <div style="font-size: 3rem; margin-bottom: 1.5rem;">{{ barbearia.card3_icone or '💈' }}</div>
+                    <h3 style="font-size: 1.5rem; font-weight: 700; color: var(--cor-primaria); margin-bottom: 1rem;">{{ barbearia.card3_titulo or 'Combo premium' }}</h3>
+                    <p style="color: rgba(31, 31, 31, 0.7); line-height: 1.6;">
+                        {{ barbearia.card3_descricao or 'Corte + barba + finalização, o pacote completo para você sair renovado' }}
                     </p>
                 </div>
 
                 <!-- Card 4 -->
-                <div style="background: rgba(74, 158, 255, 0.05); padding: 2.5rem; border-radius: 20px; border: 1px solid rgba(74, 158, 255, 0.2); transition: all 0.3s ease;">
-                    <div style="font-size: 3rem; margin-bottom: 1.5rem;">📅</div>
-                    <h3 style="font-size: 1.5rem; font-weight: 700; color: #4a9eff; margin-bottom: 1rem;">Agendamento fácil</h3>
-                    <p style="color: rgba(255, 255, 255, 0.7); line-height: 1.6;">
-                        Reserve seu horário online de forma rápida e prática, sem complicação
+                <div style="background: #ffffff; padding: 2.5rem; border-radius: 20px; border: 2px solid rgba(139, 92, 246, 0.2); transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.1);">
+                    <div style="font-size: 3rem; margin-bottom: 1.5rem;">{{ barbearia.card4_icone or '📅' }}</div>
+                    <h3 style="font-size: 1.5rem; font-weight: 700; color: var(--cor-primaria); margin-bottom: 1rem;">{{ barbearia.card4_titulo or 'Agendamento fácil' }}</h3>
+                    <p style="color: rgba(31, 31, 31, 0.7); line-height: 1.6;">
+                        {{ barbearia.card4_descricao or 'Reserve seu horário online de forma rápida e prática, sem complicação' }}
                     </p>
                 </div>
             </div>
@@ -354,94 +401,94 @@
     </section>
 
     <!-- Seção de Estatísticas -->
-    <section style="padding: 5rem 2rem; background: #000;">
+    <section style="padding: 5rem 2rem; background: #ffffff;">
         <div style="max-width: 1200px; margin: 0 auto;">
             <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 3rem; text-align: center;">
                 <div>
-                    <div style="font-size: 3.5rem; font-weight: 800; color: #4a9eff; margin-bottom: 0.5rem;">5+</div>
-                    <div style="color: rgba(255, 255, 255, 0.7); font-size: 1.1rem;">Anos de experiência</div>
+                    <div style="font-size: 3.5rem; font-weight: 800; color: var(--cor-primaria); margin-bottom: 0.5rem;">5+</div>
+                    <div style="color: rgba(31, 31, 31, 0.7); font-size: 1.1rem;">Anos de experiência</div>
                 </div>
                 <div>
-                    <div style="font-size: 3.5rem; font-weight: 800; color: #4a9eff; margin-bottom: 0.5rem;">1000+</div>
-                    <div style="color: rgba(255, 255, 255, 0.7); font-size: 1.1rem;">Clientes satisfeitos</div>
+                    <div style="font-size: 3.5rem; font-weight: 800; color: var(--cor-primaria); margin-bottom: 0.5rem;">1000+</div>
+                    <div style="color: rgba(31, 31, 31, 0.7); font-size: 1.1rem;">Clientes satisfeitos</div>
                 </div>
                 <div>
-                    <div style="font-size: 3.5rem; font-weight: 800; color: #4a9eff; margin-bottom: 0.5rem;">100%</div>
-                    <div style="color: rgba(255, 255, 255, 0.7); font-size: 1.1rem;">Profissionais qualificados</div>
+                    <div style="font-size: 3.5rem; font-weight: 800; color: var(--cor-primaria); margin-bottom: 0.5rem;">100%</div>
+                    <div style="color: rgba(31, 31, 31, 0.7); font-size: 1.1rem;">Profissionais qualificados</div>
                 </div>
                 <div>
-                    <div style="font-size: 3.5rem; font-weight: 800; color: #4a9eff; margin-bottom: 0.5rem;">★★★★★</div>
-                    <div style="color: rgba(255, 255, 255, 0.7); font-size: 1.1rem;">Avaliação dos clientes</div>
+                    <div style="font-size: 3.5rem; font-weight: 800; color: var(--cor-primaria); margin-bottom: 0.5rem;">★★★★★</div>
+                    <div style="color: rgba(31, 31, 31, 0.7); font-size: 1.1rem;">Avaliação dos clientes</div>
                 </div>
             </div>
         </div>
     </section>
 
     <!-- Seção de Planos -->
-    <section id="planos" style="padding: 6rem 2rem; background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%);">
+    <section id="planos" style="padding: 6rem 2rem; background: linear-gradient(135deg, #f3f4f6 0%, #f9fafb 100%);">
         <div style="max-width: 1200px; margin: 0 auto;">
             <div style="text-align: center; margin-bottom: 4rem;">
-                <h2 style="font-size: 2.5rem; font-weight: 700; color: #ffffff; margin-bottom: 1rem; letter-spacing: -0.5px;">
-                    💎 Planos <span style="color: #4a9eff;">Mensais</span>
+                <h2 style="font-size: 2.5rem; font-weight: 700; color: var(--cor-texto); margin-bottom: 1rem; letter-spacing: -0.5px;">
+                    💎 Planos <span style="color: var(--cor-primaria);">Mensais</span>
                 </h2>
-                <p style="color: rgba(255, 255, 255, 0.7); font-size: 1.1rem;">
+                <p style="color: rgba(31, 31, 31, 0.7); font-size: 1.1rem;">
                     Economize e tenha benefícios exclusivos com nossos planos
                 </p>
             </div>
 
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-bottom: 2rem;">
                 <!-- Plano Básico -->
-                <div style="background: rgba(74, 158, 255, 0.05); padding: 2.5rem; border-radius: 20px; border: 1px solid rgba(74, 158, 255, 0.2); text-align: center;">
-                    <h3 style="font-size: 1.5rem; font-weight: 700; color: #4a9eff; margin-bottom: 1rem;">Plano Básico</h3>
-                    <div style="font-size: 3rem; font-weight: 800; color: #ffffff; margin: 1rem 0;">R$ 79,90</div>
-                    <div style="color: rgba(255, 255, 255, 0.6); margin-bottom: 1.5rem;">por mês</div>
-                    <div style="background: rgba(74, 158, 255, 0.1); padding: 0.8rem; border-radius: 10px; margin-bottom: 1.5rem; font-weight: 600;">
+                <div style="background: #ffffff; padding: 2.5rem; border-radius: 20px; border: 2px solid rgba(139, 92, 246, 0.2); text-align: center; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.1);">
+                    <h3 style="font-size: 1.5rem; font-weight: 700; color: var(--cor-primaria); margin-bottom: 1rem;">Plano Básico</h3>
+                    <div style="font-size: 3rem; font-weight: 800; color: var(--cor-texto); margin: 1rem 0;">R$ 79,90</div>
+                    <div style="color: rgba(31, 31, 31, 0.6); margin-bottom: 1.5rem;">por mês</div>
+                    <div style="background: rgba(139, 92, 246, 0.1); padding: 0.8rem; border-radius: 10px; margin-bottom: 1.5rem; font-weight: 600; color: var(--cor-texto);">
                         2 atendimentos/mês
                     </div>
-                    <ul style="list-style: none; padding: 0; text-align: left; color: rgba(255, 255, 255, 0.8);">
-                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">✓ Corte incluso</li>
-                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">✓ 10% off em produtos</li>
-                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">✓ Agendamento prioritário</li>
+                    <ul style="list-style: none; padding: 0; text-align: left; color: rgba(31, 31, 31, 0.8);">
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(139, 92, 246, 0.1);">✓ Corte incluso</li>
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(139, 92, 246, 0.1);">✓ 10% off em produtos</li>
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(139, 92, 246, 0.1);">✓ Agendamento prioritário</li>
                     </ul>
                 </div>
 
                 <!-- Plano Premium -->
-                <div style="background: rgba(74, 158, 255, 0.1); padding: 2.5rem; border-radius: 20px; border: 2px solid #4a9eff; text-align: center; position: relative; transform: scale(1.05);">
-                    <div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: #4a9eff; color: #000; padding: 0.5rem 1.5rem; border-radius: 50px; font-weight: 700; font-size: 0.9rem;">MAIS POPULAR</div>
-                    <h3 style="font-size: 1.5rem; font-weight: 700; color: #4a9eff; margin-bottom: 1rem;">Plano Premium</h3>
+                <div style="background: var(--cor-primaria); padding: 2.5rem; border-radius: 20px; border: 2px solid var(--cor-secundaria); text-align: center; position: relative; transform: scale(1.05); box-shadow: 0 8px 24px rgba(139, 92, 246, 0.3);">
+                    <div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: #ffffff; color: var(--cor-primaria); padding: 0.5rem 1.5rem; border-radius: 50px; font-weight: 700; font-size: 0.9rem;">MAIS POPULAR</div>
+                    <h3 style="font-size: 1.5rem; font-weight: 700; color: #ffffff; margin-bottom: 1rem;">Plano Premium</h3>
                     <div style="font-size: 3rem; font-weight: 800; color: #ffffff; margin: 1rem 0;">R$ 149,90</div>
-                    <div style="color: rgba(255, 255, 255, 0.6); margin-bottom: 1.5rem;">por mês</div>
-                    <div style="background: rgba(74, 158, 255, 0.2); padding: 0.8rem; border-radius: 10px; margin-bottom: 1.5rem; font-weight: 600;">
+                    <div style="color: rgba(255, 255, 255, 0.8); margin-bottom: 1.5rem;">por mês</div>
+                    <div style="background: rgba(255, 255, 255, 0.2); padding: 0.8rem; border-radius: 10px; margin-bottom: 1.5rem; font-weight: 600; color: #ffffff;">
                         4 atendimentos/mês
                     </div>
-                    <ul style="list-style: none; padding: 0; text-align: left; color: rgba(255, 255, 255, 0.9);">
-                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">✓ Corte + Barba</li>
-                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">✓ 20% off em produtos</li>
-                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">✓ Agendamento VIP</li>
-                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">✓ Toalha quente</li>
+                    <ul style="list-style: none; padding: 0; text-align: left; color: rgba(255, 255, 255, 0.95);">
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.2);">✓ Corte + Barba</li>
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.2);">✓ 20% off em produtos</li>
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.2);">✓ Agendamento VIP</li>
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.2);">✓ Toalha quente</li>
                     </ul>
                 </div>
 
                 <!-- Plano Black -->
-                <div style="background: rgba(74, 158, 255, 0.05); padding: 2.5rem; border-radius: 20px; border: 1px solid rgba(74, 158, 255, 0.2); text-align: center;">
-                    <h3 style="font-size: 1.5rem; font-weight: 700; color: #4a9eff; margin-bottom: 1rem;">Plano Black</h3>
-                    <div style="font-size: 3rem; font-weight: 800; color: #ffffff; margin: 1rem 0;">R$ 249,90</div>
-                    <div style="color: rgba(255, 255, 255, 0.6); margin-bottom: 1.5rem;">por mês</div>
-                    <div style="background: rgba(74, 158, 255, 0.1); padding: 0.8rem; border-radius: 10px; margin-bottom: 1.5rem; font-weight: 600;">
+                <div style="background: #ffffff; padding: 2.5rem; border-radius: 20px; border: 2px solid rgba(139, 92, 246, 0.2); text-align: center; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.1);">
+                    <h3 style="font-size: 1.5rem; font-weight: 700; color: var(--cor-primaria); margin-bottom: 1rem;">Plano Black</h3>
+                    <div style="font-size: 3rem; font-weight: 800; color: var(--cor-texto); margin: 1rem 0;">R$ 249,90</div>
+                    <div style="color: rgba(31, 31, 31, 0.6); margin-bottom: 1.5rem;">por mês</div>
+                    <div style="background: rgba(139, 92, 246, 0.1); padding: 0.8rem; border-radius: 10px; margin-bottom: 1.5rem; font-weight: 600; color: var(--cor-texto);">
                         8 atendimentos/mês
                     </div>
-                    <ul style="list-style: none; padding: 0; text-align: left; color: rgba(255, 255, 255, 0.8);">
-                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">✓ Serviços ilimitados</li>
-                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">✓ 30% off em produtos</li>
-                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">✓ Prioridade Black</li>
-                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">✓ Eventos exclusivos</li>
+                    <ul style="list-style: none; padding: 0; text-align: left; color: rgba(31, 31, 31, 0.8);">
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(139, 92, 246, 0.1);">✓ Serviços ilimitados</li>
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(139, 92, 246, 0.1);">✓ 30% off em produtos</li>
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(139, 92, 246, 0.1);">✓ Prioridade Black</li>
+                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(139, 92, 246, 0.1);">✓ Eventos exclusivos</li>
                     </ul>
                 </div>
             </div>
 
             <div style="text-align: center; margin-top: 3rem;">
                 <a href="{{ url_for('login', slug=barbearia.slug) }}" 
-                   style="display: inline-flex; align-items: center; gap: 0.5rem; font-size: 1rem; font-weight: 600; padding: 1rem 2rem; border-radius: 50px; text-decoration: none; background: #4a9eff; color: #000000;">
+                   style="display: inline-flex; align-items: center; gap: 0.5rem; font-size: 1rem; font-weight: 600; padding: 1rem 2rem; border-radius: 50px; text-decoration: none; background: var(--cor-primaria); color: #ffffff; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);">
                     Ver todos os planos →
                 </a>
             </div>
@@ -449,23 +496,23 @@
     </section>
 
     <!-- CTA Final -->
-    <section style="padding: 5rem 2rem; background: linear-gradient(135deg, #4a9eff 0%, #2563eb 100%);">
+    <section style="padding: 5rem 2rem; background: linear-gradient(135deg, var(--cor-primaria) 0%, var(--cor-secundaria) 100%);">
         <div style="max-width: 900px; margin: 0 auto; text-align: center;">
-            <h2 style="font-size: 3rem; font-weight: 700; color: #000000; margin-bottom: 1.5rem; letter-spacing: -0.5px;">
+            <h2 style="font-size: 3rem; font-weight: 700; color: #ffffff; margin-bottom: 1.5rem; letter-spacing: -0.5px;">
                 Agende seu horário
             </h2>
-            <p style="font-size: 1.2rem; color: rgba(0, 0, 0, 0.8); margin-bottom: 2.5rem; line-height: 1.7;">
+            <p style="font-size: 1.2rem; color: rgba(255, 255, 255, 0.9); margin-bottom: 2.5rem; line-height: 1.7;">
                 Reserve seu horário online de forma rápida e prática. Estamos prontos para te atender!
             </p>
             <a href="{{ url_for('cadastro', slug=barbearia.slug) }}" 
-               style="display: inline-flex; align-items: center; gap: 0.5rem; font-size: 1.1rem; font-weight: 700; padding: 1.2rem 3rem; border-radius: 50px; text-decoration: none; background: #000000; color: #ffffff; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);">
+               style="display: inline-flex; align-items: center; gap: 0.5rem; font-size: 1.1rem; font-weight: 700; padding: 1.2rem 3rem; border-radius: 50px; text-decoration: none; background: #ffffff; color: var(--cor-primaria); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);">
                 Fazer agendamento →
             </a>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer style="background: #0a0a0a; padding: 3rem 2rem 2rem; border-top: 1px solid rgba(74, 158, 255, 0.2);">
+    <footer style="background: #f9fafb; padding: 3rem 2rem 2rem; border-top: 2px solid rgba(139, 92, 246, 0.2);">
         <div style="max-width: 1200px; margin: 0 auto;">
             <div style="display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 3rem; margin-bottom: 3rem;">
                 <!-- Coluna 1 - Sobre -->
@@ -473,21 +520,21 @@
                     <div style="font-size: 1.5rem; font-weight: 700; margin-bottom: 1rem;">
                         {% set nome_parts = barbearia.nome.split() %}
                         {% if nome_parts|length >= 2 %}
-                            <span style="color: #ffffff;">{{ nome_parts[0] }} {{ nome_parts[1] }}</span><span style="color: #4a9eff;">{{ ' '.join(nome_parts[2:]) if nome_parts|length > 2 else '' }}</span>
+                            <span style="color: var(--cor-texto);">{{ nome_parts[0] }} {{ nome_parts[1] }}</span><span style="color: var(--cor-primaria);">{{ ' '.join(nome_parts[2:]) if nome_parts|length > 2 else '' }}</span>
                         {% else %}
-                            <span style="color: #ffffff;">{{ barbearia.nome }}</span>
+                            <span style="color: var(--cor-texto);">{{ barbearia.nome }}</span>
                         {% endif %}
                     </div>
-                    <p style="color: rgba(255, 255, 255, 0.6); line-height: 1.6; margin-bottom: 1.5rem;">
+                    <p style="color: rgba(31, 31, 31, 0.6); line-height: 1.6; margin-bottom: 1.5rem;">
                         Tradição e modernidade em cortes masculinos. Agende seu horário e venha nos visitar!
                     </p>
                     {% if barbearia.telefone %}
-                    <div style="color: rgba(255, 255, 255, 0.7); margin-bottom: 0.5rem;">
+                    <div style="color: rgba(31, 31, 31, 0.7); margin-bottom: 0.5rem;">
                         📞 {{ barbearia.telefone }}
                     </div>
                     {% endif %}
                     {% if barbearia.endereco %}
-                    <div style="color: rgba(255, 255, 255, 0.7);">
+                    <div style="color: rgba(31, 31, 31, 0.7);">
                         📍 {{ barbearia.endereco }}
                     </div>
                     {% endif %}
@@ -495,51 +542,52 @@
 
                 <!-- Coluna 2 - Links -->
                 <div>
-                    <h4 style="color: #4a9eff; font-size: 1rem; font-weight: 700; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Links</h4>
+                    <h4 style="color: var(--cor-primaria); font-size: 1rem; font-weight: 700; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Links</h4>
                     <ul style="list-style: none; padding: 0;">
                         <li style="margin-bottom: 0.8rem;">
-                            <a href="/" style="color: rgba(255, 255, 255, 0.7); text-decoration: none;">Início</a>
+                            <a href="/barberia" style="color: rgba(31, 31, 31, 0.7); text-decoration: none;">Início</a>
                         </li>
                         <li style="margin-bottom: 0.8rem;">
-                            <a href="{{ url_for('login', slug=barbearia.slug) }}" style="color: rgba(255, 255, 255, 0.7); text-decoration: none;">Login</a>
+                            <a href="{{ url_for('login', slug=barbearia.slug) }}" style="color: rgba(31, 31, 31, 0.7); text-decoration: none;">Login</a>
                         </li>
                         <li style="margin-bottom: 0.8rem;">
-                            <a href="{{ url_for('cadastro', slug=barbearia.slug) }}" style="color: rgba(255, 255, 255, 0.7); text-decoration: none;">Cadastro</a>
+                            <a href="{{ url_for('cadastro', slug=barbearia.slug) }}" style="color: rgba(31, 31, 31, 0.7); text-decoration: none;">Cadastro</a>
                         </li>
                     </ul>
                 </div>
 
                 <!-- Coluna 3 - Recursos -->
                 <div>
-                    <h4 style="color: #4a9eff; font-size: 1rem; font-weight: 700; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Serviços</h4>
+                    <h4 style="color: var(--cor-primaria); font-size: 1rem; font-weight: 700; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Serviços</h4>
                     <ul style="list-style: none; padding: 0;">
-                        <li style="margin-bottom: 0.8rem; color: rgba(255, 255, 255, 0.7);">Corte masculino</li>
-                        <li style="margin-bottom: 0.8rem; color: rgba(255, 255, 255, 0.7);">Barba completa</li>
-                        <li style="margin-bottom: 0.8rem; color: rgba(255, 255, 255, 0.7);">Combo premium</li>
+                        <li style="margin-bottom: 0.8rem; color: rgba(31, 31, 31, 0.7);">Corte masculino</li>
+                        <li style="margin-bottom: 0.8rem; color: rgba(31, 31, 31, 0.7);">Barba completa</li>
+                        <li style="margin-bottom: 0.8rem; color: rgba(31, 31, 31, 0.7);">Combo premium</li>
                     </ul>
                 </div>
 
                 <!-- Coluna 4 - Redes Sociais -->
                 <div>
-                    <h4 style="color: #4a9eff; font-size: 1rem; font-weight: 700; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Social</h4>
+                    <h4 style="color: var(--cor-primaria); font-size: 1rem; font-weight: 700; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Social</h4>
                     <div style="display: flex; gap: 1rem;">
-                        <a href="#" style="width: 40px; height: 40px; background: rgba(74, 158, 255, 0.1); border: 1px solid rgba(74, 158, 255, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.2rem;">📘</a>
-                        <a href="#" style="width: 40px; height: 40px; background: rgba(74, 158, 255, 0.1); border: 1px solid rgba(74, 158, 255, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.2rem;">📷</a>
-                        <a href="#" style="width: 40px; height: 40px; background: rgba(74, 158, 255, 0.1); border: 1px solid rgba(74, 158, 255, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.2rem;">💬</a>
+                        <a href="#" style="width: 40px; height: 40px; background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.2rem;">📘</a>
+                        <a href="#" style="width: 40px; height: 40px; background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.2rem;">📷</a>
+                        <a href="#" style="width: 40px; height: 40px; background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.2rem;">💬</a>
                     </div>
                 </div>
             </div>
 
             <!-- Copyright -->
-            <div style="border-top: 1px solid rgba(74, 158, 255, 0.1); padding-top: 2rem; text-align: center;">
-                <p style="color: rgba(255, 255, 255, 0.5); font-size: 0.9rem; margin-bottom: 0.5rem;">
+            <div style="border-top: 1px solid rgba(139, 92, 246, 0.2); padding-top: 2rem; text-align: center;">
+                <p style="color: rgba(31, 31, 31, 0.5); font-size: 0.9rem; margin-bottom: 0.5rem;">
                     © 2025 {{ barbearia.nome }}. Todos os direitos reservados.
                 </p>
-                <p style="color: rgba(255, 255, 255, 0.6); font-size: 1rem; margin-top: 0.75rem; font-family: 'Plus Jakarta Sans', sans-serif;">
-                    Desenvolvido por <a href="http://127.0.0.1:5001" target="_blank" style="text-decoration: none;"><span style="color: #ffffff; font-weight: 700;">Barber</span><span style="color: #4a9eff; font-weight: 700;">Connect</span></a>
+                <p style="color: rgba(31, 31, 31, 0.6); font-size: 1rem; margin-top: 0.75rem; font-family: 'Plus Jakarta Sans', sans-serif;">
+                    Desenvolvido por <a href="http://127.0.0.1:5001" target="_blank" style="text-decoration: none;"><span style="color: var(--cor-texto); font-weight: 700;">Barber</span><span style="color: var(--cor-primaria); font-weight: 700;">Connect</span></a>
                 </p>
             </div>
         </div>
     </footer>
 </body>
 </html>
+

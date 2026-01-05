@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 {% block title %}Super Admin - Editar Barbearia{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}?v=1.0">
+{% endblock %}
 
 {% block content %}
 <div class="super-admin-form">
@@ -122,6 +125,110 @@
                     <small class="form-help">Endereço completo da barbearia</small>
                 </div>
 
+                <!-- SEÇÃO DE PERSONALIZAÇÃO VISUAL -->
+                <div class="form-section full-width">
+                    <h3 style="color: #8b5cf6; font-size: 1.3rem; margin: 2rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid #8b5cf6;">
+                        🎨 Personalização Visual da Home Page
+                    </h3>
+                </div>
+
+                <!-- Hero Título -->
+                <div class="form-group full-width">
+                    <label for="hero_titulo" class="form-label">
+                        <span class="label-icon">📝</span>
+                        Título Principal
+                    </label>
+                    <input type="text" id="hero_titulo" name="hero_titulo" 
+                           value="{{ barbearia.hero_titulo or 'Seu visual|no nível máximo' }}" 
+                           class="form-input" 
+                           placeholder="Ex: Seu visual|no nível máximo">
+                    <small class="form-help">💡 Use <strong>|</strong> (pipe) para dividir o título em duas cores. Exemplo: <em>Barbershop|Premium</em></small>
+                </div>
+
+                <!-- Hero Subtítulo -->
+                <div class="form-group full-width">
+                    <label for="hero_subtitulo" class="form-label">
+                        <span class="label-icon">📄</span>
+                        Subtítulo
+                    </label>
+                    <textarea id="hero_subtitulo" name="hero_subtitulo" 
+                              class="form-textarea" 
+                              rows="2" 
+                              placeholder="Ex: Agende seu horário com praticidade e estilo. Cortes modernos e atendimento de excelência.">{{ barbearia.hero_subtitulo or 'Agende seu horário com praticidade e estilo. Cortes modernos e atendimento de excelência.' }}</textarea>
+                    <small class="form-help">Texto descritivo abaixo do título</small>
+                </div>
+
+                <!-- Slogan -->
+                <div class="form-group full-width">
+                    <label for="slogan" class="form-label">
+                        <span class="label-icon">💬</span>
+                        Slogan
+                    </label>
+                    <input type="text" id="slogan" name="slogan" 
+                           value="{{ barbearia.slogan or 'Estilo e Tradição' }}" 
+                           class="form-input" 
+                           placeholder="Ex: Estilo e Tradição">
+                    <small class="form-help">Frase de destaque da barbearia</small>
+                </div>
+
+                <!-- Cores -->
+                <div class="form-group">
+                    <label for="cor_primaria" class="form-label">
+                        <span class="label-icon">🎨</span>
+                        Cor Primária
+                    </label>
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <input type="color" id="cor_primaria" name="cor_primaria" 
+                               value="{{ barbearia.cor_primaria or '#8b5cf6' }}" 
+                               style="width: 60px; height: 40px; border: 2px solid #8b5cf6; border-radius: 8px; cursor: pointer;">
+                        <input type="text" id="cor_primaria_text" 
+                               value="{{ barbearia.cor_primaria or '#8b5cf6' }}" 
+                               class="form-input" 
+                               placeholder="#8b5cf6"
+                               readonly
+                               style="flex: 1;">
+                    </div>
+                    <small class="form-help">Cor principal usada nos botões e destaques</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="cor_secundaria" class="form-label">
+                        <span class="label-icon">🎨</span>
+                        Cor Secundária
+                    </label>
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <input type="color" id="cor_secundaria" name="cor_secundaria" 
+                               value="{{ barbearia.cor_secundaria or '#7c3aed' }}" 
+                               style="width: 60px; height: 40px; border: 2px solid #8b5cf6; border-radius: 8px; cursor: pointer;">
+                        <input type="text" id="cor_secundaria_text" 
+                               value="{{ barbearia.cor_secundaria or '#7c3aed' }}" 
+                               class="form-input" 
+                               placeholder="#7c3aed"
+                               readonly
+                               style="flex: 1;">
+                    </div>
+                    <small class="form-help">Cor para hover e elementos secundários</small>
+                </div>
+
+                <div class="form-group">
+                    <label for="cor_texto" class="form-label">
+                        <span class="label-icon">✏️</span>
+                        Cor do Texto
+                    </label>
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <input type="color" id="cor_texto" name="cor_texto" 
+                               value="{{ barbearia.cor_texto or '#1f2937' }}" 
+                               style="width: 60px; height: 40px; border: 2px solid #8b5cf6; border-radius: 8px; cursor: pointer;">
+                        <input type="text" id="cor_texto_text" 
+                               value="{{ barbearia.cor_texto or '#1f2937' }}" 
+                               class="form-input" 
+                               placeholder="#1f2937"
+                               readonly
+                               style="flex: 1;">
+                    </div>
+                    <small class="form-help">Cor principal do texto</small>
+                </div>
+
                 <!-- Status -->
                 <div class="form-group full-width">
                     <div class="checkbox-group">
@@ -133,6 +240,137 @@
                         </label>
                     </div>
                     <small class="form-help">Desmarque para inativar a barbearia temporariamente</small>
+                </div>
+
+                <!-- SEÇÃO DE CARDS DE SERVIÇOS -->
+                <div class="form-section full-width">
+                    <h3 style="color: #8b5cf6; font-size: 1.3rem; margin: 2rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid #8b5cf6;">
+                        📦 Cards de Serviços (4 cards personalizáveis)
+                    </h3>
+                </div>
+
+                <!-- Card 1 -->
+                <div class="form-section full-width" style="background: rgba(139, 92, 246, 0.05); padding: 1.5rem; border-radius: 12px; margin-bottom: 1rem;">
+                    <h4 style="color: #8b5cf6; font-size: 1.1rem; margin-bottom: 1rem;">📍 Card 1</h4>
+                    
+                    <div style="display: grid; grid-template-columns: 100px 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="form-group" style="margin: 0;">
+                            <label for="card1_icone" class="form-label">Ícone</label>
+                            <input type="text" id="card1_icone" name="card1_icone" 
+                                   value="{{ barbearia.card1_icone or '✂️' }}" 
+                                   class="form-input" 
+                                   placeholder="✂️"
+                                   style="text-align: center; font-size: 2rem;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label for="card1_titulo" class="form-label">Título</label>
+                            <input type="text" id="card1_titulo" name="card1_titulo" 
+                                   value="{{ barbearia.card1_titulo or 'Corte masculino' }}" 
+                                   class="form-input" 
+                                   placeholder="Corte masculino">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="margin: 0;">
+                        <label for="card1_descricao" class="form-label">Descrição</label>
+                        <textarea id="card1_descricao" name="card1_descricao" 
+                                  class="form-textarea" 
+                                  rows="2" 
+                                  placeholder="Descrição do serviço">{{ barbearia.card1_descricao or 'Cortes modernos e clássicos com acabamento perfeito' }}</textarea>
+                    </div>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="form-section full-width" style="background: rgba(139, 92, 246, 0.05); padding: 1.5rem; border-radius: 12px; margin-bottom: 1rem;">
+                    <h4 style="color: #8b5cf6; font-size: 1.1rem; margin-bottom: 1rem;">📍 Card 2</h4>
+                    
+                    <div style="display: grid; grid-template-columns: 100px 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="form-group" style="margin: 0;">
+                            <label for="card2_icone" class="form-label">Ícone</label>
+                            <input type="text" id="card2_icone" name="card2_icone" 
+                                   value="{{ barbearia.card2_icone or '🧔' }}" 
+                                   class="form-input" 
+                                   placeholder="🧔"
+                                   style="text-align: center; font-size: 2rem;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label for="card2_titulo" class="form-label">Título</label>
+                            <input type="text" id="card2_titulo" name="card2_titulo" 
+                                   value="{{ barbearia.card2_titulo or 'Barba completa' }}" 
+                                   class="form-input" 
+                                   placeholder="Barba completa">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="margin: 0;">
+                        <label for="card2_descricao" class="form-label">Descrição</label>
+                        <textarea id="card2_descricao" name="card2_descricao" 
+                                  class="form-textarea" 
+                                  rows="2" 
+                                  placeholder="Descrição do serviço">{{ barbearia.card2_descricao or 'Design, aparação e tratamento completo para sua barba' }}</textarea>
+                    </div>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="form-section full-width" style="background: rgba(139, 92, 246, 0.05); padding: 1.5rem; border-radius: 12px; margin-bottom: 1rem;">
+                    <h4 style="color: #8b5cf6; font-size: 1.1rem; margin-bottom: 1rem;">📍 Card 3</h4>
+                    
+                    <div style="display: grid; grid-template-columns: 100px 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="form-group" style="margin: 0;">
+                            <label for="card3_icone" class="form-label">Ícone</label>
+                            <input type="text" id="card3_icone" name="card3_icone" 
+                                   value="{{ barbearia.card3_icone or '💈' }}" 
+                                   class="form-input" 
+                                   placeholder="💈"
+                                   style="text-align: center; font-size: 2rem;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label for="card3_titulo" class="form-label">Título</label>
+                            <input type="text" id="card3_titulo" name="card3_titulo" 
+                                   value="{{ barbearia.card3_titulo or 'Combo premium' }}" 
+                                   class="form-input" 
+                                   placeholder="Combo premium">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="margin: 0;">
+                        <label for="card3_descricao" class="form-label">Descrição</label>
+                        <textarea id="card3_descricao" name="card3_descricao" 
+                                  class="form-textarea" 
+                                  rows="2" 
+                                  placeholder="Descrição do serviço">{{ barbearia.card3_descricao or 'Corte + barba + finalização, o pacote completo' }}</textarea>
+                    </div>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="form-section full-width" style="background: rgba(139, 92, 246, 0.05); padding: 1.5rem; border-radius: 12px; margin-bottom: 1rem;">
+                    <h4 style="color: #8b5cf6; font-size: 1.1rem; margin-bottom: 1rem;">📍 Card 4</h4>
+                    
+                    <div style="display: grid; grid-template-columns: 100px 1fr; gap: 1rem; margin-bottom: 1rem;">
+                        <div class="form-group" style="margin: 0;">
+                            <label for="card4_icone" class="form-label">Ícone</label>
+                            <input type="text" id="card4_icone" name="card4_icone" 
+                                   value="{{ barbearia.card4_icone or '📅' }}" 
+                                   class="form-input" 
+                                   placeholder="📅"
+                                   style="text-align: center; font-size: 2rem;">
+                        </div>
+                        <div class="form-group" style="margin: 0;">
+                            <label for="card4_titulo" class="form-label">Título</label>
+                            <input type="text" id="card4_titulo" name="card4_titulo" 
+                                   value="{{ barbearia.card4_titulo or 'Agendamento fácil' }}" 
+                                   class="form-input" 
+                                   placeholder="Agendamento fácil">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group" style="margin: 0;">
+                        <label for="card4_descricao" class="form-label">Descrição</label>
+                        <textarea id="card4_descricao" name="card4_descricao" 
+                                  class="form-textarea" 
+                                  rows="2" 
+                                  placeholder="Descrição do serviço">{{ barbearia.card4_descricao or 'Reserve seu horário online de forma rápida e prática' }}</textarea>
+                    </div>
                 </div>
             </div>
 
@@ -234,6 +472,19 @@ document.getElementById('telefone').addEventListener('input', function() {
         }
     }
     this.value = value;
+});
+
+// Sincronizar color pickers com campos de texto
+document.getElementById('cor_primaria').addEventListener('input', function() {
+    document.getElementById('cor_primaria_text').value = this.value;
+});
+
+document.getElementById('cor_secundaria').addEventListener('input', function() {
+    document.getElementById('cor_secundaria_text').value = this.value;
+});
+
+document.getElementById('cor_texto').addEventListener('input', function() {
+    document.getElementById('cor_texto_text').value = this.value;
 });
 </script>
 
@@ -348,7 +599,7 @@ body {
     border-radius: 4px;
     font-size: 16px;
     transition: all 0.3s ease;
-    background: #1a1a1a;
+    background: #f9fafb;
     color: #f5f5dc;
     font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 }
@@ -360,7 +611,7 @@ body {
 .form-input:focus, .form-textarea:focus {
     outline: none;
     border-color: var(--gold);
-    box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.1);
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
 }
 
 .form-help {

@@ -12,6 +12,9 @@ from jinja2 import ChoiceLoader, FileSystemLoader
 import smtplib
 from email.message import EmailMessage
 from datetime import datetime
+import requests
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.interval import IntervalTrigger
 
 # Importar módulo de segurança
 from security import (
@@ -76,6 +79,7 @@ db = SQLAlchemy(app)
 csrf.exempt('api_agendamentos_hoje')
 csrf.exempt('api_agendamentos_todos')
 csrf.exempt('api_reservas_cliente')
+csrf.exempt('sincronizar_chamados_manual')  # Sincronização manual de chamados
 # Removido CSRF exempt para admin_cancelar_agendamento - deve usar CSRF token
 
 # Tratamento de erros CSRF
@@ -83,7 +87,7 @@ csrf.exempt('api_reservas_cliente')
 def handle_csrf_error(e):
     if 'CSRF' in str(e):
         flash('⚠️ Token de segurança inválido ou expirado. Por favor, tente novamente.', 'error')
-        return redirect(request.referrer or url_for('index'))
+        return redirect(request.referrer or url_for('index_login'))
     return e
 
 # Headers de Segurança
@@ -104,6 +108,11 @@ def set_security_headers(response):
         "connect-src 'self'; "
         "img-src 'self' data:;"
     )
+    # Desabilitar cache para páginas HTML (facilitar desenvolvimento)
+    if response.content_type and 'text/html' in response.content_type:
+        response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+        response.headers['Pragma'] = 'no-cache'
+        response.headers['Expires'] = '0'
     # HSTS (apenas em produção com HTTPS)
     if not app.debug:
         response.headers['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains'
@@ -168,6 +177,31 @@ class Barbearia(db.Model):
     
     # Configurações específicas da barbearia (JSON)
     configuracoes = db.Column(db.Text, default='{}')
+    
+    # Personalização visual da home page
+    hero_titulo = db.Column(db.Text, nullable=True)
+    hero_subtitulo = db.Column(db.Text, nullable=True)
+    slogan = db.Column(db.String(200), nullable=True)
+    cor_primaria = db.Column(db.String(10), nullable=True)
+    cor_secundaria = db.Column(db.String(10), nullable=True)
+    cor_texto = db.Column(db.String(10), nullable=True)
+    
+    # Cards de serviços personalizáveis
+    card1_icone = db.Column(db.String(10), nullable=True)
+    card1_titulo = db.Column(db.String(100), nullable=True)
+    card1_descricao = db.Column(db.Text, nullable=True)
+    
+    card2_icone = db.Column(db.String(10), nullable=True)
+    card2_titulo = db.Column(db.String(100), nullable=True)
+    card2_descricao = db.Column(db.Text, nullable=True)
+    
+    card3_icone = db.Column(db.String(10), nullable=True)
+    card3_titulo = db.Column(db.String(100), nullable=True)
+    card3_descricao = db.Column(db.Text, nullable=True)
+    
+    card4_icone = db.Column(db.String(10), nullable=True)
+    card4_titulo = db.Column(db.String(100), nullable=True)
+    card4_descricao = db.Column(db.Text, nullable=True)
     
     # Relacionamentos
     usuarios = db.relationship('UsuarioBarbearia', back_populates='barbearia', cascade="all, delete-orphan")
@@ -447,6 +481,32 @@ class Disponibilidade(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     config_json = db.Column(db.Text, nullable=False, default='{}')
 
+class Chamado(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.String(36), unique=True, nullable=False, default=lambda: str(uuid.uuid4()))
+    numero_chamado = db.Column(db.String(50), unique=True, nullable=False)
+    barbearia_id = db.Column(db.Integer, db.ForeignKey('barbearia.id'), nullable=False)
+    usuario_id = db.Column(db.Integer, db.ForeignKey('usuario.id'), nullable=False)
+    
+    aplicacao = db.Column(db.String(100), nullable=False)
+    usuario_nome = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(120), nullable=False)
+    telefone = db.Column(db.String(20))
+    assunto = db.Column(db.String(200), nullable=False)
+    mensagem = db.Column(db.Text, nullable=False)
+    prioridade = db.Column(db.String(20), nullable=False, default='media')
+    
+    status = db.Column(db.String(20), nullable=False, default='enviado')  # enviado, em_andamento, resolvido, fechado, cancelado
+    data_criacao = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    data_atualizacao = db.Column(db.DateTime, nullable=False, default=datetime.utcnow, onupdate=datetime.utcnow)
+    
+    resposta_api = db.Column(db.Text)  # Resposta da API externa
+    api_chamado_id = db.Column(db.String(100))  # ID retornado pela API externa
+    
+    # Relacionamentos
+    barbearia = db.relationship('Barbearia', backref=db.backref('chamados', lazy=True))
+    usuario = db.relationship('Usuario', backref=db.backref('chamados', lazy=True))
+
 # ---------- UTIL ---------- 
 def check_required_templates(required):
     available = set()
@@ -481,13 +541,22 @@ REQUIRED_TEMPLATES = [
     'admin/dashboard.html',
     'admin/admin_agendamentos.html',
     'admin/disponibilidade.html',
-    'admin/disponibilidade_semana.html'
+    'admin/disponibilidade_semana.html',
+    'admin/suporte.html',
+    'admin/chamados.html'
 ]
 
 # ---------- MIDDLEWARE ----------
 @app.before_request
 def before_request():
     """Middleware executado antes de cada request"""
+    # Debug para sincronização
+    if 'sincronizar' in request.path:
+        print(f"\n🔍 [BEFORE_REQUEST] Path: {request.path}")
+        print(f"🔍 [BEFORE_REQUEST] Endpoint: {request.endpoint}")
+        print(f"🔍 [BEFORE_REQUEST] Method: {request.method}")
+        print(f"🔍 [BEFORE_REQUEST] Session: {dict(session)}\n")
+    
     # Excluir rotas que não precisam de tenant context
     excluded_paths = ['/static/', '/super_admin/', '/_']
     excluded_endpoints = ['super_admin_login', 'super_admin_dashboard', 'super_admin_barbearias', 'super_admin_usuarios', 'super_admin_relatorios', 'super_admin_redirect']
@@ -505,6 +574,8 @@ def before_request():
             # Se falhar o setup do tenant, configura um contexto vazio
             g.tenant = None
             g.current_barbearia = None
+            if 'sincronizar' in request.path:
+                print(f"⚠️ [BEFORE_REQUEST] Erro no setup_tenant_context: {e}")
             pass
 
 # ---------- FUNÇÕES HELPER ----------
@@ -2696,6 +2767,144 @@ def super_admin_relatorios():
                          relatorio_crescimento=relatorio_crescimento,
                          top_servicos=top_servicos)
 
+# ==================== ROTAS DE PLANOS DO SUPER ADMIN ====================
+
+@app.route('/super_admin/planos')
+@require_super_admin
+def super_admin_planos():
+    """Gerenciar planos de todas as barbearias"""
+    barbearias = Barbearia.query.filter_by(ativa=True).all()
+    
+    # Criar estrutura de dados com barbearias e seus planos
+    dados_barbearias = []
+    for barbearia in barbearias:
+        planos = PlanoMensal.query.filter_by(barbearia_id=barbearia.id).all()
+        dados_barbearias.append({
+            'barbearia': barbearia,
+            'planos': planos,
+            'total_planos': len(planos),
+            'planos_ativos': len([p for p in planos if p.ativo])
+        })
+    
+    return render_template('super_admin/planos.html', dados_barbearias=dados_barbearias)
+
+@app.route('/super_admin/plano/criar/<string:barbearia_uuid>', methods=['GET', 'POST'])
+@require_super_admin
+def super_admin_criar_plano(barbearia_uuid):
+    """Criar novo plano para uma barbearia"""
+    barbearia = Barbearia.query.filter_by(uuid=barbearia_uuid).first_or_404()
+    
+    if request.method == 'POST':
+        nome = request.form.get('nome', '').strip()
+        descricao = request.form.get('descricao', '').strip()
+        preco = request.form.get('preco', '').strip()
+        atendimentos_mes = request.form.get('atendimentos_mes', '').strip()
+        
+        # Benefícios (um por linha no textarea)
+        beneficios_text = request.form.get('beneficios', '').strip()
+        beneficios = [b.strip() for b in beneficios_text.split('\n') if b.strip()]
+        
+        # Validações
+        if not nome or not preco or not atendimentos_mes:
+            flash('Nome, preço e quantidade de atendimentos são obrigatórios!', 'error')
+            return redirect(request.url)
+        
+        try:
+            preco_float = float(preco.replace(',', '.'))
+            atendimentos_int = int(atendimentos_mes)
+            
+            # Criar plano
+            novo_plano = PlanoMensal(
+                barbearia_id=barbearia.id,
+                nome=nome,
+                descricao=descricao,
+                preco=preco_float,
+                atendimentos_mes=atendimentos_int,
+                ativo=True
+            )
+            novo_plano.set_beneficios(beneficios)
+            
+            db.session.add(novo_plano)
+            db.session.commit()
+            
+            flash(f'Plano "{nome}" criado com sucesso!', 'success')
+            return redirect(url_for('super_admin_planos'))
+            
+        except ValueError:
+            flash('Preço e atendimentos devem ser números válidos!', 'error')
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Erro ao criar plano: {str(e)}', 'error')
+    
+    return render_template('super_admin/plano_form.html', barbearia=barbearia, plano=None)
+
+@app.route('/super_admin/plano/<string:plano_uuid>/editar', methods=['GET', 'POST'])
+@require_super_admin
+def super_admin_editar_plano(plano_uuid):
+    """Editar plano existente"""
+    plano = PlanoMensal.query.filter_by(uuid=plano_uuid).first_or_404()
+    barbearia = plano.barbearia
+    
+    if request.method == 'POST':
+        nome = request.form.get('nome', '').strip()
+        descricao = request.form.get('descricao', '').strip()
+        preco = request.form.get('preco', '').strip()
+        atendimentos_mes = request.form.get('atendimentos_mes', '').strip()
+        ativo = request.form.get('ativo') == 'on'
+        
+        # Benefícios (um por linha no textarea)
+        beneficios_text = request.form.get('beneficios', '').strip()
+        beneficios = [b.strip() for b in beneficios_text.split('\n') if b.strip()]
+        
+        # Validações
+        if not nome or not preco or not atendimentos_mes:
+            flash('Nome, preço e quantidade de atendimentos são obrigatórios!', 'error')
+            return redirect(request.url)
+        
+        try:
+            preco_float = float(preco.replace(',', '.'))
+            atendimentos_int = int(atendimentos_mes)
+            
+            # Atualizar plano
+            plano.nome = nome
+            plano.descricao = descricao
+            plano.preco = preco_float
+            plano.atendimentos_mes = atendimentos_int
+            plano.ativo = ativo
+            plano.set_beneficios(beneficios)
+            
+            db.session.commit()
+            
+            flash(f'Plano "{nome}" atualizado com sucesso!', 'success')
+            return redirect(url_for('super_admin_planos'))
+            
+        except ValueError:
+            flash('Preço e atendimentos devem ser números válidos!', 'error')
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Erro ao atualizar plano: {str(e)}', 'error')
+    
+    return render_template('super_admin/plano_form.html', barbearia=barbearia, plano=plano)
+
+@app.route('/super_admin/plano/<string:plano_uuid>/excluir', methods=['POST'])
+@require_super_admin
+def super_admin_excluir_plano(plano_uuid):
+    """Desativar um plano"""
+    plano = PlanoMensal.query.filter_by(uuid=plano_uuid).first_or_404()
+    
+    try:
+        # Apenas desativar, não deletar
+        plano.ativo = False
+        db.session.commit()
+        flash(f'Plano "{plano.nome}" desativado com sucesso!', 'success')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Erro ao desativar plano: {str(e)}', 'error')
+    
+    return redirect(url_for('super_admin_planos'))
+
+# ==================== FIM ROTAS DE PLANOS ====================
+
 @app.route('/super_admin/barbearia/<string:barbearia_uuid>/editar', methods=['GET', 'POST'])
 @require_super_admin
 def super_admin_editar_barbearia(barbearia_uuid):
@@ -2764,15 +2973,63 @@ def super_admin_editar_barbearia(barbearia_uuid):
                 flash('Este CNPJ já está sendo usado por outra barbearia!', 'error')
                 return redirect(request.url)
         
+        # Campos de personalização visual
+        hero_titulo = request.form.get('hero_titulo', '').strip()
+        hero_subtitulo = request.form.get('hero_subtitulo', '').strip()
+        slogan = request.form.get('slogan', '').strip()
+        cor_primaria = request.form.get('cor_primaria', '').strip()
+        cor_secundaria = request.form.get('cor_secundaria', '').strip()
+        cor_texto = request.form.get('cor_texto', '').strip()
+        
+        # Cards de serviços
+        card1_icone = request.form.get('card1_icone', '').strip()
+        card1_titulo = request.form.get('card1_titulo', '').strip()
+        card1_descricao = request.form.get('card1_descricao', '').strip()
+        
+        card2_icone = request.form.get('card2_icone', '').strip()
+        card2_titulo = request.form.get('card2_titulo', '').strip()
+        card2_descricao = request.form.get('card2_descricao', '').strip()
+        
+        card3_icone = request.form.get('card3_icone', '').strip()
+        card3_titulo = request.form.get('card3_titulo', '').strip()
+        card3_descricao = request.form.get('card3_descricao', '').strip()
+        
+        card4_icone = request.form.get('card4_icone', '').strip()
+        card4_titulo = request.form.get('card4_titulo', '').strip()
+        card4_descricao = request.form.get('card4_descricao', '').strip()
+        
         # Atualizar os dados
-        # IMPORTANTE: Não sobrescrever o campo configuracoes para preservar logo e outras configs
         barbearia.nome = nome
         barbearia.slug = slug
         barbearia.cnpj = cnpj if cnpj else None
         barbearia.telefone = telefone if telefone else None
         barbearia.endereco = endereco if endereco else None
         barbearia.ativa = ativa
-        # O campo configuracoes é PRESERVADO (não é alterado aqui)
+        
+        # Atualizar personalização visual
+        barbearia.hero_titulo = hero_titulo if hero_titulo else 'Seu visual|no nível máximo'
+        barbearia.hero_subtitulo = hero_subtitulo if hero_subtitulo else 'Mais que um corte de cabelo, uma experiência completa'
+        barbearia.slogan = slogan if slogan else 'Estilo e Tradição'
+        barbearia.cor_primaria = cor_primaria if cor_primaria else '#8b5cf6'
+        barbearia.cor_secundaria = cor_secundaria if cor_secundaria else '#A78BFA'
+        barbearia.cor_texto = cor_texto if cor_texto else '#1f2937'
+        
+        # Atualizar cards
+        barbearia.card1_icone = card1_icone if card1_icone else '✂️'
+        barbearia.card1_titulo = card1_titulo if card1_titulo else 'Corte masculino'
+        barbearia.card1_descricao = card1_descricao if card1_descricao else 'Cortes modernos e clássicos'
+        
+        barbearia.card2_icone = card2_icone if card2_icone else '🧔'
+        barbearia.card2_titulo = card2_titulo if card2_titulo else 'Barba completa'
+        barbearia.card2_descricao = card2_descricao if card2_descricao else 'Design e tratamento completo'
+        
+        barbearia.card3_icone = card3_icone if card3_icone else '💈'
+        barbearia.card3_titulo = card3_titulo if card3_titulo else 'Combo premium'
+        barbearia.card3_descricao = card3_descricao if card3_descricao else 'Corte + barba + finalização'
+        
+        barbearia.card4_icone = card4_icone if card4_icone else '📅'
+        barbearia.card4_titulo = card4_titulo if card4_titulo else 'Agendamento fácil'
+        barbearia.card4_descricao = card4_descricao if card4_descricao else 'Reserve online de forma prática'
         
         try:
             db.session.commit()
@@ -2825,7 +3082,7 @@ def super_admin_nova_barbearia():
                 filepath = os.path.join(app.config['UPLOAD_FOLDER'], logo_filename)
                 file.save(filepath)
         
-        # Criar nova barbearia
+        # Criar nova barbearia com valores padrão de personalização
         nova_barbearia = Barbearia(
             nome=nome,
             slug=slug,
@@ -2833,7 +3090,27 @@ def super_admin_nova_barbearia():
             telefone=telefone if telefone else None,
             endereco=endereco if endereco else None,
             logo=logo_filename,
-            ativa=True
+            ativa=True,
+            # Valores padrão de personalização
+            hero_titulo='Seu visual|no nível máximo',
+            hero_subtitulo='Mais que um corte de cabelo, uma experiência completa. Profissionais qualificados, ambiente moderno e atendimento premium.',
+            slogan='Estilo e Tradição',
+            cor_primaria='#8b5cf6',
+            cor_secundaria='#A78BFA',
+            cor_texto='#1f2937',
+            # Cards padrão
+            card1_icone='✂️',
+            card1_titulo='Corte masculino',
+            card1_descricao='Cortes modernos e clássicos com acabamento perfeito, realizado por barbeiros experientes',
+            card2_icone='🧔',
+            card2_titulo='Barba completa',
+            card2_descricao='Design, aparação e tratamento completo para sua barba ficar impecável',
+            card3_icone='💈',
+            card3_titulo='Combo premium',
+            card3_descricao='Corte + barba + finalização, o pacote completo para você sair renovado',
+            card4_icone='📅',
+            card4_titulo='Agendamento fácil',
+            card4_descricao='Reserve seu horário online de forma rápida e prática, sem complicação'
         )
         
         try:
@@ -2909,6 +3186,169 @@ def teste_isolamento():
                          reservas=reservas_barbearia,
                          stats=stats)
 
+@app.route('/<slug>/admin/suporte', methods=['GET', 'POST'])
+def admin_suporte(slug):
+    """Página de suporte para enviar chamados"""
+    if 'usuario_id' not in session:
+        return redirect(url_for('login', slug=slug))
+    
+    if not g.tenant.is_admin():
+        flash('Acesso negado - apenas administradores', 'error')
+        return redirect(url_for('dashboard', slug=slug))
+    
+    barbearia = get_current_barbearia()
+    usuario = Usuario.query.get(session['usuario_id'])
+    
+    if request.method == 'POST':
+        try:
+            # Coletar dados do formulário
+            aplicacao = request.form.get('aplicacao', 'Minha Barbearia App')
+            usuario_nome = request.form.get('usuario', usuario.nome if usuario else 'Admin')
+            email = request.form.get('email', usuario.email if usuario else '')
+            telefone = request.form.get('telefone', '')
+            assunto = request.form.get('assunto', '')
+            mensagem = request.form.get('mensagem', '')
+            prioridade = request.form.get('prioridade', 'media')
+            
+            # Validar campos obrigatórios
+            if not assunto or not mensagem:
+                flash('Assunto e mensagem são obrigatórios', 'error')
+                return redirect(request.url)
+            
+            # Preparar dados para a API
+            data = {
+                "aplicacao": aplicacao,
+                "usuario": usuario_nome,
+                "email": email,
+                "telefone": telefone,
+                "assunto": assunto,
+                "mensagem": mensagem,
+                "prioridade": prioridade,
+                "webhook_url": ""  # Desabilitado - use sincronização manual
+            }
+            
+            # Enviar para a API externa
+            response = requests.post(
+                "http://localhost:5001/api/v1/suporte",
+                headers={"X-API-Key": "barber-connect-api-key-2025"},
+                json=data,
+                timeout=10
+            )
+            
+            if response.status_code == 200 or response.status_code == 201:
+                # Extrair ticket_id da resposta da API
+                try:
+                    resposta_json = response.json()
+                    # A API retorna: {"success": true, "ticket_id": "SUP-...", ...}
+                    api_ticket_id = resposta_json.get('ticket_id') or resposta_json.get('id')
+                except:
+                    api_ticket_id = None
+                
+                # Salvar chamado no banco local
+                barbearia_id = get_current_barbearia_id()
+                novo_chamado = Chamado(
+                    numero_chamado="TEMP",  # Valor temporário para evitar constraint
+                    barbearia_id=barbearia_id,
+                    usuario_id=session['usuario_id'],
+                    aplicacao=aplicacao,
+                    usuario_nome=usuario_nome,
+                    email=email,
+                    telefone=telefone,
+                    assunto=assunto,
+                    mensagem=mensagem,
+                    prioridade=prioridade,
+                    resposta_api=response.text,
+                    api_chamado_id=api_ticket_id
+                )
+                db.session.add(novo_chamado)
+                db.session.commit()  # Commit com valor temporário
+                
+                # Gerar número do chamado baseado no ID e atualizar
+                chamado_numero = f"CH{novo_chamado.id:06d}"
+                novo_chamado.numero_chamado = chamado_numero
+                db.session.commit()  # Commit final com numero correto
+                
+                if api_ticket_id:
+                    flash(f'✅ Chamado enviado com sucesso! Ticket: {api_ticket_id}', 'success')
+                else:
+                    flash('⚠️ Chamado salvo localmente, mas sem ID da API', 'warning')
+                flash(f'Número do chamado: {chamado_numero}', 'info')
+            else:
+                flash(f'Erro ao enviar chamado: {response.status_code} - {response.text}', 'error')
+                
+        except requests.exceptions.RequestException as e:
+            flash(f'Erro de conexão: {str(e)}', 'error')
+        except Exception as e:
+            flash(f'Erro inesperado: {str(e)}', 'error')
+        
+        return redirect(request.url)
+    
+    return render_template('admin/suporte.html', barbearia=barbearia, usuario=usuario)
+
+@app.route('/<slug>/admin/chamados')
+def admin_chamados(slug):
+    """Lista os chamados enviados pelo admin"""
+    if 'usuario_id' not in session:
+        return redirect(url_for('login', slug=slug))
+    
+    if not g.tenant.is_admin():
+        flash('Acesso negado - apenas administradores', 'error')
+        return redirect(url_for('dashboard', slug=slug))
+    
+    barbearia_id = get_current_barbearia_id()
+    barbearia = get_current_barbearia()
+    
+    # Buscar chamados do admin atual nesta barbearia
+    chamados = Chamado.query.filter_by(
+        barbearia_id=barbearia_id,
+        usuario_id=session['usuario_id']
+    ).order_by(Chamado.data_criacao.desc()).all()
+    
+    return render_template('admin/chamados.html', 
+                         barbearia=barbearia, 
+                         chamados=chamados)
+
+@app.route('/<slug>/admin/chamados/sincronizar', methods=['POST'])
+@csrf.exempt
+def sincronizar_chamados_manual(slug):
+    """Endpoint para sincronizar chamados manualmente via AJAX"""
+    print("\n" + "="*80)
+    print(f"🔄 [DEBUG] >>> FUNÇÃO CHAMADA! Slug: {slug}")
+    print(f"🔄 [DEBUG] >>> Session: {dict(session)}")
+    print(f"🔄 [DEBUG] >>> Request method: {request.method}")
+    print("="*80 + "\n")
+    
+    if 'usuario_id' not in session:
+        print("❌ [DEBUG] Usuário não autenticado")
+        return jsonify({'success': False, 'error': 'Não autenticado'}), 401
+    
+    # Verificar se é admin pela sessão
+    tipo_conta = session.get('tipo_conta')
+    print(f"🔍 [DEBUG] Tipo de conta: {tipo_conta}")
+    
+    if tipo_conta not in ['admin', 'super_admin']:
+        print("❌ [DEBUG] Usuário não é admin")
+        return jsonify({'success': False, 'error': 'Acesso negado'}), 403
+    
+    try:
+        print("🔄 [DEBUG] Executando sincronização...")
+        # Executar sincronização
+        sincronizar_chamados_automatica()
+        
+        print("✅ [DEBUG] Sincronização executada com sucesso!")
+        return jsonify({
+            'success': True,
+            'message': 'Sincronização executada com sucesso!'
+        })
+    except Exception as e:
+        print(f"❌ [DEBUG] Erro na sincronização: {e}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({
+            'success': False,
+            'error': str(e)
+        }), 500
+
 @app.route('/_endpoints_debug')
 def endpoints_debug():
     rules = []
@@ -2920,6 +3360,212 @@ def endpoints_debug():
         })
     return jsonify(rules)
 
+# ---------- WEBHOOK PARA NOTIFICAÇÕES DA API EXTERNA ----------
+
+@app.route('/api/webhook/suporte/status-update', methods=['POST'])
+def webhook_status_update():
+    """Webhook para receber atualizações de status da API externa"""
+    try:
+        # Verificar se a requisição tem dados JSON
+        if not request.is_json:
+            return jsonify({'error': 'Content-Type deve ser application/json'}), 400
+
+        data = request.get_json()
+
+        print(f"🔔 Webhook recebido: {json.dumps(data, indent=2)}")
+
+        # Validar estrutura básica da notificação
+        if not data.get('ticket_id'):
+            return jsonify({'error': 'ticket_id é obrigatório'}), 400
+
+        ticket_id = data['ticket_id']
+        novo_status = data.get('status')
+        evento = data.get('event', 'status_update')
+
+        if not novo_status:
+            return jsonify({'error': 'status é obrigatório'}), 400
+
+        # Buscar chamado no banco local
+        chamado = Chamado.query.filter_by(api_chamado_id=ticket_id).first()
+
+        if not chamado:
+            print(f"⚠️  Chamado {ticket_id} não encontrado no sistema local")
+            return jsonify({'error': f'Chamado {ticket_id} não encontrado'}), 404
+
+        # Mapear status da API para status local
+        status_mapeado = mapear_status_api(novo_status)
+
+        # Verificar se houve mudança de status
+        if chamado.status == status_mapeado:
+            print(f"ℹ️  Status já está atualizado: {chamado.numero_chamado} = {status_mapeado}")
+            return jsonify({'message': 'Status já atualizado', 'ticket_id': ticket_id}), 200
+
+        # Atualizar status do chamado
+        status_anterior = chamado.status
+        chamado.status = status_mapeado
+        chamado.data_atualizacao = datetime.utcnow()
+
+        # Salvar no banco
+        db.session.commit()
+
+        print(f"✅ Status atualizado via webhook: {chamado.numero_chamado}")
+        print(f"   {status_anterior} → {status_mapeado}")
+
+        # Aqui poderia adicionar notificações em tempo real via WebSocket
+        # ou outras ações como envio de email, etc.
+
+        return jsonify({
+            'message': 'Status atualizado com sucesso',
+            'ticket_id': ticket_id,
+            'numero_chamado': chamado.numero_chamado,
+            'status_anterior': status_anterior,
+            'status_novo': status_mapeado
+        }), 200
+
+    except Exception as e:
+        print(f"❌ Erro no webhook: {e}")
+        db.session.rollback()
+        return jsonify({'error': 'Erro interno do servidor'}), 500
+
+def mapear_status_api(status_api):
+    """Mapeia status da API externa para status local"""
+    mapeamento = {
+        'novo': 'enviado',
+        'recebido': 'enviado',
+        'em_andamento': 'em_andamento',
+        'atendimento': 'em_andamento',
+        'em_atendimento': 'em_andamento',
+        'resolvido': 'resolvido',
+        'finalizado': 'fechado',
+        'fechado': 'fechado',
+        'cancelado': 'cancelado',
+        'deletado': 'cancelado'
+    }
+
+    return mapeamento.get(status_api.lower(), 'enviado')
+
+# ---------- SINCRONIZAÇÃO AUTOMÁTICA DE CHAMADOS ----------
+
+def sincronizar_chamados_automatica():
+    """Função executada automaticamente pelo scheduler para sincronizar chamados"""
+    try:
+        print(f"🔄 [{datetime.now().strftime('%H:%M:%S')}] Executando sincronização automática de chamados...")
+
+        with app.app_context():
+            # Buscar chamados que têm api_chamado_id
+            chamados = Chamado.query.filter(Chamado.api_chamado_id.isnot(None)).all()
+
+            if not chamados:
+                print("⚠️  Nenhum chamado para sincronizar")
+                return
+
+            atualizados = 0
+            deletados = 0
+
+            for chamado in chamados:
+                try:
+                    # Verificar status na API
+                    status_api, _ = verificar_status_chamado_api(chamado.api_chamado_id)
+
+                    if status_api == 'deletado' and chamado.status != 'cancelado':
+                        chamado.status = 'cancelado'
+                        chamado.data_atualizacao = datetime.utcnow()
+                        deletados += 1
+                        print(f"   🗑️  {chamado.numero_chamado} marcado como CANCELADO")
+                    elif status_api and status_api != chamado.status:
+                        chamado.status = status_api
+                        chamado.data_atualizacao = datetime.utcnow()
+                        atualizados += 1
+                        print(f"   🔄 {chamado.numero_chamado}: {chamado.status} → {status_api}")
+
+                except Exception as e:
+                    print(f"   ❌ Erro em {chamado.numero_chamado}: {e}")
+
+            if atualizados > 0 or deletados > 0:
+                db.session.commit()
+                print(f"✅ Sincronização concluída: {atualizados} atualizados, {deletados} cancelados")
+            else:
+                print("✅ Nenhum chamado precisou ser atualizado")
+
+    except Exception as e:
+        print(f"❌ Erro na sincronização automática: {e}")
+
+def verificar_status_chamado_api(api_chamado_id):
+    """Verifica status de um chamado na API externa (função auxiliar)"""
+    if not api_chamado_id:
+        return None, None
+
+    try:
+        # Tentar diferentes endpoints
+        endpoints = [
+            f"http://localhost:5001/api/v1/suporte/{api_chamado_id}",
+            f"http://localhost:5001/api/v1/chamados/{api_chamado_id}",
+            f"http://localhost:5001/api/chamados/{api_chamado_id}"
+        ]
+
+        headers = {"X-API-Key": "barber-connect-api-key-2025"}
+
+        for url in endpoints:
+            try:
+                response = requests.get(url, headers=headers, timeout=5)
+                if response.status_code == 200:
+                    try:
+                        data = response.json()
+                        
+                        # Verificar formato da resposta
+                        if data.get('success') and 'ticket' in data:
+                            # Formato: {"success": true, "ticket": {...}}
+                            ticket = data['ticket']
+                            status_api = ticket.get('status', 'novo')
+                        else:
+                            # Formato direto
+                            status_api = data.get('status', 'novo')
+                        
+                        # Mapear status da API para status local
+                        status_mapeado = mapear_status_api(status_api)
+                        return status_mapeado, data
+                        
+                    except json.JSONDecodeError:
+                        print(f"⚠️  Resposta JSON inválida da API: {url}")
+                        continue
+                elif response.status_code == 404:
+                    return 'deletado', None
+            except requests.RequestException as e:
+                print(f"⚠️  Erro ao conectar com {url}: {e}")
+                continue
+
+    except Exception as e:
+        print(f"❌ Erro ao verificar API: {e}")
+
+    return None, None
+
+def iniciar_scheduler_sincronizacao():
+    """Inicia o scheduler para sincronização automática"""
+    try:
+        # Verificar se já existe um scheduler
+        if hasattr(app, 'scheduler') and app.scheduler.running:
+            print("🔄 Scheduler já está rodando")
+            return
+
+        # Criar scheduler
+        app.scheduler = BackgroundScheduler()
+        app.scheduler.start()
+
+        # Adicionar job de sincronização a cada 5 minutos
+        app.scheduler.add_job(
+            func=sincronizar_chamados_automatica,
+            trigger=IntervalTrigger(minutes=5),
+            id='sincronizacao_chamados',
+            name='Sincronização automática de chamados',
+            replace_existing=True
+        )
+
+        print("✅ Scheduler de sincronizacao iniciado - executara a cada 5 minutos")
+        print("💡 Para alterar o intervalo, modifique o parâmetro 'minutes' no IntervalTrigger")
+
+    except Exception as e:
+        print(f"❌ Erro ao iniciar scheduler: {e}")
+
 # ---------- START ----------
 if __name__ == '__main__':
     with app.app_context():
@@ -2930,6 +3576,10 @@ if __name__ == '__main__':
             pass
         db.session.commit()
 
+    # Iniciar scheduler de sincronização automática
+    print("🔄 Iniciando scheduler de sincronizacao de chamados...")
+    iniciar_scheduler_sincronizacao()
+
     # checa templates requeridos (avisa, mas não interrompe)
     missing = check_required_templates(REQUIRED_TEMPLATES)
     if missing:
@@ -2938,6 +3588,12 @@ if __name__ == '__main__':
     # Configuração para Railway
     port = int(os.environ.get('PORT', 5000))
     host = os.environ.get('HOST', '0.0.0.0')
-    debug = os.environ.get('FLASK_DEBUG', 'False').lower() == 'true'
+    debug = True  # Modo debug ativado
 
-    app.run(host=host, port=port, debug=debug)
+    try:
+        app.run(host=host, port=port, debug=debug, use_reloader=False)
+    finally:
+        # Parar scheduler quando o app for encerrado
+        if hasattr(app, 'scheduler'):
+            print("🛑 Parando scheduler...")
+            app.scheduler.shutdown()

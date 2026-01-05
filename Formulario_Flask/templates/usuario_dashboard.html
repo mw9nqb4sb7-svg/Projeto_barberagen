@@ -16,16 +16,16 @@
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background: #000;
-            color: #ffffff;
+            background: #ffffff;
+            color: var(--cor-texto);
             min-height: 100vh;
             line-height: 1.6;
         }
 
         /* Navbar */
         .navbar {
-            background: rgba(26, 26, 26, 0.6);
-            border-bottom: 2px solid rgba(74, 158, 255, 0.3);
+            background: rgba(249, 250, 251, 0.6);
+            border-bottom: 2px solid rgba(139, 92, 246, 0.3);
             position: sticky;
             top: 0;
             z-index: 100;
@@ -51,7 +51,7 @@
         .navbar-logo {
             height: 50px;
             width: auto;
-            filter: drop-shadow(0 4px 15px rgba(74, 158, 255, 0.4));
+            filter: drop-shadow(0 4px 15px rgba(139, 92, 246, 0.4));
         }
 
         .navbar-title-wrap {
@@ -69,7 +69,7 @@
 
         .navbar-subtitle {
             font-size: 0.75rem;
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(31, 41, 55, 0.6);
             font-weight: 600;
         }
 
@@ -85,7 +85,7 @@
             justify-content: center;
             gap: 0.5rem;
             padding: 0.9rem 1.8rem;
-            background: linear-gradient(135deg, #4a9eff 0%, #2563eb 100%);
+            background: linear-gradient(135deg, var(--cor-primaria) 0%, var(--cor-secundaria) 100%);
             color: #ffffff;
             text-decoration: none;
             font-weight: 800;
@@ -94,13 +94,13 @@
             border-radius: 50px;
             transition: all 0.3s ease;
             border: none;
-            box-shadow: 0 4px 15px rgba(74, 158, 255, 0.4);
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.4);
             white-space: nowrap;
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(74, 158, 255, 0.5);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.5);
         }
 
         .btn-secondary {
@@ -110,20 +110,20 @@
             gap: 0.5rem;
             padding: 0.9rem 1.8rem;
             background: transparent;
-            color: #ffffff;
+            color: var(--cor-texto);
             text-decoration: none;
             font-weight: 700;
             font-size: 0.9rem;
             letter-spacing: 0.5px;
             border-radius: 50px;
             transition: all 0.3s ease;
-            border: 2px solid rgba(74, 158, 255, 0.3);
+            border: 2px solid rgba(139, 92, 246, 0.3);
             white-space: nowrap;
         }
 
         .btn-secondary:hover {
-            border-color: #4a9eff;
-            background: rgba(74, 158, 255, 0.1);
+            border-color: var(--cor-primaria);
+            background: rgba(139, 92, 246, 0.1);
         }
 
         .btn-danger {
@@ -158,8 +158,8 @@
 
         /* Welcome Section */
         .welcome-section {
-            background: linear-gradient(135deg, rgba(74, 158, 255, 0.1) 0%, rgba(37, 99, 235, 0.05) 100%);
-            border: 2px solid rgba(74, 158, 255, 0.2);
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(37, 99, 235, 0.05) 100%);
+            border: 2px solid rgba(139, 92, 246, 0.2);
             border-radius: 20px;
             padding: 2.5rem;
             margin-bottom: 3rem;
@@ -176,7 +176,7 @@
 
         .welcome-subtitle {
             font-size: 1.1rem;
-            color: rgba(255, 255, 255, 0.7);
+            color: rgba(31, 41, 55, 0.7);
             font-weight: 500;
         }
 
@@ -190,17 +190,17 @@
 
         /* Card Base */
         .card {
-            background: rgba(26, 26, 26, 0.6);
-            border: 2px solid rgba(74, 158, 255, 0.2);
+            background: rgba(249, 250, 251, 0.6);
+            border: 2px solid rgba(139, 92, 246, 0.2);
             border-radius: 20px;
             overflow: hidden;
             backdrop-filter: blur(10px);
         }
 
         .card-header {
-            background: rgba(74, 158, 255, 0.1);
+            background: rgba(139, 92, 246, 0.1);
             padding: 1.8rem 2rem;
-            border-bottom: 2px solid rgba(74, 158, 255, 0.3);
+            border-bottom: 2px solid rgba(139, 92, 246, 0.3);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -208,20 +208,20 @@
 
         .card-title {
             margin: 0;
-            color: #ffffff;
+            color: var(--cor-texto);
             font-size: 1.4rem;
             font-weight: 900;
             letter-spacing: -0.5px;
         }
 
         .card-badge {
-            background: linear-gradient(135deg, #4a9eff 0%, #2563eb 100%);
+            background: linear-gradient(135deg, var(--cor-primaria) 0%, var(--cor-secundaria) 100%);
             color: #ffffff;
             padding: 0.6rem 1.2rem;
             border-radius: 50px;
             font-weight: 800;
             font-size: 0.95rem;
-            box-shadow: 0 4px 15px rgba(74, 158, 255, 0.3);
+            box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3);
         }
 
         .card-body {
@@ -237,16 +237,16 @@
 
         .reserva-item {
             padding: 1.5rem;
-            border: 2px solid rgba(74, 158, 255, 0.2);
+            border: 2px solid rgba(139, 92, 246, 0.2);
             border-radius: 15px;
             transition: all 0.3s ease;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.3);
         }
 
         .reserva-item:hover {
-            border-color: #4a9eff;
+            border-color: var(--cor-primaria);
             transform: translateX(5px);
-            box-shadow: 0 8px 25px rgba(74, 158, 255, 0.3);
+            box-shadow: 0 8px 25px rgba(139, 92, 246, 0.3);
         }
 
         .reserva-header {
@@ -259,7 +259,7 @@
         }
 
         .reserva-servico {
-            color: #ffffff;
+            color: var(--cor-texto);
             font-size: 1.15rem;
             font-weight: 800;
         }
@@ -274,7 +274,7 @@
             display: flex;
             gap: 1.5rem;
             font-size: 0.9rem;
-            color: rgba(255, 255, 255, 0.7);
+            color: rgba(31, 41, 55, 0.7);
             margin-bottom: 1rem;
             flex-wrap: wrap;
         }
@@ -347,14 +347,14 @@
             justify-content: space-between;
             align-items: center;
             padding: 1rem;
-            background: rgba(0, 0, 0, 0.3);
+            background: rgba(255, 255, 255, 0.3);
             border-radius: 15px;
-            border: 2px solid rgba(74, 158, 255, 0.2);
+            border: 2px solid rgba(139, 92, 246, 0.2);
             transition: all 0.3s ease;
         }
 
         .servico-item:hover {
-            border-color: #4a9eff;
+            border-color: var(--cor-primaria);
             transform: translateX(5px);
         }
 
@@ -365,14 +365,14 @@
         }
 
         .servico-nome {
-            color: #ffffff;
+            color: var(--cor-texto);
             font-size: 1.05rem;
             font-weight: 700;
         }
 
         .servico-duracao {
             font-size: 0.8rem;
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(31, 41, 55, 0.6);
         }
 
         .servico-preco {
@@ -385,7 +385,7 @@
         .empty-state {
             text-align: center;
             padding: 3rem;
-            color: rgba(255, 255, 255, 0.5);
+            color: rgba(31, 41, 55, 0.5);
         }
 
         .empty-icon {
@@ -396,7 +396,7 @@
         .empty-title {
             font-size: 1.1rem;
             margin-bottom: 0.5rem;
-            color: #ffffff;
+            color: var(--cor-texto);
         }
 
         .empty-subtitle {
@@ -418,19 +418,19 @@
             align-items: center;
             gap: 0.75rem;
             padding: 2rem;
-            background: rgba(26, 26, 26, 0.6);
-            border: 2px solid rgba(74, 158, 255, 0.2);
+            background: rgba(249, 250, 251, 0.6);
+            border: 2px solid rgba(139, 92, 246, 0.2);
             border-radius: 20px;
             text-decoration: none;
-            color: #ffffff;
+            color: var(--cor-texto);
             transition: all 0.3s ease;
             backdrop-filter: blur(10px);
         }
 
         .action-card:hover {
-            border-color: #4a9eff;
+            border-color: var(--cor-primaria);
             transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(74, 158, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
         }
 
         .action-icon {
@@ -447,9 +447,8 @@
         footer {
             margin-top: 6rem;
             padding: 3rem 2rem 2rem;
-            background: linear-gradient(180deg, transparent 0%, rgba(26, 26, 26, 0.5) 50%, rgba(13, 13, 13, 0.8) 100%);
-            border-top: 2px solid rgba(74, 158, 255, 0.3);
-            backdrop-filter: blur(10px);
+            background: #f9fafb;
+            border-top: 2px solid rgba(139, 92, 246, 0.3);
         }
 
         .footer-grid {
@@ -471,11 +470,11 @@
         .footer-logo {
             height: 50px;
             width: auto;
-            filter: drop-shadow(0 4px 15px rgba(74, 158, 255, 0.4));
+            filter: drop-shadow(0 4px 15px rgba(139, 92, 246, 0.4));
         }
 
         .footer-title {
-            color: #ffffff;
+            color: var(--cor-texto);
             font-size: 1.2rem;
             font-weight: 900;
             margin: 0;
@@ -483,13 +482,13 @@
         }
 
         .footer-text {
-            color: rgba(255, 255, 255, 0.7);
+            color: rgba(31, 41, 55, 0.7);
             line-height: 1.6;
             font-size: 0.95rem;
         }
 
         .footer-heading {
-            color: #ffffff;
+            color: var(--cor-texto);
             font-size: 1rem;
             font-weight: 800;
             margin-bottom: 1.5rem;
@@ -504,7 +503,7 @@
         }
 
         .footer-link {
-            color: rgba(255, 255, 255, 0.8);
+            color: rgba(31, 41, 55, 0.8);
             text-decoration: none;
             transition: color 0.3s ease;
             display: flex;
@@ -513,7 +512,7 @@
         }
 
         .footer-link:hover {
-            color: #4a9eff;
+            color: var(--cor-primaria);
         }
 
         .social-icons {
@@ -528,10 +527,10 @@
             justify-content: center;
             width: 45px;
             height: 45px;
-            background: rgba(74, 158, 255, 0.1);
-            border: 2px solid rgba(74, 158, 255, 0.3);
+            background: rgba(139, 92, 246, 0.1);
+            border: 2px solid rgba(139, 92, 246, 0.3);
             border-radius: 50%;
-            color: #ffffff;
+            color: var(--cor-texto);
             text-decoration: none;
             font-size: 1.3rem;
             transition: all 0.3s ease;
@@ -539,25 +538,25 @@
         }
 
         .social-icon:hover {
-            border-color: #4a9eff;
-            background: rgba(74, 158, 255, 0.2);
+            border-color: var(--cor-primaria);
+            background: rgba(139, 92, 246, 0.2);
             transform: translateY(-3px);
         }
 
         .footer-bottom {
             padding-top: 2rem;
-            border-top: 1px solid rgba(74, 158, 255, 0.2);
+            border-top: 1px solid rgba(139, 92, 246, 0.2);
             text-align: center;
         }
 
         .footer-copyright {
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(31, 41, 55, 0.6);
             font-size: 0.9rem;
             margin-bottom: 0.5rem;
         }
 
         .footer-cnpj {
-            color: rgba(255, 255, 255, 0.5);
+            color: rgba(31, 41, 55, 0.5);
             font-size: 0.85rem;
         }
 
@@ -614,6 +613,38 @@
             .quick-actions {
                 grid-template-columns: 1fr;
             }
+
+            /* Footer mobile */
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            footer {
+                padding: 2rem 1rem 1.5rem;
+            }
+
+            .footer-brand {
+                justify-content: center;
+                text-align: center;
+            }
+
+            .footer-heading {
+                text-align: center;
+                font-size: 0.9rem;
+            }
+
+            .footer-links {
+                align-items: center;
+            }
+
+            .social-icons {
+                justify-content: center;
+            }
+
+            .footer-bottom {
+                text-align: center;
+            }
         }
 
         @media (max-width: 480px) {
@@ -647,6 +678,15 @@
     </style>
 </head>
 <body>
+<style>
+:root {
+    --cor-primaria: {{ barbearia.cor_primaria or 'var(--cor-primaria)' }};
+    --cor-secundaria: {{ barbearia.cor_secundaria or '#A78BFA' }};
+    --cor-texto: {{ barbearia.cor_texto or 'var(--cor-texto)' }};
+}
+</style>
+
+
     <!-- Navbar -->
     <nav class="navbar">
         <div class="navbar-content">
@@ -658,8 +698,8 @@
                 {% endif %}
                 <div class="navbar-title-wrap">
                     <h1 class="navbar-title">
-                        <span style="color: #ffffff;">{{ barbearia.nome.split()[0] if barbearia else 'Barbearia' }}</span>
-                        <span style="color: #4a9eff;">{{ ' '.join(barbearia.nome.split()[1:]) if barbearia and barbearia.nome.split()[1:] else '' }}</span>
+                        <span style="color: var(--cor-texto);">{{ barbearia.nome.split()[0] if barbearia else 'Barbearia' }}</span>
+                        <span style="color: var(--cor-primaria);">{{ ' '.join(barbearia.nome.split()[1:]) if barbearia and barbearia.nome.split()[1:] else '' }}</span>
                     </h1>
                     <span class="navbar-subtitle">
                         {% if user_type == 'barbeiro' %}✂️ Barbeiro{% else %}👤 Cliente{% endif %} • Olá, {{ session.usuario_nome }}
@@ -694,7 +734,7 @@
         <!-- Welcome Section -->
         <div class="welcome-section">
             <h2 class="welcome-title">
-                Bem-vindo, <span style="color: #4a9eff;">{{ session.usuario_nome }}</span>
+                Bem-vindo, <span style="color: var(--cor-primaria);">{{ session.usuario_nome }}</span>
             </h2>
             <p class="welcome-subtitle">
                 {% if user_type == 'barbeiro' %}
@@ -719,7 +759,7 @@
                 <!-- Botões de Filtro (apenas para clientes) -->
                 {% if user_type == 'cliente' %}
                 <div style="padding: 0 1.5rem 1.5rem; display: flex; gap: 0.5rem; justify-content: flex-start;">
-                    <button id="btn-pendentes" type="button" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.8rem 1.2rem; text-align: center; background: linear-gradient(135deg, #4a9eff 0%, #2563eb 100%); color: #fff; text-decoration: none; font-weight: 700; font-size: 0.85rem; border-radius: 12px; transition: all 0.3s ease; border: 2px solid transparent; box-shadow: 0 4px 15px rgba(74, 158, 255, 0.3); cursor:pointer;" >📋 A ATENDER</button>
+                    <button id="btn-pendentes" type="button" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.8rem 1.2rem; text-align: center; background: linear-gradient(135deg, var(--cor-primaria) 0%, var(--cor-secundaria) 100%); color: #ffffff; text-decoration: none; font-weight: 700; font-size: 0.85rem; border-radius: 12px; transition: all 0.3s ease; border: 2px solid transparent; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3); cursor:pointer;" >📋 A ATENDER</button>
                     <button id="btn-atendidos" type="button" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.8rem 1.2rem; text-align: center; background: rgba(16, 185, 129, 0.1); color: rgba(16, 185, 129, 0.8); text-decoration: none; font-weight: 700; font-size: 0.85rem; border-radius: 12px; transition: all 0.3s ease; border: 2px solid rgba(16, 185, 129, 0.2); box-shadow: none; cursor:pointer;" >✅ ATENDIDOS</button>
                 </div>
                 <script>
@@ -749,7 +789,7 @@
                             </div>`;
                         });
                         if (reservas.length > 5) {
-                            html += `<div style="text-align: center; padding: 1rem; color: rgba(255,255,255,0.5); font-style: italic; font-size: 0.9rem;">E mais ${reservas.length-5} reservas...</div>`;
+                            html += `<div style="text-align: center; padding: 1rem; color: rgba(31, 41, 55,0.5); font-style: italic; font-size: 0.9rem;">E mais ${reservas.length-5} reservas...</div>`;
                         }
                         reservasList.innerHTML = html;
                         badge.textContent = reservas.length;
@@ -759,11 +799,11 @@
                             btnAtendidos.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
                             btnAtendidos.style.color = '#fff';
                             btnAtendidos.style.border = '2px solid transparent';
-                            btnPendentes.style.background = 'rgba(74, 158, 255, 0.1)';
-                            btnPendentes.style.color = 'rgba(74, 158, 255, 0.8)';
-                            btnPendentes.style.border = '2px solid rgba(74, 158, 255, 0.2)';
+                            btnPendentes.style.background = 'rgba(139, 92, 246, 0.1)';
+                            btnPendentes.style.color = 'rgba(139, 92, 246, 0.8)';
+                            btnPendentes.style.border = '2px solid rgba(139, 92, 246, 0.2)';
                         } else {
-                            btnPendentes.style.background = 'linear-gradient(135deg, #4a9eff 0%, #2563eb 100%)';
+                            btnPendentes.style.background = 'linear-gradient(135deg, var(--cor-primaria) 0%, var(--cor-secundaria) 100%)';
                             btnPendentes.style.color = '#fff';
                             btnPendentes.style.border = '2px solid transparent';
                             btnAtendidos.style.background = 'rgba(16, 185, 129, 0.1)';
@@ -826,7 +866,7 @@
                             {% endfor %}
                             
                             {% if reservas|length > 5 %}
-                            <div style="text-align: center; padding: 1rem; color: rgba(255, 255, 255, 0.5); font-style: italic; font-size: 0.9rem;">
+                            <div style="text-align: center; padding: 1rem; color: rgba(31, 41, 55, 0.5); font-style: italic; font-size: 0.9rem;">
                                 E mais {{ reservas|length - 5 }} reservas...
                             </div>
                             {% endif %}
@@ -918,8 +958,8 @@
                          class="footer-logo">
                     {% endif %}
                     <h3 class="footer-title">
-                        <span style="color: #ffffff;">{{ barbearia.nome.split()[0] }}</span>
-                        <span style="color: #4a9eff;">{{ barbearia.nome.split()[1:] | join(' ') }}</span>
+                        <span style="color: var(--cor-texto);">{{ barbearia.nome.split()[0] }}</span>
+                        <span style="color: var(--cor-primaria);">{{ barbearia.nome.split()[1:] | join(' ') }}</span>
                     </h3>
                 </div>
                 <p class="footer-text">
@@ -974,7 +1014,7 @@
                     <a href="#" class="social-icon">💬</a>
                     <a href="#" class="social-icon">📸</a>
                 </div>
-                <p style="color: rgba(255, 255, 255, 0.6); margin-top: 1.5rem; font-size: 0.9rem;">
+                <p style="color: rgba(31, 41, 55, 0.6); margin-top: 1.5rem; font-size: 0.9rem;">
                     Siga-nos nas redes sociais!
                 </p>
             </div>
@@ -990,8 +1030,8 @@
                 CNPJ: {{ barbearia.cnpj }}
             </p>
             {% endif %}
-            <p style="color: rgba(255, 255, 255, 0.5); font-size: 0.85rem; margin-top: 1rem;">
-                Desenvolvido por <span style="color: #ffffff; font-weight: 700;">Barber</span><span style="color: #4a9eff; font-weight: 700;">Connect</span>
+            <p style="color: rgba(31, 41, 55, 0.5); font-size: 0.85rem; margin-top: 1rem;">
+                Desenvolvido por <span style="color: var(--cor-texto); font-weight: 700;">Barber</span><span style="color: var(--cor-primaria); font-weight: 700;">Connect</span>
             </p>
         </div>
     </footer>

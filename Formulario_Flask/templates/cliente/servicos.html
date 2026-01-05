@@ -17,8 +17,8 @@
         
         html, body {
             overflow-x: hidden;
-            background: #000;
-            color: #fff;
+            background: #ffffff;
+            color: var(--cor-texto);
             font-family: 'Plus Jakarta Sans', sans-serif;
             letter-spacing: -0.3px;
         }
@@ -32,7 +32,7 @@
         /* Navbar moved to shared partial */
         
         h1 {
-            color: #4a9eff;
+            color: var(--cor-primaria);
             font-size: 2.5rem;
             font-weight: 800;
             letter-spacing: -1px;
@@ -49,7 +49,7 @@
         }
         
         h2 {
-            color: #4a9eff;
+            color: var(--cor-primaria);
             font-size: 1.5rem;
             font-weight: 700;
             letter-spacing: -0.5px;
@@ -58,11 +58,11 @@
         
         .card-form {
             background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(74, 158, 255, 0.2);
+            border: 1px solid rgba(139, 92, 246, 0.2);
             border-radius: 16px;
             padding: 2rem;
             backdrop-filter: blur(10px);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
         }
         
         .form-group {
@@ -71,7 +71,7 @@
         
         label {
             display: block;
-            color: rgba(255, 255, 255, 0.8);
+            color: rgba(31, 41, 55, 0.8);
             font-size: 0.9rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
@@ -83,9 +83,9 @@
             width: 100%;
             padding: 1rem;
             background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(74, 158, 255, 0.2);
+            border: 1px solid rgba(139, 92, 246, 0.2);
             border-radius: 12px;
-            color: #fff;
+            color: var(--cor-texto);
             font-size: 1rem;
             font-family: 'Plus Jakarta Sans', sans-serif;
             transition: all 0.3s ease;
@@ -93,18 +93,18 @@
         
         input:focus {
             outline: none;
-            border-color: #4a9eff;
-            background: rgba(74, 158, 255, 0.05);
-            box-shadow: 0 0 0 3px rgba(74, 158, 255, 0.1);
+            border-color: var(--cor-primaria);
+            background: rgba(139, 92, 246, 0.05);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
         }
         
         button[type="submit"] {
             width: 100%;
             padding: 1rem;
-            background: rgba(74, 158, 255, 0.2);
-            border: 1px solid #4a9eff;
+            background: rgba(139, 92, 246, 0.2);
+            border: 1px solid var(--cor-primaria);
             border-radius: 12px;
-            color: #4a9eff;
+            color: var(--cor-primaria);
             font-size: 1rem;
             font-weight: 700;
             font-family: 'Plus Jakarta Sans', sans-serif;
@@ -114,18 +114,18 @@
         }
         
         button[type="submit"]:hover {
-            background: rgba(74, 158, 255, 0.3);
+            background: rgba(139, 92, 246, 0.3);
             transform: translateY(-2px);
-            box-shadow: 0 10px 30px rgba(74, 158, 255, 0.3);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.3);
         }
         
         .table-responsive {
             background: rgba(255, 255, 255, 0.03);
-            border: 1px solid rgba(74, 158, 255, 0.2);
+            border: 1px solid rgba(139, 92, 246, 0.2);
             border-radius: 16px;
             overflow: hidden;
             backdrop-filter: blur(10px);
-            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
         }
         
         table {
@@ -134,10 +134,10 @@
         }
         
         th {
-            background: rgba(74, 158, 255, 0.1);
+            background: rgba(139, 92, 246, 0.1);
             padding: 1.2rem;
             text-align: left;
-            color: #4a9eff;
+            color: var(--cor-primaria);
             font-weight: 700;
             font-size: 0.9rem;
             text-transform: uppercase;
@@ -146,13 +146,13 @@
         
         td {
             padding: 1.2rem;
-            border-top: 1px solid rgba(74, 158, 255, 0.1);
-            color: rgba(255, 255, 255, 0.9);
+            border-top: 1px solid rgba(139, 92, 246, 0.1);
+            color: rgba(31, 41, 55, 0.9);
             font-size: 0.95rem;
         }
         
         tr:hover {
-            background: rgba(74, 158, 255, 0.05);
+            background: rgba(139, 92, 246, 0.05);
         }
         
         .btn-danger {
@@ -179,7 +179,7 @@
             border: 1px solid rgba(255, 159, 10, 0.3);
             border-radius: 12px;
             padding: 1.5rem;
-            color: rgba(255, 255, 255, 0.8);
+            color: rgba(31, 41, 55, 0.8);
             text-align: center;
         }
         
@@ -221,6 +221,15 @@
     </style>
 </head>
 <body>
+<style>
+:root {
+    --cor-primaria: {{ barbearia.cor_primaria or 'var(--cor-primaria)' }};
+    --cor-secundaria: {{ barbearia.cor_secundaria or '#A78BFA' }};
+    --cor-texto: {{ barbearia.cor_texto or 'var(--cor-texto)' }};
+}
+</style>
+
+
 {% set extra_nav_html %}
     <a href="{{ url_for('admin_home', slug=session.get('slug', '')) }}">🏠 Home</a>
     <a href="{{ url_for('clientes') }}">👥 Clientes</a>
@@ -266,7 +275,7 @@
                         {% for servico in servicos %}
                         <tr>
                             <td>{{ servico.nome }}</td>
-                            <td style="color: #4a9eff; font-weight: 700;">R$ {{ "%.2f"|format(servico.preco) }}</td>
+                            <td style="color: var(--cor-primaria); font-weight: 700;">R$ {{ "%.2f"|format(servico.preco) }}</td>
                             <td>
                                 <a href="{{ url_for('editar_servico', servico_uuid=servico.uuid) }}" class="btn-action btn-primary" style="margin-right:0.5rem">Alterar</a>
                                 <a href="{{ url_for('deletar_servico', servico_uuid=servico.uuid) }}" 
@@ -288,9 +297,9 @@
         </div>
     </div>
 
-    <footer style="background: rgba(255, 255, 255, 0.03); border-top: 1px solid rgba(74, 158, 255, 0.2); padding: 2rem; text-align: center; margin-top: 4rem; border-radius: 16px;">
-        <p style="color: rgba(255, 255, 255, 0.6); font-size: 0.9rem;">
-            Desenvolvido por <span style="color: #4a9eff; font-weight: 700;">BarberConnect</span> ✂️
+    <footer style="background: rgba(249, 250, 251, 0.8); border-top: 1px solid rgba(139, 92, 246, 0.2); padding: 2rem; text-align: center; margin-top: 4rem; border-radius: 16px;">
+        <p style="color: rgba(31, 41, 55, 0.6); font-size: 0.9rem;">
+            Desenvolvido por <span style="color: var(--cor-primaria); font-weight: 700;">BarberConnect</span> ✂️
         </p>
     </footer>
 </body>

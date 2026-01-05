@@ -12,6 +12,14 @@ sys.path.insert(0, BASE_DIR)
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash
+import logging, sys
+
+# Logger para scripts
+logger = logging.getLogger('projeto_barber.scripts.resetar_admins')
+logger.setLevel(logging.INFO)
+_handler = logging.StreamHandler(sys.stdout)
+_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s %(message)s'))
+logger.addHandler(_handler)
 
 # Configurar Flask
 DB_PATH = os.path.join(BASE_DIR, 'meubanco.db')
@@ -46,17 +54,17 @@ class UsuarioBarbearia(db.Model):
     ativo = db.Column(db.Boolean, default=True)
 
 with app.app_context():
-    print("🔍 Verificando usuários...\n")
+    logger.info("Verificando usuários...")
     
     # Verificar super admin
     super_admin = Usuario.query.filter_by(tipo_conta='super_admin').first()
     if super_admin:
-        print(f"✅ Super Admin encontrado: {super_admin.email}")
+        logger.info(f"Super Admin encontrado: {super_admin.email}")
         super_admin.senha = generate_password_hash("super123")
         super_admin.ativo = True
-        print("   🔄 Senha resetada para: super123")
+        logger.info("Senha resetada para: super123")
     else:
-        print("❌ Super Admin não encontrado, criando...")
+        logger.info("Super Admin não encontrado, criando...")
         super_admin = Usuario(
             nome="Super Administrador",
             email="superadmin@sistema.com",
@@ -66,19 +74,19 @@ with app.app_context():
             ativo=True
         )
         db.session.add(super_admin)
-        print("   ✅ Super Admin criado")
+        logger.info("Super Admin criado")
     
     print()
     
     # Verificar admin Principal
     admin_principal = Usuario.query.filter_by(email='admin@principal.com').first()
     if admin_principal:
-        print(f"✅ Admin Principal encontrado: {admin_principal.email}")
+        logger.info(f"Admin Principal encontrado: {admin_principal.email}")
         admin_principal.senha = generate_password_hash("admin123")
         admin_principal.ativo = True
-        print("   🔄 Senha resetada para: admin123")
+        logger.info("Senha resetada para: admin123")
     else:
-        print("❌ Admin Principal não encontrado, criando...")
+        logger.info("Admin Principal não encontrado, criando...")
         admin_principal = Usuario(
             nome="Admin Principal",
             email="admin@principal.com",
@@ -98,19 +106,19 @@ with app.app_context():
             ativo=True
         )
         db.session.add(relacao)
-        print("   ✅ Admin Principal criado e vinculado à barbearia")
+        logger.info("Admin Principal criado e vinculado à barbearia")
     
     db.session.commit()
     
-    print("\n" + "="*60)
-    print("✅ SENHAS RESETADAS COM SUCESSO!\n")
-    print("📋 CREDENCIAIS ATUALIZADAS:")
-    print("\n🔷 Super Admin (acesso global):")
-    print("   📧 Email: superadmin@sistema.com")
-    print("   🔑 Senha: super123")
-    print("   🔗 URL: http://192.168.0.31:5000/super_admin/login")
-    print("\n🔷 Admin Barbearia Principal:")
-    print("   📧 Email: admin@principal.com")
-    print("   🔑 Senha: admin123")
-    print("   🔗 URL: http://192.168.0.31:5000/principal/login")
-    print("="*60)
+    logger.info('\n' + '='*60)
+    logger.info('SENHAS RESETADAS COM SUCESSO')
+    logger.info('CREDENCIAIS ATUALIZADAS:')
+    logger.info('Super Admin (acesso global):')
+    logger.info('   Email: superadmin@sistema.com')
+    logger.info('   Senha: super123')
+    logger.info('   URL: http://192.168.0.31:5000/super_admin/login')
+    logger.info('Admin Barbearia Principal:')
+    logger.info('   Email: admin@principal.com')
+    logger.info('   Senha: admin123')
+    logger.info('   URL: http://192.168.0.31:5000/principal/login')
+    logger.info('='*60)

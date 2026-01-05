@@ -6,6 +6,12 @@
     <title>Cadastro - {{ barbearia.nome }}</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --cor-primaria: {{ barbearia.cor_primaria or '#8B5CF6' }};
+            --cor-secundaria: {{ barbearia.cor_secundaria or '#A78BFA' }};
+            --cor-texto: {{ barbearia.cor_texto or '#1f2937' }};
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -13,9 +19,9 @@
         }
         
         body {
-            background: #000;
+            background: linear-gradient(135deg, #f9fafb 0%, #ffffff 50%, #f3f4f6 100%);
             font-family: 'Plus Jakarta Sans', sans-serif;
-            color: #fff;
+            color: var(--cor-texto);
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -34,11 +40,11 @@
         }
         
         .cadastro-card {
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            background: #ffffff;
             padding: 3rem;
             border-radius: 20px;
-            border: 1px solid rgba(74, 158, 255, 0.2);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 2px solid var(--cor-primaria);
+            box-shadow: 0 10px 40px rgba(139, 92, 246, 0.15);
         }
         
         .logo-section {
@@ -48,12 +54,13 @@
         
         .logo-section h1 {
             font-size: 2rem;
-            font-weight: 700;
+            font-weight: 800;
             margin-bottom: 0.5rem;
+            color: var(--cor-primaria);
         }
         
         .logo-section p {
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(31, 41, 55, 0.6);
             font-size: 0.95rem;
         }
         
@@ -65,7 +72,7 @@
             display: block;
             font-size: 0.9rem;
             font-weight: 600;
-            color: #4a9eff;
+            color: var(--cor-primaria);
             margin-bottom: 0.5rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -74,10 +81,10 @@
         .form-input {
             width: 100%;
             padding: 1rem;
-            background: rgba(74, 158, 255, 0.05);
-            border: 1px solid rgba(74, 158, 255, 0.2);
+            background: rgba(139, 92, 246, 0.05);
+            border: 1px solid var(--cor-primaria);
             border-radius: 10px;
-            color: #ffffff;
+            color: var(--cor-texto);
             font-size: 1rem;
             font-family: 'Plus Jakarta Sans', sans-serif;
             transition: all 0.3s ease;
@@ -85,12 +92,12 @@
         
         .form-input:focus {
             outline: none;
-            border-color: #4a9eff;
-            background: rgba(74, 158, 255, 0.1);
+            border-color: var(--cor-primaria);
+            background: rgba(139, 92, 246, 0.1);
         }
         
         .form-input::placeholder {
-            color: rgba(255, 255, 255, 0.3);
+            color: rgba(31, 41, 55, 0.3);
         }
         
         .form-row {
@@ -114,39 +121,39 @@
         }
         
         .btn-primary {
-            background: #4a9eff;
-            color: #000000;
+            background: var(--cor-primaria);
+            color: #ffffff;
             margin-top: 1rem;
         }
         
         .btn-primary:hover {
-            background: #2563eb;
+            background: var(--cor-secundaria);
             transform: translateY(-2px);
-            box-shadow: 0 8px 24px rgba(74, 158, 255, 0.4);
+            box-shadow: 0 8px 24px rgba(139, 92, 246, 0.4);
         }
         
         .divider {
             margin: 2rem 0;
             padding-top: 2rem;
-            border-top: 1px solid rgba(74, 158, 255, 0.2);
+            border-top: 1px solid var(--cor-primaria);
             text-align: center;
         }
         
         .divider p {
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(31, 41, 55, 0.6);
             margin-bottom: 1rem;
             font-size: 0.95rem;
         }
         
         .btn-secondary {
             background: transparent;
-            color: #4a9eff;
-            border: 1px solid rgba(74, 158, 255, 0.5);
+            color: var(--cor-primaria);
+            border: 1px solid var(--cor-primaria);
         }
         
         .btn-secondary:hover {
-            background: rgba(74, 158, 255, 0.1);
-            border-color: #4a9eff;
+            background: rgba(139, 92, 246, 0.1);
+            border-color: var(--cor-primaria);
         }
         
         .back-link {
@@ -155,14 +162,14 @@
         }
         
         .back-link a {
-            color: rgba(255, 255, 255, 0.6);
+            color: rgba(31, 41, 55, 0.6);
             text-decoration: none;
             font-size: 0.95rem;
             transition: color 0.3s ease;
         }
         
         .back-link a:hover {
-            color: #4a9eff;
+            color: var(--cor-primaria);
         }
         
         .alert {
@@ -245,9 +252,9 @@
                 {% set nome_parts = barbearia.nome.split() %}
                 <h1>
                     {% if nome_parts|length >= 2 %}
-                        <span style="color: #ffffff;">{{ nome_parts[0] }} {{ nome_parts[1] }}</span><span style="color: #4a9eff;">{{ ' '.join(nome_parts[2:]) if nome_parts|length > 2 else '' }}</span>
+                        <span style="color: #1f2937;">{{ nome_parts[0] }} {{ nome_parts[1] }}</span><span style="color: #8b5cf6;">{{ ' '.join(nome_parts[2:]) if nome_parts|length > 2 else '' }}</span>
                     {% else %}
-                        <span style="color: #ffffff;">{{ barbearia.nome }}</span>
+                        <span style="color: #1f2937;">{{ barbearia.nome }}</span>
                     {% endif %}
                 </h1>
                 <p>Crie sua conta e agende seu horário</p>
@@ -325,5 +332,73 @@
             <a href="{{ url_for('barbearia_publica', slug=barbearia.slug) }}">← Voltar para página inicial</a>
         </div>
     </div>
+
+    <script>
+    // Máscara de telefone com formatação automática
+    const telefoneInput = document.getElementById('telefone');
+
+    if (telefoneInput) {
+        // Aplica máscara ao digitar
+        telefoneInput.addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, ''); // Remove tudo que não é número
+            
+            if (value.length > 11) {
+                value = value.slice(0, 11); // Limita a 11 dígitos
+            }
+            
+            // Aplica formatação: (00) 00000-0000 ou (00) 0000-0000
+            if (value.length > 10) {
+                e.target.value = value.replace(/(\d{2})(\d{5})(\d{4})/, '($1) $2-$3');
+            } else if (value.length > 6) {
+                e.target.value = value.replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3');
+            } else if (value.length > 2) {
+                e.target.value = value.replace(/(\d{2})(\d{0,5})/, '($1) $2');
+            } else {
+                e.target.value = value;
+            }
+        });
+
+        // Validação ao submeter formulário
+        const form = telefoneInput.closest('form');
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                const telefone = telefoneInput.value.replace(/\D/g, '');
+                
+                // Valida quantidade de dígitos
+                if (telefone.length < 10 || telefone.length > 11) {
+                    e.preventDefault();
+                    alert('❌ Telefone inválido!\n\nUse o formato:\n(00) 00000-0000 para celular\n(00) 0000-0000 para fixo\n\nDigite apenas números.');
+                    telefoneInput.focus();
+                    return false;
+                }
+
+                // Valida senhas
+                const senha = document.getElementById('senha').value;
+                const confirmarSenha = document.getElementById('confirmar_senha').value;
+                
+                if (senha !== confirmarSenha) {
+                    e.preventDefault();
+                    alert('❌ As senhas não coincidem!\n\nDigite a mesma senha nos dois campos.');
+                    document.getElementById('confirmar_senha').focus();
+                    return false;
+                }
+
+                if (senha.length < 6) {
+                    e.preventDefault();
+                    alert('❌ Senha muito curta!\n\nA senha deve ter no mínimo 6 caracteres.');
+                    document.getElementById('senha').focus();
+                    return false;
+                }
+            });
+        }
+    }
+
+    // Validação de data de nascimento (não permitir data futura)
+    const dataNascimento = document.getElementById('data_nascimento');
+    if (dataNascimento) {
+        const hoje = new Date().toISOString().split('T')[0];
+        dataNascimento.setAttribute('max', hoje);
+    }
+    </script>
 </body>
 </html>

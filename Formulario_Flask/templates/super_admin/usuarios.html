@@ -1,12 +1,15 @@
 {% extends "base.html" %}
 {% block title %}Super Admin - Usuários{% endblock %}
 
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}?v=1.0">
+{% endblock %}
 {% block content %}
 <!-- Header -->
 <div style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); padding: 3rem 2rem; margin-bottom: 3rem; border: 3px solid var(--gold); border-radius: 4px;">
     <div style="max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem;">
         <div>
-            <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(0, 0, 0, 0.3); padding: 0.5rem 1.5rem; border: 2px solid var(--gold); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 2px;">
+            <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(255, 255, 255, 0.3); padding: 0.5rem 1.5rem; border: 2px solid var(--gold); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 2px;">
                 <span style="font-size: 1.2rem;">⚡</span>
                 <span style="color: var(--gold); font-weight: 700; font-size: 0.9rem;">SUPER ADMIN</span>
             </div>
@@ -15,7 +18,7 @@
         </div>
         
         <div>
-            <a href="{{ url_for('super_admin_dashboard') }}" style="display: flex; align-items: center; gap: 0.5rem; background: rgba(0, 0, 0, 0.3); color: var(--text-color); padding: 1rem 1.5rem; border: 2px solid var(--gold-dark); text-decoration: none; font-weight: 600; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px;">
+            <a href="{{ url_for('super_admin_dashboard') }}" style="display: flex; align-items: center; gap: 0.5rem; background: rgba(255, 255, 255, 0.3); color: var(--text-color); padding: 1rem 1.5rem; border: 2px solid var(--gold-dark); text-decoration: none; font-weight: 600; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px;">
                 <span style="font-size: 1.2rem;">🏠</span>
                 Dashboard
             </a>
@@ -37,7 +40,7 @@
                 {{ barbearia_nome }}
                 {% endif %}
             </h2>
-            <div style="display: flex; align-items: center; gap: 0.5rem; background: rgba(0, 0, 0, 0.4); padding: 0.75rem 1.25rem; border: 2px solid var(--gold-dark); border-radius: 4px;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; background: rgba(255, 255, 255, 0.4); padding: 0.75rem 1.25rem; border: 2px solid var(--gold-dark); border-radius: 4px;">
                 <span style="font-size: 1.25rem; font-weight: 700; color: var(--gold);">{{ usuarios_lista|length }}</span>
                 <span style="color: rgba(245, 245, 220, 0.6); font-size: 0.9rem;">usuário{{ 's' if usuarios_lista|length != 1 else '' }}</span>
             </div>
@@ -49,7 +52,7 @@
             {% set vinculos = item.vinculos %}
             <div style="background: var(--bg-dark); padding: 1.5rem; border: 2px solid var(--gold-dark); border-radius: 4px; transition: all 0.3s ease;" onmouseover="this.style.borderColor='var(--gold)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--gold-dark)'; this.style.transform='translateY(0)'">
                 <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem;">
-                    <div style="width: 3rem; height: 3rem; border-radius: 50%; background: rgba(0, 0, 0, 0.4); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; border: 2px solid var(--gold-dark);">
+                    <div style="width: 3rem; height: 3rem; border-radius: 50%; background: rgba(255, 255, 255, 0.4); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; border: 2px solid var(--gold-dark);">
                         {% if usuario.tipo_conta == 'super_admin' %}⚡
                         {% elif vinculos and vinculos[0].role == 'admin' %}🛡️
                         {% elif vinculos and vinculos[0].role == 'barbeiro' %}✂️
@@ -76,7 +79,7 @@
                     {% if usuario.telefone %}
                     <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid rgba(245, 245, 220, 0.1);">
                         <span style="color: rgba(245, 245, 220, 0.6); font-size: 0.875rem; font-weight: 600;">Telefone:</span>
-                        <span style="color: var(--text-color); font-size: 0.875rem;">{{ usuario.telefone }}</span>
+                        <span style="color: var(--text-color); font-size: 0.875rem;">{{ usuario.telefone | format_phone }}</span>
                     </div>
                     {% endif %}
                     <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
@@ -86,7 +89,7 @@
                 </div>
                 
                 {% if vinculos %}
-                <div style="background: rgba(0, 0, 0, 0.3); padding: 1rem; border-radius: 4px; border: 1px solid var(--gold-dark);">
+                <div style="background: rgba(255, 255, 255, 0.3); padding: 1rem; border-radius: 4px; border: 1px solid var(--gold-dark);">
                     <div style="font-size: 0.875rem; font-weight: 600; color: rgba(245, 245, 220, 0.7); margin-bottom: 0.5rem;">Funções:</div>
                     <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
                         {% for vinculo in vinculos %}
@@ -110,7 +113,7 @@
 <style>
 a[href]:hover {
     border-color: var(--gold) !important;
-    background: rgba(74, 158, 255, 0.2) !important;
+    background: rgba(139, 92, 246, 0.2) !important;
     transform: translateY(-2px);
 }
 

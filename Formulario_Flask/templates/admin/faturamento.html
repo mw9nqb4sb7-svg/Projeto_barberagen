@@ -20,22 +20,22 @@
     }
 
     body {
-        background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
-        color: #ffffff;
+        background: linear-gradient(135deg, #ffffff 0%, #f9fafb 100%);
+        color: #1f2937;
         font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
         min-height: 100vh;
         padding-top: 100px;
     }
 
     .navbar {
-        background: linear-gradient(180deg, rgba(0, 0, 0, 0.95) 0%, rgba(13, 13, 13, 0.98) 100%);
-        border-bottom: 3px solid #4a9eff;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(249, 250, 251, 0.98) 100%);
+        border-bottom: 3px solid #8b5cf6;
         position: fixed;
         top: 0;
         left: 0;
         right: 0;
         z-index: 1000;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
         padding: 1.5rem 2rem;
     }
 
@@ -74,7 +74,7 @@
     }
 
     .btn-primary {
-        background: #4a9eff;
+        background: #8b5cf6;
         color: #000000;
     }
 
@@ -85,12 +85,12 @@
 
     .btn-secondary {
         background: transparent;
-        color: #ffffff;
+        color: #1f2937;
         border: 1px solid rgba(255, 255, 255, 0.3);
     }
 
     .btn-secondary:hover {
-        background: rgba(255, 255, 255, 0.1);
+        background: rgba(139, 92, 246, 0.05);
     }
 
     .container {
@@ -116,12 +116,12 @@
 
     .page-subtitle {
         font-size: 1.1rem;
-        color: rgba(255, 255, 255, 0.7);
+        color: rgba(31, 41, 55, 0.7);
     }
 
     .date-selector {
-        background: rgba(74, 158, 255, 0.05);
-        border: 1px solid rgba(74, 158, 255, 0.2);
+        background: rgba(139, 92, 246, 0.05);
+        border: 1px solid rgba(139, 92, 246, 0.2);
         border-radius: 15px;
         padding: 1.5rem;
         margin-bottom: 2rem;
@@ -132,13 +132,13 @@
 
     .date-selector label {
         font-weight: 600;
-        color: #4a9eff;
+        color: #8b5cf6;
     }
 
     .date-selector input[type="date"] {
-        background: rgba(0, 0, 0, 0.5);
-        border: 1px solid rgba(74, 158, 255, 0.3);
-        color: #ffffff;
+        background: rgba(255, 255, 255, 0.5);
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        color: #1f2937;
         padding: 0.8rem 1rem;
         border-radius: 10px;
         font-size: 1rem;
@@ -153,8 +153,8 @@
     }
 
     .stat-card {
-        background: rgba(74, 158, 255, 0.05);
-        border: 1px solid rgba(74, 158, 255, 0.2);
+        background: rgba(139, 92, 246, 0.05);
+        border: 1px solid rgba(139, 92, 246, 0.2);
         border-radius: 15px;
         padding: 1.5rem;
         transition: all 0.3s ease;
@@ -162,13 +162,13 @@
 
     .stat-card:hover {
         transform: translateY(-5px);
-        border-color: #4a9eff;
-        box-shadow: 0 10px 30px rgba(74, 158, 255, 0.2);
+        border-color: #8b5cf6;
+        box-shadow: 0 10px 30px rgba(139, 92, 246, 0.2);
     }
 
     .stat-label {
         font-size: 0.9rem;
-        color: rgba(255, 255, 255, 0.6);
+        color: rgba(31, 41, 55, 0.6);
         margin-bottom: 0.5rem;
         display: flex;
         align-items: center;
@@ -178,13 +178,13 @@
     .stat-value {
         font-size: 2rem;
         font-weight: 800;
-        color: #4a9eff;
+        color: #8b5cf6;
         margin-bottom: 0.5rem;
     }
 
     .stat-detail {
         font-size: 0.85rem;
-        color: rgba(255, 255, 255, 0.5);
+        color: rgba(31, 41, 55, 0.5);
     }
 
     .charts-grid {
@@ -195,8 +195,8 @@
     }
 
     .chart-card {
-        background: rgba(74, 158, 255, 0.05);
-        border: 1px solid rgba(74, 158, 255, 0.2);
+        background: rgba(139, 92, 246, 0.05);
+        border: 1px solid rgba(139, 92, 246, 0.2);
         border-radius: 15px;
         padding: 2rem;
     }
@@ -204,7 +204,7 @@
     .chart-title {
         font-size: 1.3rem;
         font-weight: 700;
-        color: #4a9eff;
+        color: #8b5cf6;
         margin-bottom: 1.5rem;
     }
 
@@ -223,12 +223,12 @@
     .bar-label {
         min-width: 100px;
         font-size: 0.9rem;
-        color: rgba(255, 255, 255, 0.8);
+        color: rgba(31, 41, 55, 0.8);
     }
 
     .bar-container {
         flex: 1;
-        background: rgba(0, 0, 0, 0.3);
+        background: rgba(255, 255, 255, 0.3);
         border-radius: 10px;
         height: 30px;
         position: relative;
@@ -237,7 +237,7 @@
 
     .bar-fill {
         height: 100%;
-        background: linear-gradient(90deg, #4a9eff 0%, #2563eb 100%);
+        background: linear-gradient(90deg, #8b5cf6 0%, #7c3aed 100%);
         border-radius: 10px;
         transition: width 0.5s ease;
         display: flex;
@@ -249,7 +249,7 @@
     .bar-value {
         font-size: 0.85rem;
         font-weight: 700;
-        color: #ffffff;
+        color: #1f2937;
         white-space: nowrap;
     }
 
@@ -263,16 +263,16 @@
         display: flex;
         align-items: center;
         gap: 1rem;
-        background: rgba(0, 0, 0, 0.3);
+        background: rgba(255, 255, 255, 0.3);
         padding: 1rem;
         border-radius: 10px;
-        border-left: 3px solid #4a9eff;
+        border-left: 3px solid #8b5cf6;
     }
 
     .ranking-position {
         font-size: 1.5rem;
         font-weight: 800;
-        color: #4a9eff;
+        color: #8b5cf6;
         min-width: 40px;
         text-align: center;
     }
@@ -283,19 +283,19 @@
 
     .ranking-name {
         font-weight: 600;
-        color: #ffffff;
+        color: #1f2937;
         margin-bottom: 0.3rem;
     }
 
     .ranking-detail {
         font-size: 0.85rem;
-        color: rgba(255, 255, 255, 0.6);
+        color: rgba(31, 41, 55, 0.6);
     }
 
     .ranking-value {
         font-size: 1.2rem;
         font-weight: 700;
-        color: #4a9eff;
+        color: #8b5cf6;
     }
 
     .full-width-chart {
@@ -319,7 +319,7 @@
     .month-bar-container {
         width: 100%;
         height: 150px;
-        background: rgba(0, 0, 0, 0.3);
+        background: rgba(255, 255, 255, 0.3);
         border-radius: 5px;
         display: flex;
         align-items: flex-end;
@@ -328,14 +328,14 @@
 
     .month-bar-fill {
         width: 100%;
-        background: linear-gradient(180deg, #4a9eff 0%, #2563eb 100%);
+        background: linear-gradient(180deg, #8b5cf6 0%, #7c3aed 100%);
         border-radius: 5px 5px 0 0;
         transition: height 0.5s ease;
     }
 
     .month-label {
         font-size: 0.8rem;
-        color: rgba(255, 255, 255, 0.7);
+        color: rgba(31, 41, 55, 0.7);
         font-weight: 600;
     }
 
@@ -400,9 +400,9 @@
     
     #mobileMenuBtn {
         display: none;
-        background: rgba(74, 158, 255, 0.1);
-        border: 1px solid rgba(74, 158, 255, 0.3);
-        color: #4a9eff;
+        background: rgba(139, 92, 246, 0.1);
+        border: 1px solid rgba(139, 92, 246, 0.3);
+        color: #8b5cf6;
         padding: 0.5rem 0.75rem;
         border-radius: 8px;
         cursor: pointer;
@@ -416,7 +416,7 @@
     <!-- Header -->
     <div class="page-header">
         <h1 class="page-title">
-            💰 Dashboard de <span style="color: #4a9eff;">Faturamento</span>
+            💰 Dashboard de <span style="color: #8b5cf6;">Faturamento</span>
         </h1>
         <p class="page-subtitle">
             Análise completa de receitas e performance do seu negócio
@@ -430,7 +430,7 @@
                id="data-select" 
                value="{{ data_selecionada.strftime('%Y-%m-%d') }}"
                onchange="window.location.href='{{ url_for('admin_faturamento', slug=barbearia.slug) }}?data=' + this.value">
-        <span style="color: rgba(255, 255, 255, 0.7); margin-left: auto;">
+        <span style="color: rgba(31, 41, 55, 0.7); margin-left: auto;">
             {{ data_selecionada.strftime('%d/%m/%Y') }}
         </span>
     </div>
@@ -530,7 +530,7 @@
                 {% endfor %}
             </div>
             {% else %}
-            <p style="color: rgba(255, 255, 255, 0.5); text-align: center; padding: 2rem;">
+            <p style="color: rgba(31, 41, 55, 0.5); text-align: center; padding: 2rem;">
                 Nenhum serviço vendido neste mês
             </p>
             {% endif %}
@@ -553,7 +553,7 @@
                 {% endfor %}
             </div>
             {% else %}
-            <p style="color: rgba(255, 255, 255, 0.5); text-align: center; padding: 2rem;">
+            <p style="color: rgba(31, 41, 55, 0.5); text-align: center; padding: 2rem;">
                 Nenhum atendimento registrado neste mês
             </p>
             {% endif %}

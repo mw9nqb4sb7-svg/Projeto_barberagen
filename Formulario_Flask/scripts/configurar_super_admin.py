@@ -6,11 +6,19 @@ Senha: 562402
 import sqlite3
 import os
 from werkzeug.security import generate_password_hash
+import logging, sys
+
+# Logger para scripts
+logger = logging.getLogger('projeto_barber.scripts.configurar_super_admin')
+logger.setLevel(logging.INFO)
+_handler = logging.StreamHandler(sys.stdout)
+_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s %(message)s'))
+logger.addHandler(_handler)
 
 # Caminho do banco de dados
 db_path = os.path.join(os.path.dirname(__file__), 'meubanco.db')
 
-print(f"Conectando ao banco de dados: {db_path}")
+logger.info(f"Conectando ao banco de dados: {db_path}")
 
 # Conectar ao banco
 conn = sqlite3.connect(db_path)
@@ -27,11 +35,11 @@ try:
     
     if super_admin:
         admin_id, nome, email, username_atual = super_admin
-        print(f"\n✓ Super Admin existente encontrado:")
-        print(f"  ID: {admin_id}")
-        print(f"  Nome: {nome}")
-        print(f"  Email: {email}")
-        print(f"  Username atual: {username_atual or 'Nenhum'}")
+        logger.info("Super Admin existente encontrado:")
+        logger.info(f"  ID: {admin_id}")
+        logger.info(f"  Nome: {nome}")
+        logger.info(f"  Email: {email}")
+        logger.info(f"  Username atual: {username_atual or 'Nenhum'}")
         
         # Atualizar username e senha
         cursor.execute("""
@@ -41,13 +49,13 @@ try:
         """, (username, senha_hash, admin_id))
         conn.commit()
         
-        print(f"\n✅ Super Admin atualizado com sucesso!")
-        print(f"   Username: {username}")
-        print(f"   Senha: {senha}")
+        logger.info("Super Admin atualizado com sucesso")
+        logger.info(f"   Username: {username}")
+        logger.info(f"   Senha: {senha}")
         
     else:
-        print("\n❌ Nenhum super admin encontrado no sistema")
-        print("Criando novo super admin...")
+        logger.info('Nenhum super admin encontrado no sistema')
+        logger.info('Criando novo super admin...')
         
         # Criar novo super admin
         cursor.execute("""
@@ -56,20 +64,20 @@ try:
         """, ('Super Admin', 'superadmin@sistema.com', username, senha_hash, 'super_admin', 1))
         conn.commit()
         
-        print(f"\n✅ Super Admin criado com sucesso!")
-        print(f"   Nome: Super Admin")
-        print(f"   Username: {username}")
-        print(f"   Email: superadmin@sistema.com")
-        print(f"   Senha: {senha}")
+        logger.info('Super Admin criado com sucesso')
+        logger.info(f"   Nome: Super Admin")
+        logger.info(f"   Username: {username}")
+        logger.info(f"   Email: superadmin@sistema.com")
+        logger.info(f"   Senha: {senha}")
     
-    print("\n📋 Credenciais de acesso:")
-    print(f"   URL: http://localhost:5000/super_admin/login")
-    print(f"   Usuário: {username}")
-    print(f"   Senha: {senha}")
+    logger.info('Credenciais de acesso:')
+    logger.info(f"   URL: http://localhost:5000/super_admin/login")
+    logger.info(f"   Usuário: {username}")
+    logger.info(f"   Senha: {senha}")
     
 except Exception as e:
-    print(f"❌ Erro: {e}")
+    logger.exception(f"Erro: {e}")
     conn.rollback()
 finally:
     conn.close()
-    print("\n✓ Concluído!")
+    logger.info("Concluído")

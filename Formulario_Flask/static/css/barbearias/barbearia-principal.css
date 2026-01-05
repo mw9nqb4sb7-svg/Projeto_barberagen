@@ -1,13 +1,13 @@
 /* ========================================
-   TEMA STUDIO 29 - BARBEARIA PRINCIPAL
-   Bege e Branco Elegante
+   TEMA BARBEARIA PRINCIPAL
+   Roxo e Branco Elegante
    ======================================== */
 
 :root {
-    --studio-bege: #D4A574;
-    --studio-bege-claro: #E8C9A0;
-    --studio-white: #ffffff;
-    --studio-cream: #FFF8F0;
+    --studio-bege: #8B5CF6;
+    --studio-bege-claro: #A78BFA;
+    --studio-white: #1a1a1a;
+    --studio-cream: #ffffff;
 }
 
 /* ========================================
@@ -50,7 +50,7 @@ span.brand-last,
 }
 
 .nav-link {
-    color: var(--studio-white) !important;
+    color: #1a1a1a !important;
 }
 
 .nav-link:hover {
@@ -62,7 +62,7 @@ span.brand-last,
    HERO SECTION - TÍTULOS
    ======================================== */
 .hero-title {
-    color: var(--studio-white) !important;
+    color: #1a1a1a !important;
 }
 
 h1.hero-title .title-line-1,
@@ -77,9 +77,9 @@ h1 .title-line-1 {
 h1.hero-title .title-line-2,
 .title-line-2,
 h1 .title-line-2 {
-    color: var(--studio-white) !important;
-    -webkit-text-fill-color: var(--studio-white) !important;
-    text-shadow: 0 0 20px rgba(212, 165, 116, 0.3) !important;
+    color: #1a1a1a !important;
+    -webkit-text-fill-color: #1a1a1a !important;
+    text-shadow: 0 0 20px rgba(139, 92, 246, 0.3) !important;
     background: transparent !important;
     -webkit-background-clip: unset !important;
 }
@@ -94,14 +94,14 @@ h1 .title-line-3 {
 }
 
 .hero-description {
-    color: rgba(255, 255, 255, 0.8) !important;
+    color: rgba(26, 26, 26, 0.8) !important;
 }
 
 /* ========================================
    INFO PILLS
    ======================================== */
 .info-pill {
-    color: var(--studio-white) !important;
+    color: #1a1a1a !important;
 }
 
 /* ========================================
@@ -109,8 +109,8 @@ h1 .title-line-3 {
    ======================================== */
 .btn-primary-cta {
     background: linear-gradient(135deg, var(--studio-bege) 0%, var(--studio-bege-claro) 100%) !important;
-    color: #1a1a1a !important;
-    box-shadow: 0 10px 30px rgba(212, 165, 116, 0.4) !important;
+    color: #ffffff !important;
+    box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4) !important;
     position: relative !important;
     overflow: hidden !important;
     transform: translateY(0) !important;
@@ -129,7 +129,7 @@ h1 .title-line-3 {
 
 .btn-primary-cta:hover {
     background: linear-gradient(135deg, var(--studio-bege-claro) 0%, var(--studio-bege) 100%) !important;
-    box-shadow: 0 16px 48px rgba(212, 165, 116, 0.6) !important;
+    box-shadow: 0 16px 48px rgba(139, 92, 246, 0.6) !important;
     transform: translateY(-5px) scale(1.05) !important;
     filter: brightness(1.1) !important;
 }
@@ -167,9 +167,9 @@ h1 .title-line-3 {
 
 .btn-secondary-cta:hover {
     border-color: var(--studio-bege-claro) !important;
-    color: #1a1a1a !important;
+    color: #ffffff !important;
     transform: translateY(-5px) scale(1.05) !important;
-    box-shadow: 0 10px 30px rgba(212, 165, 116, 0.4) !important;
+    box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4) !important;
 }
 
 .btn-secondary-cta:hover::before {
@@ -185,15 +185,15 @@ h1 .title-line-3 {
    LOGO E ELEMENTOS DECORATIVOS
    ======================================== */
 .logo-img {
-    filter: drop-shadow(0 0 15px rgba(212, 165, 116, 0.5)) brightness(1.1) !important;
+    filter: drop-shadow(0 0 15px rgba(139, 92, 246, 0.5)) brightness(1.1) !important;
 }
 
 .logo-img:hover {
-    filter: drop-shadow(0 0 25px rgba(212, 165, 116, 0.8)) brightness(1.2) !important;
+    filter: drop-shadow(0 0 25px rgba(139, 92, 246, 0.8)) brightness(1.2) !important;
 }
 
 .hero-logo {
-    filter: drop-shadow(0 20px 60px rgba(212, 165, 116, 0.3)) !important;
+    filter: drop-shadow(0 20px 60px rgba(139, 92, 246, 0.3)) !important;
 }
 
 .deco-shape-1 {
@@ -201,22 +201,22 @@ h1 .title-line-3 {
 }
 
 .deco-shape-2 {
-    background: linear-gradient(135deg, rgba(212, 165, 116, 0.3) 0%, rgba(232, 201, 160, 0.2) 100%) !important;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(167, 139, 250, 0.2) 100%) !important;
 }
 
 .logo-fallback {
-    background: linear-gradient(135deg, rgba(212, 165, 116, 0.2) 0%, rgba(255, 255, 255, 0.05) 100%) !important;
+    background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(167, 139, 250, 0.05) 100%) !important;
 }
 
 .fallback-icon {
-    filter: drop-shadow(0 10px 30px rgba(212, 165, 116, 0.5)) !important;
+    filter: drop-shadow(0 10px 30px rgba(139, 92, 246, 0.5)) !important;
 }
 
 /* ========================================
    TÍTULOS GERAIS
    ======================================== */
 h2, h3 {
-    color: var(--studio-white) !important;
+    color: #1a1a1a !important;
 }
 
 /* ========================================
@@ -224,7 +224,7 @@ h2, h3 {
    ======================================== */
 .grid > div:hover {
     border-color: var(--studio-bege) !important;
-    box-shadow: 0 10px 40px rgba(212, 165, 116, 0.3) !important;
+    box-shadow: 0 10px 40px rgba(139, 92, 246, 0.3) !important;
 }
 
 /* ========================================
@@ -235,7 +235,7 @@ h2, h3 {
 }
 
 .bc-connect {
-    color: var(--studio-white) !important;
+    color: #1a1a1a !important;
 }
 
 footer a:hover {
@@ -243,7 +243,7 @@ footer a:hover {
 }
 
 footer a[style*="border-radius: 50%"]:hover {
-    background: rgba(212, 165, 116, 0.3) !important;
+    background: rgba(139, 92, 246, 0.3) !important;
     border-color: var(--studio-bege) !important;
 }
 
@@ -268,8 +268,8 @@ footer a[style*="border-radius: 50%"]:hover {
    CARDS DE SERVIÇOS
    ======================================== */
 .service-card {
-    background: rgba(26, 26, 26, 0.6) !important;
-    border: 2px solid rgba(212, 165, 116, 0.2) !important;
+    background: rgba(255, 255, 255, 0.6) !important;
+    border: 2px solid rgba(139, 92, 246, 0.2) !important;
     border-radius: 20px !important;
     padding: 2.5rem !important;
     text-align: center !important;
@@ -280,7 +280,7 @@ footer a[style*="border-radius: 50%"]:hover {
 .service-card:hover {
     transform: translateY(-5px) !important;
     border-color: var(--studio-bege) !important;
-    box-shadow: 0 10px 40px rgba(212, 165, 116, 0.3) !important;
+    box-shadow: 0 10px 40px rgba(139, 92, 246, 0.3) !important;
 }
 
 /* ========================================
@@ -289,8 +289,8 @@ footer a[style*="border-radius: 50%"]:hover {
 .feature-card {
     text-align: center !important;
     padding: 2rem !important;
-    background: rgba(26, 26, 26, 0.4) !important;
-    border: 2px solid rgba(212, 165, 116, 0.15) !important;
+    background: rgba(255, 255, 255, 0.4) !important;
+    border: 2px solid rgba(139, 92, 246, 0.15) !important;
     border-radius: 15px !important;
     transition: all 0.3s ease !important;
 }
@@ -298,5 +298,5 @@ footer a[style*="border-radius: 50%"]:hover {
 .feature-card:hover {
     transform: translateY(-5px) !important;
     border-color: var(--studio-bege) !important;
-    box-shadow: 0 5px 20px rgba(212, 165, 116, 0.2) !important;
+    box-shadow: 0 5px 20px rgba(139, 92, 246, 0.2) !important;
 }

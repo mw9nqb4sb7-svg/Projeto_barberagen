@@ -7,6 +7,14 @@ import os
 import sys
 import getpass
 from werkzeug.security import generate_password_hash, check_password_hash
+import logging, sys as _sys
+
+# Logger para scripts interativos
+logger = logging.getLogger('projeto_barber.scripts.criar_admin_interativo')
+logger.setLevel(logging.INFO)
+_handler = logging.StreamHandler(_sys.stdout)
+_handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s %(message)s'))
+logger.addHandler(_handler)
 
 # Definir caminho fixo do banco de dados (onde o script está originalmente)
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -18,10 +26,10 @@ def limpar_tela():
 def listar_barbearias():
     """Lista e retorna todas as barbearias disponíveis"""
     if not os.path.exists(DB_PATH):
-        print(f"❌ Erro: Banco de dados não encontrado em: {DB_PATH}")
-        print("\n⚠️  Execute este script da pasta do projeto:")
-        print(f"   {SCRIPT_DIR}")
-        input("\nPressione ENTER para sair...")
+        logger.error(f"Erro: Banco de dados não encontrado em: {DB_PATH}")
+        logger.info("Execute este script da pasta do projeto")
+        logger.info(f"   {SCRIPT_DIR}")
+        input("Pressione ENTER para sair...")
         sys.exit(1)
     
     conn = sqlite3.connect(DB_PATH)
@@ -37,26 +45,26 @@ def listar_barbearias():
 def criar_admin_interativo():
     """Cria um admin de forma interativa"""
     limpar_tela()
-    print("=" * 70)
-    print("🎯 CRIAR ADMINISTRADOR DE BARBEARIA")
-    print("=" * 70)
-    print()
+    logger.info("" + "=" * 70)
+    logger.info("CRIAÇÃO INTERATIVA DE ADMINISTRADOR DE BARBEARIA")
+    logger.info("" + "=" * 70)
+    logger.info("")
     
     # Verificar autenticação do super admin
     if not verificar_super_admin():
-        print("\n❌ Credenciais inválidas! Acesso negado.")
+        logger.error('Credenciais inválidas — acesso negado')
         return
-    
-    print("\n✅ Autenticado com sucesso!\n")
+
+    logger.info('Autenticado com sucesso')
     
     # 1. Listar e selecionar barbearia
-    print("📋 BARBEARIAS DISPONÍVEIS:")
-    print("-" * 70)
+    logger.info('BARBEARIAS DISPONÍVEIS:')
+    logger.info('-' * 70)
     barbearias = listar_barbearias()
     
     for idx, (id, slug, nome, ativa) in enumerate(barbearias, 1):
-        status = "✅" if ativa else "❌"
-        print(f"{idx}. {status} {nome} ({slug})")
+        status = "ATIVA" if ativa else "INATIVA"
+        logger.info(f"{idx}. {status} {nome} ({slug})")
     print("-" * 70)
     print()
     
@@ -68,29 +76,29 @@ def criar_admin_interativo():
                 barbearia_id, barbearia_slug, barbearia_nome, _ = barbearias[idx]
                 break
             else:
-                print("❌ Número inválido! Tente novamente.")
+                    logger.warning('Número inválido! Tente novamente.')
         except ValueError:
-            print("❌ Digite apenas números!")
+                logger.warning('Digite apenas números!')
     
-    print(f"\n✓ Barbearia selecionada: {barbearia_nome}\n")
+    logger.info(f"Barbearia selecionada: {barbearia_nome}")
     
     # 2. Coletar dados do admin
-    print("👤 DADOS DO ADMINISTRADOR:")
-    print("-" * 70)
+    logger.info('DADOS DO ADMINISTRADOR:')
+    logger.info('-' * 70)
     
     nome = input("Nome completo: ").strip()
     while not nome:
-        print("❌ Nome é obrigatório!")
+        logger.warning('Nome é obrigatório!')
         nome = input("Nome completo: ").strip()
     
     username = input("Username (para login): ").strip()
     while not username:
-        print("❌ Username é obrigatório!")
+        logger.warning('Username é obrigatório!')
         username = input("Username (para login): ").strip()
     
     senha = getpass.getpass("Senha: ")
     while not senha:
-        print("❌ Senha é obrigatória!")
+        logger.warning('Senha é obrigatória!')
         senha = getpass.getpass("Senha: ")
     
     email = input("Email (deixe vazio para gerar automaticamente): ").strip()
@@ -100,22 +108,21 @@ def criar_admin_interativo():
     telefone = input("Telefone (opcional): ").strip() or None
     
     # 3. Confirmar dados
-    print()
-    print("=" * 70)
-    print("📋 CONFIRME OS DADOS:")
-    print("=" * 70)
-    print(f"Barbearia: {barbearia_nome}")
-    print(f"Nome: {nome}")
-    print(f"Username: {username}")
-    print(f"Senha: {senha}")
-    print(f"Email: {email}")
-    print(f"Telefone: {telefone or 'Não informado'}")
-    print("=" * 70)
-    print()
+    logger.info('=' * 70)
+    logger.info('CONFIRME OS DADOS:')
+    logger.info('=' * 70)
+    logger.info(f"Barbearia: {barbearia_nome}")
+    logger.info(f"Nome: {nome}")
+    logger.info(f"Username: {username}")
+    logger.info(f"Senha: {senha}")
+    logger.info(f"Email: {email}")
+    logger.info(f"Telefone: {telefone or 'Não informado'}")
+    logger.info('=' * 70)
+    logger.info('')
     
     confirma = input("Confirma a criação? (S/N): ").strip().upper()
     if confirma != 'S':
-        print("\n❌ Operação cancelada!")
+        logger.info('Operação cancelada pelo usuário')
         return
     
     # 4. Criar no banco de dados
@@ -126,13 +133,13 @@ def criar_admin_interativo():
         # Verificar se username já existe
         cursor.execute("SELECT id FROM usuario WHERE username = ?", (username,))
         if cursor.fetchone():
-            print(f"\n❌ Erro: Username '{username}' já está em uso!")
+            logger.error(f"Username '{username}' já está em uso")
             return
         
         # Verificar se email já existe
         cursor.execute("SELECT id FROM usuario WHERE email = ?", (email,))
         if cursor.fetchone():
-            print(f"\n❌ Erro: Email '{email}' já está em uso!")
+            logger.error(f"Email '{email}' já está em uso")
             return
         
         # Criar o usuário
@@ -152,29 +159,28 @@ def criar_admin_interativo():
         
         conn.commit()
         
-        print("\n" + "=" * 70)
-        print("✅ ADMINISTRADOR CRIADO COM SUCESSO!")
-        print("=" * 70)
-        print(f"\n📋 Credenciais de Acesso:")
-        print(f"   Barbearia: {barbearia_nome}")
-        print(f"   Username: {username}")
-        print(f"   Senha: {senha}")
-        print(f"   Email: {email}")
-        print(f"\n🔗 URL de Login:")
-        print(f"   http://localhost:5000/{barbearia_slug}/login")
-        print("=" * 70)
-        print()
+        logger.info('=' * 70)
+        logger.info('ADMINISTRADOR CRIADO COM SUCESSO')
+        logger.info('=' * 70)
+        logger.info('Credenciais de Acesso:')
+        logger.info(f"   Barbearia: {barbearia_nome}")
+        logger.info(f"   Username: {username}")
+        logger.info(f"   Senha: {senha}")
+        logger.info(f"   Email: {email}")
+        logger.info(f"   http://localhost:5000/{barbearia_slug}/login")
+        logger.info('=' * 70)
+        logger.info('')
         
     except Exception as e:
-        print(f"\n❌ Erro ao criar admin: {e}")
+        logger.exception('Erro ao criar admin')
         conn.rollback()
     finally:
         conn.close()
 
 def verificar_super_admin():
     """Verifica credenciais do super admin"""
-    print("\n🔐 AUTENTICAÇÃO DO SUPER ADMIN")
-    print("-" * 70)
+    logger.info('AUTENTICAÇÃO DO SUPER ADMIN')
+    logger.info('-' * 70)
     username = input("Username do Super Admin: ").strip()
     senha = getpass.getpass("Senha do Super Admin: ")
     

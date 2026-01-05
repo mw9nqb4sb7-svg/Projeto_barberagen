@@ -34,6 +34,7 @@ Sistema web completo para gerenciamento de barbearias com arquitetura multi-tena
 - **Frontend**: HTML5, CSS3, JavaScript
 - **Autenticação**: Werkzeug Security
 - **Template Engine**: Jinja2
+- **API Cliente**: Biblioteca própria para integração com sistema de suporte ([docs/API_CLIENTE.md](API_CLIENTE.md))
 
 ## 📦 Instalação
 
@@ -193,6 +194,15 @@ git add .
 git commit -m "Deploy para Heroku"
 git push heroku main
 ```
+
+## 📚 Documentação Adicional
+
+- **[API_CLIENTE.md](API_CLIENTE.md)**: Documentação completa da biblioteca cliente para integração com sistema de suporte
+- **[CHANGELOG.md](CHANGELOG.md)**: Histórico de mudanças e versões
+- **[CONTRIBUTING.md](CONTRIBUTING.md)**: Guia para contribuidores
+- **[DOCS.md](DOCS.md)**: Documentação técnica detalhada
+- **[QUICKSTART.md](QUICKSTART.md)**: Guia rápido para começar
+- **[MIGRACAO_UUID.md](MIGRACAO_UUID.md)**: Guia de migração para UUID
 
 ## 🤝 Contribuição
 

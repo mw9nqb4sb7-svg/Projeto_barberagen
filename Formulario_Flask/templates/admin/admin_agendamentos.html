@@ -82,6 +82,289 @@
             padding: 2rem;
         }
         
+        /* ===== HEADER MODERNIZADO ===== */
+        .page-header {
+            margin-bottom: 2rem;
+        }
+        
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .page-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #4a9eff 0%, #3a8eef 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            box-shadow: 0 4px 20px rgba(74, 158, 255, 0.3);
+        }
+        
+        .page-title {
+            font-size: 2rem;
+            font-weight: 800;
+            margin: 0;
+            letter-spacing: -1px;
+            background: linear-gradient(135deg, #ffffff 0%, #4a9eff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .page-date {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.9rem;
+            margin: 0.25rem 0 0 0;
+            text-transform: capitalize;
+        }
+        
+        .header-actions {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        
+        .btn-action {
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            border: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-search {
+            background: rgba(74, 158, 255, 0.1);
+            color: #4a9eff;
+            border: 1px solid rgba(74, 158, 255, 0.3);
+        }
+        
+        .btn-search:hover {
+            background: #4a9eff;
+            color: #000;
+            transform: translateY(-2px);
+        }
+        
+        .btn-filter {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .btn-filter:hover {
+            background: rgba(255, 255, 255, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .btn-clear {
+            background: rgba(255, 59, 48, 0.1);
+            color: #ff3b30;
+            border: 1px solid rgba(255, 59, 48, 0.3);
+        }
+        
+        .btn-clear:hover {
+            background: #ff3b30;
+            color: #fff;
+            transform: translateY(-2px);
+        }
+        
+        /* ===== SEARCH ===== */
+        .search-container {
+            margin-top: 1rem;
+            animation: slideDown 0.3s ease;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 1rem 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(74, 158, 255, 0.2);
+            border-radius: 12px;
+            color: #fff;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.08);
+            border-color: #4a9eff;
+            box-shadow: 0 0 0 4px rgba(74, 158, 255, 0.1);
+        }
+        
+        .search-input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+        
+        /* ===== STATS CARDS ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(74, 158, 255, 0.2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(74, 158, 255, 0.2);
+        }
+        
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+        }
+        
+        .stat-total .stat-icon {
+            background: rgba(74, 158, 255, 0.1);
+        }
+        
+        .stat-confirmed .stat-icon {
+            background: rgba(52, 199, 89, 0.1);
+        }
+        
+        .stat-pending .stat-icon {
+            background: rgba(255, 204, 0, 0.1);
+        }
+        
+        .stat-content {
+            flex: 1;
+        }
+        
+        .stat-label {
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.6);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 600;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #fff;
+            line-height: 1;
+            margin-top: 0.25rem;
+        }
+        
+        /* ===== FILTER SECTION ===== */
+        .filter-section {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(74, 158, 255, 0.2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            animation: slideDown 0.3s ease;
+        }
+        
+        .filter-chips {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+        
+        .filter-chip {
+            padding: 0.75rem 1.25rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(74, 158, 255, 0.2);
+            border-radius: 10px;
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .filter-chip:hover {
+            background: rgba(74, 158, 255, 0.1);
+            border-color: #4a9eff;
+            color: #fff;
+            transform: translateY(-2px);
+        }
+        
+        .filter-chip.active {
+            background: #4a9eff;
+            border-color: #4a9eff;
+            color: #000;
+        }
+        
+        .filter-dropdown-row {
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .filter-select {
+            flex: 1;
+            padding: 0.75rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(74, 158, 255, 0.2);
+            border-radius: 10px;
+            color: #fff;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-select:focus {
+            outline: none;
+            background: rgba(255, 255, 255, 0.08);
+            border-color: #4a9eff;
+        }
+        
+        .filter-select option {
+            background: #1a1a1a;
+            color: #fff;
+        }
+        
         .hero-section {
             text-align: center;
             padding: 3rem 2rem;
@@ -560,6 +843,78 @@
             font-weight: 700;
         }
         
+        /* ===== MOBILE CARDS ===== */
+        .agendamento-card {
+            display: none;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(74, 158, 255, 0.2);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            transition: all 0.3s ease;
+        }
+        
+        .agendamento-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: #4a9eff;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(74, 158, 255, 0.2);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(74, 158, 255, 0.1);
+        }
+        
+        .card-id {
+            font-size: 0.9rem;
+            color: #4a9eff;
+            font-weight: 700;
+        }
+        
+        .card-body {
+            margin-bottom: 1rem;
+        }
+        
+        .card-info-row {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+            padding: 0.5rem 0;
+        }
+        
+        .card-icon {
+            font-size: 1.2rem;
+            width: 24px;
+            text-align: center;
+        }
+        
+        .card-label {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.85rem;
+            font-weight: 600;
+            min-width: 80px;
+        }
+        
+        .card-value {
+            color: #fff;
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+        
+        .card-footer {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(74, 158, 255, 0.1);
+        }
+        
         @media (max-width: 968px) {
             .hero-title {
                 font-size: 2rem;
@@ -576,6 +931,33 @@
             
             .agendamento-card {
                 display: block;
+            }
+            
+            .header-top {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            
+            .header-actions {
+                width: 100%;
+            }
+            
+            .btn-action {
+                flex: 1;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .filter-chips {
+                overflow-x: auto;
+                flex-wrap: nowrap;
+                padding-bottom: 0.5rem;
+            }
+            
+            .filter-chip {
+                white-space: nowrap;
             }
         }
         
@@ -596,37 +978,127 @@
                 padding: 0.6rem 1rem;
                 font-size: 0.85rem;
             }
+            
+            .page-title {
+                font-size: 1.5rem;
+            }
+            
+            .page-icon {
+                width: 48px;
+                height: 48px;
+                font-size: 1.5rem;
+            }
+            
+            .btn-action {
+                padding: 0.6rem 1rem;
+                font-size: 0.85rem;
+            }
+            
+            .stat-value {
+                font-size: 1.5rem;
+            }
         }
     </style>
 </head>
 <body>
     
     <div class="container">
-        <!-- Hero Section -->
-        <div class="hero-section">
-            <div class="admin-badge">🔐 ADMIN</div>
-            <h1 class="hero-title">📋 Gerenciar Agendamentos</h1>
-            <p class="hero-subtitle">{{ barbearia.nome }}</p>
+        <!-- Header Modernizado -->
+        <div class="page-header">
+            <div class="header-top">
+                <div class="header-left">
+                    <div class="page-icon">📋</div>
+                    <div>
+                        <h1 class="page-title">Agendamentos</h1>
+                        <p class="page-date">{{ 'hoje' if not data_atual else data_atual.strftime('%A, %d de %B de %Y') }}</p>
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="btn-action btn-search" onclick="toggleSearch()">
+                        🔍 Buscar
+                    </button>
+                    <button class="btn-action btn-filter" onclick="toggleFilters()">
+                        ⚙️ Filtros
+                    </button>
+                    <button class="btn-action btn-clear" onclick="limparFiltros()">
+                        🗑️ Limpar
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Search Bar (oculto por padrão) -->
+            <div class="search-container" id="searchContainer" style="display: none;">
+                <input type="text" 
+                       class="search-input" 
+                       id="buscaCliente" 
+                       placeholder="Buscar por nome do cliente..."
+                       onkeyup="filtrarAgendamentos()">
+            </div>
         </div>
         
-        <!-- Filtro de Status -->
-        <div class="filter-bar">
-            <div class="filter-tabs">
-                <a href="{{ url_for('admin_agendamentos_slug', slug=barbearia.slug, status='ativos') }}" 
-                   class="filter-tab {{ 'active' if status_filtro == 'ativos' else '' }}">
-                    📅 Ativos
-                    <span class="filter-count">{{ status_counts.ativos }}</span>
+        <!-- Stats Cards -->
+        <div class="stats-grid">
+            <div class="stat-card stat-total">
+                <div class="stat-icon">📊</div>
+                <div class="stat-content">
+                    <div class="stat-label">Total</div>
+                    <div class="stat-value">{{ status_counts.todos }}</div>
+                </div>
+            </div>
+            <div class="stat-card stat-confirmed">
+                <div class="stat-icon">✅</div>
+                <div class="stat-content">
+                    <div class="stat-label">Confirmadas</div>
+                    <div class="stat-value">{{ status_counts.get('confirmada', 0) }}</div>
+                </div>
+            </div>
+            <div class="stat-card stat-pending">
+                <div class="stat-icon">⏳</div>
+                <div class="stat-content">
+                    <div class="stat-label">Pendentes</div>
+                    <div class="stat-value">{{ status_counts.get('agendada', 0) }}</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Filtros Modernos (ocultos por padrão) -->
+        <div class="filter-section" id="filterSection" style="display: none;">
+            <div class="filter-chips">
+                <a href="{{ url_for('admin_agendamentos_slug', slug=barbearia.slug, filtro='hoje') }}" 
+                   class="filter-chip {{ 'active' if filtro_periodo == 'hoje' else '' }}">
+                    📅 Hoje
+                </a>
+                <a href="{{ url_for('admin_agendamentos_slug', slug=barbearia.slug, filtro='amanha') }}" 
+                   class="filter-chip {{ 'active' if filtro_periodo == 'amanha' else '' }}">
+                    🔔 Amanhã
+                </a>
+                <a href="{{ url_for('admin_agendamentos_slug', slug=barbearia.slug, filtro='semana') }}" 
+                   class="filter-chip {{ 'active' if filtro_periodo == 'semana' else '' }}">
+                    📆 Esta Semana
+                </a>
+                <a href="{{ url_for('admin_agendamentos_slug', slug=barbearia.slug, filtro='mes') }}" 
+                   class="filter-chip {{ 'active' if filtro_periodo == 'mes' else '' }}">
+                    📊 Este Mês
+                </a>
+                <a href="{{ url_for('admin_agendamentos_slug', slug=barbearia.slug) }}" 
+                   class="filter-chip {{ 'active' if not filtro_periodo else '' }}">
+                    🌍 Todos
                 </a>
                 <a href="{{ url_for('admin_agendamentos_slug', slug=barbearia.slug, status='concluidos') }}" 
-                   class="filter-tab {{ 'active' if status_filtro == 'concluidos' else '' }}">
+                   class="filter-chip {{ 'active' if status_filtro == 'concluidos' else '' }}">
                     ✅ Concluídos
-                    <span class="filter-count">{{ status_counts.concluidos }}</span>
                 </a>
-                <a href="{{ url_for('admin_agendamentos_slug', slug=barbearia.slug, status='todos') }}" 
-                   class="filter-tab {{ 'active' if status_filtro == 'todos' else '' }}">
-                    📊 Todos
-                    <span class="filter-count">{{ status_counts.todos }}</span>
-                </a>
+            </div>
+            
+            <div class="filter-dropdown-row">
+                <select class="filter-select" id="filtroStatus" onchange="filtrarPorStatus()">
+                    <option value="">Todos os Status</option>
+                    <option value="agendada">📅 Agendada</option>
+                    <option value="confirmada">✅ Confirmada</option>
+                    <option value="atendendo">✂️ Atendendo</option>
+                    <option value="concluida">✅ Concluída</option>
+                    <option value="cancelada">❌ Cancelada</option>
+                </select>
             </div>
         </div>
         
@@ -940,6 +1412,52 @@
                 menuAberto = null;
             }
         });
+        
+        // Toggle para busca
+        function toggleSearch() {
+            const searchContainer = document.getElementById('searchContainer');
+            const isHidden = searchContainer.style.display === 'none';
+            searchContainer.style.display = isHidden ? 'block' : 'none';
+            if (isHidden) {
+                document.getElementById('searchInput').focus();
+            }
+        }
+        
+        // Toggle para filtros
+        function toggleFilters() {
+            const filterSection = document.getElementById('filterSection');
+            filterSection.style.display = filterSection.style.display === 'none' ? 'block' : 'none';
+        }
+        
+        // Limpar filtros
+        function limparFiltros() {
+            document.getElementById('searchInput').value = '';
+            const urlBase = '{{ url_for("admin_agendamentos", slug=g.tenant.slug) }}';
+            window.location.href = urlBase;
+        }
+        
+        // Filtrar por status
+        function filtrarPorStatus() {
+            const status = document.getElementById('statusFilter').value;
+            const urlBase = '{{ url_for("admin_agendamentos", slug=g.tenant.slug) }}';
+            if (status) {
+                window.location.href = `${urlBase}?status=${status}`;
+            } else {
+                window.location.href = urlBase;
+            }
+        }
+        
+        // Buscar agendamentos
+        function filtrarAgendamentos(event) {
+            event.preventDefault();
+            const searchTerm = document.getElementById('searchInput').value;
+            const urlBase = '{{ url_for("admin_agendamentos", slug=g.tenant.slug) }}';
+            if (searchTerm) {
+                window.location.href = `${urlBase}?search=${encodeURIComponent(searchTerm)}`;
+            } else {
+                window.location.href = urlBase;
+            }
+        }
     </script>
 </body>
 </html>

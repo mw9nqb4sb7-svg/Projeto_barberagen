@@ -10,10 +10,18 @@ click==8.1.7
 blinker==1.7.0
 bleach==6.1.0
 python-dotenv==1.0.0
+requests==2.31.0
+APScheduler==3.10.4
 
 # Para produção no Railway
 gunicorn==21.2.0
 psycopg2-binary==2.9.9
+
+# Para produção Windows
+waitress==3.0.0
+
+# Para alta performance (opcional)
+# gevent==24.2.1
 
 # Para desenvolvimento (opcional)
 pytest==7.4.3
