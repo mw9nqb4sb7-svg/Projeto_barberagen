@@ -14,9 +14,8 @@ bind = f"0.0.0.0:{os.getenv('PORT', '5000')}"
 workers = int(os.getenv('WEB_CONCURRENCY', multiprocessing.cpu_count() * 2 + 1))
 
 # Tipo de worker
-# gevent ou eventlet para melhor performance com I/O
-# sync para compatibilidade máxima
-worker_class = os.getenv('WORKER_CLASS', 'sync')
+# gevent para melhor performance com I/O (recomendado para Railway)
+worker_class = os.getenv('WORKER_CLASS', 'gevent')
 
 # Threads por worker (para worker_class='sync' ou 'gthread')
 threads = int(os.getenv('WORKER_THREADS', 2))

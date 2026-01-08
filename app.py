@@ -36,6 +36,12 @@ app = Flask(__name__, template_folder=TEMPLATES_DIR, static_folder=STATIC_DIR)
 
 # Configuração WhiteNoise para arquivos estáticos em produção
 app.wsgi_app = WhiteNoise(app.wsgi_app, root=STATIC_DIR, prefix='static/')
+app.wsgi_app.add_files(STATIC_DIR, prefix='static/')
+
+# Ativar compressão e caching de longa duração (1 ano) para melhor performance
+if not app.debug:
+    app.wsgi_app.max_age = 31536000  # 1 ano
+    app.wsgi_app.autorefresh = False
 
 # Segurança: SECRET_KEY forte
 import secrets
