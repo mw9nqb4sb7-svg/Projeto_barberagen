@@ -199,7 +199,7 @@
             }
             
             .login-card {
-                padding: 2rem 1.5rem;
+                padding: 2rem 1.25rem;
             }
             
             .logo-section h1 {
@@ -211,16 +211,16 @@
             }
             
             .form-label {
-                font-size: 0.9rem;
+                font-size: 0.85rem;
             }
             
             .form-input {
-                padding: 0.9rem 1.2rem;
-                font-size: 0.95rem;
+                padding: 0.8rem 1rem;
+                font-size: 16px !important; /* Evita zoom iOS */
             }
             
             .btn {
-                padding: 1rem;
+                padding: 0.9rem;
                 font-size: 0.9rem;
             }
         }
@@ -281,6 +281,9 @@
                     <label for="senha" class="form-label">🔒 Senha</label>
                     <input type="password" class="form-input" id="senha" name="senha" 
                            placeholder="Digite sua senha" required autocomplete="current-password">
+                    <div style="text-align: right; margin-top: 5px;">
+                        <a href="{{ url_for('recuperar_senha') }}" style="color: var(--cor-primaria); font-size: 0.85rem; text-decoration: none; font-weight: 600;">Esqueceu sua senha?</a>
+                    </div>
                 </div>
                 
                 <button type="submit" class="btn btn-primary">

@@ -17,8 +17,8 @@
         
         html, body {
             overflow-x: hidden;
-            background: #ffffff;
-            color: var(--cor-texto);
+            background: #000;
+            color: #fff;
             font-family: 'Plus Jakarta Sans', sans-serif;
             letter-spacing: -0.3px;
         }
@@ -55,7 +55,7 @@
         }
         
         nav a {
-            color: rgba(31, 41, 55, 0.8);
+            color: rgba(255, 255, 255, 0.8);
             text-decoration: none;
             padding: 0.75rem 1.5rem;
             border-radius: 10px;
@@ -105,7 +105,7 @@
         
         label {
             display: block;
-            color: rgba(31, 41, 55, 0.8);
+            color: rgba(255, 255, 255, 0.8);
             font-size: 0.9rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
@@ -228,7 +228,7 @@
             border: 1px solid rgba(255, 159, 10, 0.3);
             border-radius: 12px;
             padding: 1.5rem;
-            color: rgba(31, 41, 55, 0.8);
+            color: rgba(255, 255, 255, 0.8);
             text-align: center;
         }
         
@@ -268,23 +268,43 @@
 <body>
 <style>
 :root {
-    --cor-primaria: {{ barbearia.cor_primaria or 'var(--cor-primaria)' }};
+    --cor-primaria: {{ barbearia.cor_primaria or '#8b5cf6' }};
     --cor-secundaria: {{ barbearia.cor_secundaria or '#A78BFA' }};
-    --cor-texto: {{ barbearia.cor_texto or 'var(--cor-texto)' }};
+    --cor-texto: {{ barbearia.cor_texto or '#1f2937' }};
 }
 </style>
 
-
-{% set extra_nav_html %}
-    <a href="javascript:history.back();">← Voltar</a>
-    {% set dash_slug = barbearia.slug if barbearia else (request.view_args.slug if request.view_args and request.view_args.get('slug') else session.get('slug', 'principal')) %}
-    <a href="{{ url_for('dashboard', slug=dash_slug) }}">📊 Dashboard</a>
-{% endset %}
-{% if user_type is defined %}
-{% include 'cliente/_navbar.html' %}
-{% endif %}
+<div style="padding: 1rem 2rem;">
+    <a href="javascript:history.back();" style="text-decoration: none; color: #fff; background: rgba(139, 92, 246, 0.2); padding: 0.75rem 1.5rem; border-radius: 12px; border: 1px solid var(--cor-primaria); font-weight: 600; transition: all 0.3s ease;">
+        ← Voltar
+    </a>
+</div>
 
     <h1>Gerenciamento de Clientes</h1>
+
+    <div style="max-width: 1400px; margin: 0 auto; margin-bottom: 3rem;">
+        <div class="card-form">
+            <h2>➕ Cadastrar Novo Cliente</h2>
+            <form method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
+                    <div class="form-group">
+                        <label for="nome">Nome Completo</label>
+                        <input type="text" id="nome" name="nome" placeholder="Ex: João Silva" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="apelido">Apelido (Opcional)</label>
+                        <input type="text" id="apelido" name="apelido" placeholder="Ex: Joãozinho">
+                    </div>
+                    <div class="form-group">
+                        <label for="email">E-mail</label>
+                        <input type="email" id="email" name="email" placeholder="email@exemplo.com" required>
+                    </div>
+                </div>
+                <button type="submit">Cadastrar Cliente</button>
+            </form>
+        </div>
+    </div>
 
     <div style="max-width: 1400px; margin: 0 auto;">
         <h2>📋 Clientes Cadastrados</h2>
@@ -295,7 +315,7 @@
                     <thead>
                         <tr>
                             <th>Nome</th>
-                            <th>Email</th>
+                            <th>Apelido</th>
                             <th>Telefone</th>
                             <th>Ações</th>
                         </tr>
@@ -304,10 +324,12 @@
                         {% for cliente in usuarios %}
                         <tr>
                             <td>{{ cliente.nome }}</td>
-                            <td>{{ cliente.email }}</td>
+                            <td style="color: var(--cor-secundaria); font-weight: 600;">{{ cliente.apelido or '-' }}</td>
                             <td>{{ cliente.telefone | format_phone or '-' }}</td>
                             <td>
-                                <a href="javascript:void(0);" class="btn-action btn-primary">
+                                <a href="javascript:void(0);" 
+                                   onclick="abrirModalEdicao('{{ cliente.uuid }}', '{{ cliente.nome }}', '{{ cliente.apelido or '' }}', '{{ cliente.telefone or '' }}')" 
+                                   class="btn-action btn-primary">
                                     Alterar
                                 </a>
                                 <a href="{{ url_for('deletar_cliente', cliente_uuid=cliente.uuid) }}" 
@@ -328,8 +350,62 @@
             {% endif %}
     </div>
 
-    <footer style="background: rgba(249, 250, 251, 0.8); border-top: 1px solid rgba(139, 92, 246, 0.2); padding: 2rem; text-align: center; margin-top: 4rem; border-radius: 16px;">
-        <p style="color: rgba(31, 41, 55, 0.6); font-size: 0.9rem;">
+    <!-- Modal de Edição -->
+    <div id="modalEdicao" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(5px);">
+        <div class="card-form" style="width: 90%; max-width: 500px; border: 2px solid var(--cor-primaria);">
+            <h2 style="margin-bottom: 1.5rem;">Editar Cliente</h2>
+            <form id="formEdicao" method="POST">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <div class="form-group">
+                    <label for="edit_nome">Nome Completo</label>
+                    <input type="text" id="edit_nome" name="nome" required>
+                </div>
+                <div class="form-group">
+                    <label for="edit_apelido">Apelido</label>
+                    <input type="text" id="edit_apelido" name="apelido" placeholder="Como você chama o cliente?">
+                </div>
+                <div class="form-group">
+                    <label for="edit_telefone">Telefone</label>
+                    <input type="text" id="edit_telefone" name="telefone" placeholder="(00) 00000-0000">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 2rem;">
+                    <button type="button" onclick="fecharModal()" style="background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2); color: #fff;">Cancelar</button>
+                    <button type="submit">Salvar Alterações</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function abrirModalEdicao(uuid, nome, apelido, telefone) {
+            const modal = document.getElementById('modalEdicao');
+            const form = document.getElementById('formEdicao');
+            
+            document.getElementById('edit_nome').value = nome;
+            document.getElementById('edit_apelido').value = apelido;
+            document.getElementById('edit_telefone').value = telefone;
+            
+            // Ajustar action do form usando url_for dinâmica via template ou concatenando
+            form.action = '/editar_cliente/' + uuid;
+            
+            modal.style.display = 'flex';
+        }
+
+        function fecharModal() {
+            document.getElementById('modalEdicao').style.display = 'none';
+        }
+
+        // Fechar ao clicar fora
+        window.onclick = function(event) {
+            const modal = document.getElementById('modalEdicao');
+            if (event.target == modal) {
+                fecharModal();
+            }
+        }
+    </script>
+
+    <footer style="background: #000; border-top: 1px solid rgba(139, 92, 246, 0.2); padding: 2rem; text-align: center; margin-top: 4rem; border-radius: 16px;">
+        <p style="color: rgba(255, 255, 255, 0.5); font-size: 0.9rem;">
             Desenvolvido por <span style="color: var(--cor-primaria); font-weight: 700;">BarberConnect</span> ✂️
         </p>
     </footer>

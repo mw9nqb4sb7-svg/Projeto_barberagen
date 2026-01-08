@@ -105,6 +105,18 @@
                               placeholder="Rua, número, bairro, cidade - Estado"></textarea>
                     <small class="form-help">Endereço completo da barbearia</small>
                 </div>
+
+                <div class="form-group">
+                    <label for="vagas_por_horario" class="form-label">
+                        <span class="label-icon">🪑</span>
+                        Capacidade (Cadeiras)
+                    </label>
+                    <input type="number" id="vagas_por_horario" name="vagas_por_horario" 
+                           value="1" 
+                           class="form-input" 
+                           min="1" max="10">
+                    <small class="form-help">Quantas pessoas podem ser atendidas ao mesmo tempo?</small>
+                </div>
             </div>
 
             <!-- Ações -->
@@ -267,11 +279,24 @@ document.getElementById('slug').addEventListener('input', function() {
 }
 
 .form-container {
-    background: white;
+    background: #0a0a0c;
+    border: 2px solid rgba(139, 92, 246, 0.3);
     padding: var(--spacing-2xl);
     border-radius: var(--border-radius-xl);
-    box-shadow: var(--shadow-lg);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
     margin-bottom: var(--spacing-xl);
+}
+
+.form-input, .form-textarea {
+    background: rgba(255, 255, 255, 0.05);
+    border: 2px solid rgba(139, 92, 246, 0.2);
+    color: white;
+}
+
+.form-input:focus, .form-textarea:focus {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #8b5cf6;
+    color: white;
 }
 
 .form-grid {
@@ -356,15 +381,16 @@ document.getElementById('slug').addEventListener('input', function() {
 }
 
 .tips-panel {
-    background: white;
+    background: #0a0a0c;
     padding: var(--spacing-xl);
     border-radius: var(--border-radius-xl);
-    box-shadow: var(--shadow-lg);
+    border: 2px solid rgba(139, 92, 246, 0.3);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
 }
 
 .tips-panel h3 {
     margin-bottom: var(--spacing-lg);
-    color: var(--gray-800);
+    color: #fff;
 }
 
 .tips-list {
@@ -376,9 +402,9 @@ document.getElementById('slug').addEventListener('input', function() {
     display: flex;
     gap: var(--spacing-md);
     padding: var(--spacing-md);
-    background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);
+    background: rgba(139, 92, 246, 0.05);
     border-radius: var(--border-radius-lg);
-    border-left: 4px solid #667eea;
+    border-left: 4px solid #8b5cf6;
 }
 
 .tip-icon {
@@ -387,12 +413,12 @@ document.getElementById('slug').addEventListener('input', function() {
 }
 
 .tip-content {
-    color: var(--gray-700);
+    color: rgba(255, 255, 255, 0.7);
     line-height: 1.5;
 }
 
 .tip-content strong {
-    color: var(--gray-800);
+    color: #fff;
 }
 
 @media (max-width: 768px) {

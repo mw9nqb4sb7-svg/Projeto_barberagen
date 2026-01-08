@@ -16,6 +16,7 @@ APScheduler==3.10.4
 # Para produção no Railway
 gunicorn==21.2.0
 psycopg2-binary==2.9.9
+whitenoise==6.6.0
 
 # Para produção Windows
 waitress==3.0.0

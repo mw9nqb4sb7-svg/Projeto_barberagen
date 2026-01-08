@@ -254,10 +254,82 @@
             footer {
                 padding: 2rem 1rem 1rem !important;
             }
+
+            /* NOVA SOLUÇÃO MODERNA PARA LOGO NO MOBILE */
+            .hero-image-desktop {
+                display: none !important;
+            }
+
+            .logo-mobile-container {
+                display: flex !important;
+                justify-content: center;
+                margin-top: -1rem;
+                margin-bottom: 2.5rem;
+            }
+
+            .logo-mobile-wrapper {
+                width: 140px;
+                height: 140px;
+                position: relative;
+                padding: 5px;
+                background: #ffffff;
+                border-radius: 50%;
+                border: 3px solid var(--cor-primaria);
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15), 0 0 15px rgba(139, 92, 246, 0.3);
+                animation: mobileFloat 4s ease-in-out infinite;
+                z-index: 10;
+            }
+
+            .logo-mobile-wrapper img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border-radius: 50%;
+            }
+
+            @keyframes mobileFloat {
+                0%, 100% { transform: translateY(0); }
+                50% { transform: translateY(-8px); }
+            }
+        }
+
+        /* Estilo padrão (Escondido no Desktop) */
+        .logo-mobile-container {
+            display: none;
+        }
+
+        /* Efeitos de Hover */
+        .btn-primario:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2) !important;
+            filter: brightness(1.1);
+        }
+
+        .btn-outline:hover {
+            background: var(--cor-primaria) !important;
+            color: #ffffff !important;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        .nav-link:hover {
+            color: var(--cor-primaria) !important;
+            transform: translateY(-1px);
+        }
+
+        .card-servico:hover {
+            transform: translateY(-10px);
+            border-color: var(--cor-primaria) !important;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1) !important;
+        }
+
+        .footer-link:hover {
+            color: var(--cor-primaria) !important;
+            padding-left: 5px;
+            transition: all 0.3s ease;
         }
     </style>
-</head>
-<body>
+</head><body>
     <!-- Navegação -->
     <nav style="background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(250, 250, 250, 0.95) 100%); border-bottom: 3px solid var(--cor-primaria); position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 4px 20px rgba(139, 92, 246, 0.15);">
         <div style="max-width: 1400px; margin: 0 auto; padding: 1.5rem 2rem; display: flex; justify-content: space-between; align-items: center;">
@@ -270,10 +342,10 @@
                 {% endif %}
             </div>
             <ul style="display: flex; gap: 2rem; list-style: none; margin: 0; padding: 0;">
-                <li><a href="/" style="color: var(--cor-texto); text-decoration: none; padding: 0.5rem 1rem; transition: color 0.3s;">Início</a></li>
-                <li><a href="#servicos" style="color: var(--cor-texto); text-decoration: none; padding: 0.5rem 1rem; transition: color 0.3s;">Serviços</a></li>
-                <li><a href="{{ url_for('login', slug=barbearia.slug) }}" style="color: var(--cor-texto); text-decoration: none; padding: 0.5rem 1rem; transition: color 0.3s;">Login</a></li>
-                <li><a href="{{ url_for('cadastro', slug=barbearia.slug) }}" style="color: var(--cor-texto); text-decoration: none; padding: 0.5rem 1rem; transition: color 0.3s;">Cadastro</a></li>
+                <li><a href="{{ url_for('barbearia_publica', slug=barbearia.slug) }}" class="nav-link" style="color: var(--cor-texto); text-decoration: none; padding: 0.5rem 1rem; transition: all 0.3s;">Início</a></li>
+                <li><a href="#servicos" class="nav-link" style="color: var(--cor-texto); text-decoration: none; padding: 0.5rem 1rem; transition: all 0.3s;">Serviços</a></li>
+                <li><a href="{{ url_for('login', slug=barbearia.slug) }}" class="nav-link" style="color: var(--cor-texto); text-decoration: none; padding: 0.5rem 1rem; transition: all 0.3s;">Login</a></li>
+                <li><a href="{{ url_for('cadastro', slug=barbearia.slug) }}" class="nav-link" style="color: var(--cor-texto); text-decoration: none; padding: 0.5rem 1rem; transition: all 0.3s;">Cadastro</a></li>
             </ul>
         </div>
     </nav>
@@ -283,18 +355,30 @@
         <div class="hero-container" style="max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: center; width: 100%;">
             <!-- Conteúdo à esquerda -->
             <div class="hero-content">
+                <!-- LOGO MOBILE (Visível apenas em telas pequenas) -->
+                {% if barbearia.logo %}
+                <div class="logo-mobile-container">
+                    <div class="logo-mobile-wrapper">
+                        <img src="{{ url_for('static', filename='uploads/logos/' + barbearia.logo) }}" alt="{{ barbearia.nome }}">
+                    </div>
+                </div>
+                {% endif %}
+
                 <h1 class="hero-title" style="font-size: 4rem; font-weight: 700; margin-bottom: 1.5rem; line-height: 1.1;">
-                    {% set titulo_partes = (barbearia.hero_titulo or 'Seu visual|no nível máximo').split('|') %}
-                    {% if titulo_partes|length > 1 %}
-                        <span style="color: var(--cor-primaria);">{{ titulo_partes[0] }}</span>
-                        <span style="color: var(--cor-texto);">{{ titulo_partes[1] }}</span>
-                    {% else %}
-                        <span style="color: var(--cor-primaria);">{{ titulo_partes[0] }}</span>
+                    {% set titulo_raw = barbearia.hero_titulo %}
+                    {% if titulo_raw %}
+                        {% set titulo_partes = titulo_raw.split('|') %}
+                        {% if titulo_partes|length > 1 %}
+                            <span style="color: var(--cor-primaria);">{{ titulo_partes[0] }}</span>
+                            <span style="color: var(--cor-texto);">{{ titulo_partes[1] }}</span>
+                        {% else %}
+                            <span style="color: var(--cor-primaria);">{{ titulo_partes[0] }}</span>
+                        {% endif %}
                     {% endif %}
                 </h1>
                 
                 <p class="hero-text" style="font-size: 1.1rem; line-height: 1.6; color: {{ barbearia.cor_texto or '#1f2937' }}; margin-bottom: 2rem; font-weight: 400;">
-                    {{ barbearia.hero_subtitulo or 'Mais que um corte de cabelo, uma experiência completa. Profissionais qualificados, ambiente moderno e atendimento premium.' }}
+                    {{ barbearia.hero_subtitulo or '' }}
                 </p>
                 
                 {% if barbearia.endereco or barbearia.telefone %}
@@ -310,10 +394,12 @@
                 
                 <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
                     <a href="{{ url_for('cadastro', slug=barbearia.slug) }}" 
+                       class="btn-primario"
                        style="display: inline-flex; align-items: center; gap: 0.5rem; font-size: 1rem; font-weight: 600; padding: 1rem 2rem; border-radius: 50px; text-decoration: none; background: var(--cor-primaria); color: #ffffff; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3); transition: all 0.3s;">
                         ✂️ Agendar horário
                     </a>
                     <a href="{{ url_for('login', slug=barbearia.slug) }}" 
+                       class="btn-outline"
                        style="display: inline-flex; align-items: center; gap: 0.5rem; font-size: 1rem; font-weight: 600; padding: 1rem 2rem; border-radius: 50px; text-decoration: none; background: transparent; color: var(--cor-texto); border: 2px solid var(--cor-primaria); transition: all 0.3s;">
                         Já possui uma conta? Entrar
                     </a>
@@ -321,7 +407,7 @@
             </div>
             
             <!-- Imagem à direita com formas -->
-            <div style="position: relative; height: 600px; display: flex; align-items: center; justify-content: center;">
+            <div class="hero-image-desktop" style="position: relative; height: 600px; display: flex; align-items: center; justify-content: center;">
                 <!-- Forma 1 -->
                 <div style="position: absolute; width: 280px; height: 480px; top: 10%; left: 5%; border-radius: 50% 50% 0 50%; background: #c4b5fd; z-index: 1; transform: rotate(-15deg);"></div>
                 
@@ -349,6 +435,7 @@
     </section>
 
     <!-- Seção de Recursos -->
+    {% if barbearia.card1_titulo or barbearia.card2_titulo or barbearia.card3_titulo or barbearia.card4_titulo %}
     <section id="servicos" style="padding: 5rem 2rem; background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);">
         <div style="max-width: 1200px; margin: 0 auto;">
             <div style="text-align: center; margin-bottom: 4rem;">
@@ -362,69 +449,93 @@
 
             <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 2rem;">
                 <!-- Card 1 -->
-                <div style="background: #ffffff; padding: 2.5rem; border-radius: 20px; border: 2px solid rgba(139, 92, 246, 0.2); transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.1);">
-                    <div style="font-size: 3rem; margin-bottom: 1.5rem;">{{ barbearia.card1_icone or '✂️' }}</div>
-                    <h3 style="font-size: 1.5rem; font-weight: 700; color: var(--cor-primaria); margin-bottom: 1rem;">{{ barbearia.card1_titulo or 'Corte masculino' }}</h3>
+                {% if barbearia.card1_titulo %}
+                <div class="card-servico" style="background: #ffffff; padding: 2.5rem; border-radius: 20px; border: 2px solid rgba(139, 92, 246, 0.2); transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.1);">
+                    <div style="font-size: 3rem; margin-bottom: 1.5rem;">{{ barbearia.card1_icone or '' }}</div>
+                    <h3 style="font-size: 1.5rem; font-weight: 700; color: var(--cor-primaria); margin-bottom: 1rem;">{{ barbearia.card1_titulo }}</h3>
                     <p style="color: rgba(31, 31, 31, 0.7); line-height: 1.6;">
-                        {{ barbearia.card1_descricao or 'Cortes modernos e clássicos com acabamento perfeito, realizado por barbeiros experientes' }}
+                        {{ barbearia.card1_descricao or '' }}
                     </p>
                 </div>
+                {% endif %}
 
                 <!-- Card 2 -->
-                <div style="background: #ffffff; padding: 2.5rem; border-radius: 20px; border: 2px solid rgba(139, 92, 246, 0.2); transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.1);">
-                    <div style="font-size: 3rem; margin-bottom: 1.5rem;">{{ barbearia.card2_icone or '🧔' }}</div>
-                    <h3 style="font-size: 1.5rem; font-weight: 700; color: var(--cor-primaria); margin-bottom: 1rem;">{{ barbearia.card2_titulo or 'Barba completa' }}</h3>
+                {% if barbearia.card2_titulo %}
+                <div class="card-servico" style="background: #ffffff; padding: 2.5rem; border-radius: 20px; border: 2px solid rgba(139, 92, 246, 0.2); transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.1);">
+                    <div style="font-size: 3rem; margin-bottom: 1.5rem;">{{ barbearia.card2_icone or '' }}</div>
+                    <h3 style="font-size: 1.5rem; font-weight: 700; color: var(--cor-primaria); margin-bottom: 1rem;">{{ barbearia.card2_titulo }}</h3>
                     <p style="color: rgba(31, 31, 31, 0.7); line-height: 1.6;">
-                        {{ barbearia.card2_descricao or 'Design, aparação e tratamento completo para sua barba ficar impecável' }}
+                        {{ barbearia.card2_descricao or '' }}
                     </p>
                 </div>
+                {% endif %}
 
                 <!-- Card 3 -->
-                <div style="background: #ffffff; padding: 2.5rem; border-radius: 20px; border: 2px solid rgba(139, 92, 246, 0.2); transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.1);">
-                    <div style="font-size: 3rem; margin-bottom: 1.5rem;">{{ barbearia.card3_icone or '💈' }}</div>
-                    <h3 style="font-size: 1.5rem; font-weight: 700; color: var(--cor-primaria); margin-bottom: 1rem;">{{ barbearia.card3_titulo or 'Combo premium' }}</h3>
+                {% if barbearia.card3_titulo %}
+                <div class="card-servico" style="background: #ffffff; padding: 2.5rem; border-radius: 20px; border: 2px solid rgba(139, 92, 246, 0.2); transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.1);">
+                    <div style="font-size: 3rem; margin-bottom: 1.5rem;">{{ barbearia.card3_icone or '' }}</div>
+                    <h3 style="font-size: 1.5rem; font-weight: 700; color: var(--cor-primaria); margin-bottom: 1rem;">{{ barbearia.card3_titulo }}</h3>
                     <p style="color: rgba(31, 31, 31, 0.7); line-height: 1.6;">
-                        {{ barbearia.card3_descricao or 'Corte + barba + finalização, o pacote completo para você sair renovado' }}
+                        {{ barbearia.card3_descricao or '' }}
                     </p>
                 </div>
+                {% endif %}
 
                 <!-- Card 4 -->
-                <div style="background: #ffffff; padding: 2.5rem; border-radius: 20px; border: 2px solid rgba(139, 92, 246, 0.2); transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.1);">
-                    <div style="font-size: 3rem; margin-bottom: 1.5rem;">{{ barbearia.card4_icone or '📅' }}</div>
-                    <h3 style="font-size: 1.5rem; font-weight: 700; color: var(--cor-primaria); margin-bottom: 1rem;">{{ barbearia.card4_titulo or 'Agendamento fácil' }}</h3>
+                {% if barbearia.card4_titulo %}
+                <div class="card-servico" style="background: #ffffff; padding: 2.5rem; border-radius: 20px; border: 2px solid rgba(139, 92, 246, 0.2); transition: all 0.3s ease; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.1);">
+                    <div style="font-size: 3rem; margin-bottom: 1.5rem;">{{ barbearia.card4_icone or '' }}</div>
+                    <h3 style="font-size: 1.5rem; font-weight: 700; color: var(--cor-primaria); margin-bottom: 1rem;">{{ barbearia.card4_titulo }}</h3>
                     <p style="color: rgba(31, 31, 31, 0.7); line-height: 1.6;">
-                        {{ barbearia.card4_descricao or 'Reserve seu horário online de forma rápida e prática, sem complicação' }}
+                        {{ barbearia.card4_descricao or '' }}
                     </p>
                 </div>
+                {% endif %}
             </div>
         </div>
     </section>
+    {% endif %}
 
     <!-- Seção de Estatísticas -->
+    {% if barbearia.stat1_valor or barbearia.stat2_valor or barbearia.stat3_valor or barbearia.stat4_valor %}
     <section style="padding: 5rem 2rem; background: #ffffff;">
         <div style="max-width: 1200px; margin: 0 auto;">
-            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 3rem; text-align: center;">
+            {% set total_stats = (1 if barbearia.stat1_valor else 0) + (1 if barbearia.stat2_valor else 0) + (1 if barbearia.stat3_valor else 0) + (1 if barbearia.stat4_valor else 0) %}
+            <div style="display: grid; grid-template-columns: repeat({{ total_stats }}, 1fr); gap: 3rem; text-align: center;">
+                {% if barbearia.stat1_valor %}
                 <div>
-                    <div style="font-size: 3.5rem; font-weight: 800; color: var(--cor-primaria); margin-bottom: 0.5rem;">5+</div>
-                    <div style="color: rgba(31, 31, 31, 0.7); font-size: 1.1rem;">Anos de experiência</div>
+                    <div style="font-size: 3.5rem; font-weight: 800; color: var(--cor-primaria); margin-bottom: 0.5rem;">{{ barbearia.stat1_valor }}</div>
+                    <div style="color: rgba(31, 31, 31, 0.7); font-size: 1.1rem;">{{ barbearia.stat1_label }}</div>
                 </div>
+                {% endif %}
+
+                {% if barbearia.stat2_valor %}
                 <div>
-                    <div style="font-size: 3.5rem; font-weight: 800; color: var(--cor-primaria); margin-bottom: 0.5rem;">1000+</div>
-                    <div style="color: rgba(31, 31, 31, 0.7); font-size: 1.1rem;">Clientes satisfeitos</div>
+                    <div style="font-size: 3.5rem; font-weight: 800; color: var(--cor-primaria); margin-bottom: 0.5rem;">{{ barbearia.stat2_valor }}</div>
+                    <div style="color: rgba(31, 31, 31, 0.7); font-size: 1.1rem;">{{ barbearia.stat2_label }}</div>
                 </div>
+                {% endif %}
+
+                {% if barbearia.stat3_valor %}
                 <div>
-                    <div style="font-size: 3.5rem; font-weight: 800; color: var(--cor-primaria); margin-bottom: 0.5rem;">100%</div>
-                    <div style="color: rgba(31, 31, 31, 0.7); font-size: 1.1rem;">Profissionais qualificados</div>
+                    <div style="font-size: 3.5rem; font-weight: 800; color: var(--cor-primaria); margin-bottom: 0.5rem;">{{ barbearia.stat3_valor }}</div>
+                    <div style="color: rgba(31, 31, 31, 0.7); font-size: 1.1rem;">{{ barbearia.stat3_label }}</div>
                 </div>
+                {% endif %}
+
+                {% if barbearia.stat4_valor %}
                 <div>
-                    <div style="font-size: 3.5rem; font-weight: 800; color: var(--cor-primaria); margin-bottom: 0.5rem;">★★★★★</div>
-                    <div style="color: rgba(31, 31, 31, 0.7); font-size: 1.1rem;">Avaliação dos clientes</div>
+                    <div style="font-size: 3.5rem; font-weight: 800; color: var(--cor-primaria); margin-bottom: 0.5rem;">{{ barbearia.stat4_valor }}</div>
+                    <div style="color: rgba(31, 31, 31, 0.7); font-size: 1.1rem;">{{ barbearia.stat4_label }}</div>
                 </div>
+                {% endif %}
             </div>
         </div>
     </section>
+    {% endif %}
 
     <!-- Seção de Planos -->
+    {% if planos %}
     <section id="planos" style="padding: 6rem 2rem; background: linear-gradient(135deg, #f3f4f6 0%, #f9fafb 100%);">
         <div style="max-width: 1200px; margin: 0 auto;">
             <div style="text-align: center; margin-bottom: 4rem;">
@@ -436,64 +547,44 @@
                 </p>
             </div>
 
-            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-bottom: 2rem;">
-                <!-- Plano Básico -->
-                <div style="background: #ffffff; padding: 2.5rem; border-radius: 20px; border: 2px solid rgba(139, 92, 246, 0.2); text-align: center; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.1);">
-                    <h3 style="font-size: 1.5rem; font-weight: 700; color: var(--cor-primaria); margin-bottom: 1rem;">Plano Básico</h3>
-                    <div style="font-size: 3rem; font-weight: 800; color: var(--cor-texto); margin: 1rem 0;">R$ 79,90</div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem; margin-bottom: 2rem;">
+                {% for plano in planos %}
+                <div style="background: #ffffff; padding: 2.5rem; border-radius: 20px; border: 2px solid rgba(139, 92, 246, 0.2); text-align: center; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.1); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.02)'" onmouseout="this.style.transform='scale(1)'">
+                    <h3 style="font-size: 1.5rem; font-weight: 700; color: var(--cor-primaria); margin-bottom: 1rem;">{{ plano.nome }}</h3>
+                    <div style="font-size: 3rem; font-weight: 800; color: var(--cor-texto); margin: 1rem 0;">R$ {{ "%.2f"|format(plano.preco) }}</div>
                     <div style="color: rgba(31, 31, 31, 0.6); margin-bottom: 1.5rem;">por mês</div>
+                    
                     <div style="background: rgba(139, 92, 246, 0.1); padding: 0.8rem; border-radius: 10px; margin-bottom: 1.5rem; font-weight: 600; color: var(--cor-texto);">
-                        2 atendimentos/mês
+                        {{ plano.atendimentos_mes }} atendimento{{ 's' if plano.atendimentos_mes > 1 else '' }}/mês
                     </div>
+                    
+                    {% set beneficios = plano.get_beneficios() %}
+                    {% if beneficios %}
                     <ul style="list-style: none; padding: 0; text-align: left; color: rgba(31, 31, 31, 0.8);">
-                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(139, 92, 246, 0.1);">✓ Corte incluso</li>
-                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(139, 92, 246, 0.1);">✓ 10% off em produtos</li>
-                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(139, 92, 246, 0.1);">✓ Agendamento prioritário</li>
+                        {% for item in beneficios %}
+                            <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(139, 92, 246, 0.1);">✓ {{ item }}</li>
+                        {% endfor %}
                     </ul>
+                    {% endif %}
+                    
+                    <a href="{{ url_for('login', slug=barbearia.slug) }}" 
+                        style="display: block; margin-top: 1.5rem; padding: 0.8rem; background: var(--cor-primaria); color: #fff; text-decoration: none; border-radius: 10px; font-weight: 700;">
+                        Assinar Agora
+                    </a>
                 </div>
-
-                <!-- Plano Premium -->
-                <div style="background: var(--cor-primaria); padding: 2.5rem; border-radius: 20px; border: 2px solid var(--cor-secundaria); text-align: center; position: relative; transform: scale(1.05); box-shadow: 0 8px 24px rgba(139, 92, 246, 0.3);">
-                    <div style="position: absolute; top: -15px; left: 50%; transform: translateX(-50%); background: #ffffff; color: var(--cor-primaria); padding: 0.5rem 1.5rem; border-radius: 50px; font-weight: 700; font-size: 0.9rem;">MAIS POPULAR</div>
-                    <h3 style="font-size: 1.5rem; font-weight: 700; color: #ffffff; margin-bottom: 1rem;">Plano Premium</h3>
-                    <div style="font-size: 3rem; font-weight: 800; color: #ffffff; margin: 1rem 0;">R$ 149,90</div>
-                    <div style="color: rgba(255, 255, 255, 0.8); margin-bottom: 1.5rem;">por mês</div>
-                    <div style="background: rgba(255, 255, 255, 0.2); padding: 0.8rem; border-radius: 10px; margin-bottom: 1.5rem; font-weight: 600; color: #ffffff;">
-                        4 atendimentos/mês
-                    </div>
-                    <ul style="list-style: none; padding: 0; text-align: left; color: rgba(255, 255, 255, 0.95);">
-                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.2);">✓ Corte + Barba</li>
-                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.2);">✓ 20% off em produtos</li>
-                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.2);">✓ Agendamento VIP</li>
-                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(255, 255, 255, 0.2);">✓ Toalha quente</li>
-                    </ul>
-                </div>
-
-                <!-- Plano Black -->
-                <div style="background: #ffffff; padding: 2.5rem; border-radius: 20px; border: 2px solid rgba(139, 92, 246, 0.2); text-align: center; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.1);">
-                    <h3 style="font-size: 1.5rem; font-weight: 700; color: var(--cor-primaria); margin-bottom: 1rem;">Plano Black</h3>
-                    <div style="font-size: 3rem; font-weight: 800; color: var(--cor-texto); margin: 1rem 0;">R$ 249,90</div>
-                    <div style="color: rgba(31, 31, 31, 0.6); margin-bottom: 1.5rem;">por mês</div>
-                    <div style="background: rgba(139, 92, 246, 0.1); padding: 0.8rem; border-radius: 10px; margin-bottom: 1.5rem; font-weight: 600; color: var(--cor-texto);">
-                        8 atendimentos/mês
-                    </div>
-                    <ul style="list-style: none; padding: 0; text-align: left; color: rgba(31, 31, 31, 0.8);">
-                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(139, 92, 246, 0.1);">✓ Serviços ilimitados</li>
-                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(139, 92, 246, 0.1);">✓ 30% off em produtos</li>
-                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(139, 92, 246, 0.1);">✓ Prioridade Black</li>
-                        <li style="padding: 0.5rem 0; border-bottom: 1px solid rgba(139, 92, 246, 0.1);">✓ Eventos exclusivos</li>
-                    </ul>
-                </div>
+                {% endfor %}
             </div>
 
             <div style="text-align: center; margin-top: 3rem;">
                 <a href="{{ url_for('login', slug=barbearia.slug) }}" 
-                   style="display: inline-flex; align-items: center; gap: 0.5rem; font-size: 1rem; font-weight: 600; padding: 1rem 2rem; border-radius: 50px; text-decoration: none; background: var(--cor-primaria); color: #ffffff; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);">
+                   class="btn-primario"
+                   style="display: inline-flex; align-items: center; gap: 0.5rem; font-size: 1rem; font-weight: 600; padding: 1rem 2rem; border-radius: 50px; text-decoration: none; background: var(--cor-primaria); color: #ffffff; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3); transition: all 0.3s;">
                     Ver todos os planos →
                 </a>
             </div>
         </div>
     </section>
+    {% endif %}
 
     <!-- CTA Final -->
     <section style="padding: 5rem 2rem; background: linear-gradient(135deg, var(--cor-primaria) 0%, var(--cor-secundaria) 100%);">
@@ -505,7 +596,8 @@
                 Reserve seu horário online de forma rápida e prática. Estamos prontos para te atender!
             </p>
             <a href="{{ url_for('cadastro', slug=barbearia.slug) }}" 
-               style="display: inline-flex; align-items: center; gap: 0.5rem; font-size: 1.1rem; font-weight: 700; padding: 1.2rem 3rem; border-radius: 50px; text-decoration: none; background: #ffffff; color: var(--cor-primaria); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);">
+               class="btn-primario"
+               style="display: inline-flex; align-items: center; gap: 0.5rem; font-size: 1.1rem; font-weight: 700; padding: 1.2rem 3rem; border-radius: 50px; text-decoration: none; background: #ffffff !important; color: var(--cor-primaria) !important; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2); transition: all 0.3s;">
                 Fazer agendamento →
             </a>
         </div>
@@ -545,13 +637,13 @@
                     <h4 style="color: var(--cor-primaria); font-size: 1rem; font-weight: 700; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Links</h4>
                     <ul style="list-style: none; padding: 0;">
                         <li style="margin-bottom: 0.8rem;">
-                            <a href="/barberia" style="color: rgba(31, 31, 31, 0.7); text-decoration: none;">Início</a>
+                            <a href="{{ url_for('barbearia_publica', slug=barbearia.slug) }}" class="footer-link" style="color: rgba(31, 31, 31, 0.7); text-decoration: none; transition: all 0.3s;">Início</a>
                         </li>
                         <li style="margin-bottom: 0.8rem;">
-                            <a href="{{ url_for('login', slug=barbearia.slug) }}" style="color: rgba(31, 31, 31, 0.7); text-decoration: none;">Login</a>
+                            <a href="{{ url_for('login', slug=barbearia.slug) }}" class="footer-link" style="color: rgba(31, 31, 31, 0.7); text-decoration: none; transition: all 0.3s;">Login</a>
                         </li>
                         <li style="margin-bottom: 0.8rem;">
-                            <a href="{{ url_for('cadastro', slug=barbearia.slug) }}" style="color: rgba(31, 31, 31, 0.7); text-decoration: none;">Cadastro</a>
+                            <a href="{{ url_for('cadastro', slug=barbearia.slug) }}" class="footer-link" style="color: rgba(31, 31, 31, 0.7); text-decoration: none; transition: all 0.3s;">Cadastro</a>
                         </li>
                     </ul>
                 </div>
@@ -570,9 +662,8 @@
                 <div>
                     <h4 style="color: var(--cor-primaria); font-size: 1rem; font-weight: 700; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Social</h4>
                     <div style="display: flex; gap: 1rem;">
-                        <a href="#" style="width: 40px; height: 40px; background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.2rem;">📘</a>
-                        <a href="#" style="width: 40px; height: 40px; background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.2rem;">📷</a>
-                        <a href="#" style="width: 40px; height: 40px; background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.2rem;">💬</a>
+                        <a href="https://www.instagram.com/leocortss._?igsh=MTh2eHE2ZjkzOWh0YQ==" style="width: 40px; height: 40px; background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.2rem;">📷</a>
+                        <a href="https://wa.me/11950819752?text=Ola,+Gostaria de agendar um horário!" style="width: 40px; height: 40px; background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.2rem;">💬</a>
                     </div>
                 </div>
             </div>

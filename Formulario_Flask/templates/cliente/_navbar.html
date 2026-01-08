@@ -112,7 +112,9 @@
                     <a href="{{ url_for('servicos', b=request.args.get('b', '')) }}" class="btn-secondary">⚙️ SERVIÇOS</a>
                 {% endif %}
             {% else %}
+                {% if tem_planos_sistema %}
                 <a href="{{ url_for('planos_mensais', slug=barbearia.slug if barbearia else get_current_barbearia_slug()) }}" class="btn-secondary">💎 PLANOS</a>
+                {% endif %}
             {% endif %}
             {% if extra_nav_html is defined and extra_nav_html %}
                 {{ extra_nav_html|safe }}
@@ -131,7 +133,9 @@
                         <a href="{{ url_for('servicos', b=request.args.get('b', '')) }}" style="padding: 0.85rem 1rem; background: rgba(139, 92, 246, 0.06); color: #1f2937; text-decoration: none; border-radius: 8px;">⚙️ SERVIÇOS</a>
                     {% endif %}
                 {% else %}
+                    {% if tem_planos_sistema %}
                     <a href="{{ url_for('planos_mensais', slug=barbearia.slug if barbearia else get_current_barbearia_slug()) }}" style="padding: 0.85rem 1rem; background: rgba(139, 92, 246, 0.06); color: #1f2937; text-decoration: none; border-radius: 8px;">💎 PLANOS</a>
+                    {% endif %}
                 {% endif %}
                 {% if extra_nav_html is defined and extra_nav_html %}
                     {{ extra_nav_html|safe }}

@@ -64,6 +64,11 @@ db.sqlite3-journal
 # Flask stuff:
 instance/
 .webassets-cache
+meubanco.db
+*.db
+logs/
+.env
+.flaskenv
 
 # Scrapy stuff:
 .scrapy

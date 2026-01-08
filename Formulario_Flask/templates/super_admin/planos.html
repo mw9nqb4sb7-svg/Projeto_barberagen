@@ -324,9 +324,9 @@
 
                 <div class="plano-actions">
                     <a href="{{ url_for('super_admin_editar_plano', plano_uuid=plano.uuid) }}" class="btn btn-small btn-edit">✏️ Editar</a>
-                    <form method="POST" action="{{ url_for('super_admin_excluir_plano', plano_uuid=plano.uuid) }}" style="flex: 1;" onsubmit="return confirm('Deseja realmente desativar este plano?')">
+                    <form method="POST" action="{{ url_for('super_admin_excluir_plano', plano_uuid=plano.uuid) }}" style="flex: 1;" onsubmit="return confirm('ATENÇÃO: Deseja realmente EXCLUIR permanentemente este plano? Esta ação não pode ser desfeita!')">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                        <button type="submit" class="btn btn-small btn-delete" style="width: 100%;">🗑️ Desativar</button>
+                        <button type="submit" class="btn btn-small btn-delete" style="width: 100%;">🗑️ Excluir</button>
                     </form>
                 </div>
             </div>

@@ -22,9 +22,9 @@
         <div class="sidebar-brand">
             {% set nome_parts = barbearia.nome.split() %}
             {% if nome_parts|length >= 2 %}
-                <span style="color: #ffffff;">{{ nome_parts[0] }} {{ nome_parts[1] }}</span><span style="color: #4a9eff;">{{ ' '.join(nome_parts[2:]) if nome_parts|length > 2 else '' }}</span>
+                <span style="color: #1e293b;">{{ nome_parts[0] }} {{ nome_parts[1] }}</span><span style="color: #4a9eff;">{{ ' '.join(nome_parts[2:]) if nome_parts|length > 2 else '' }}</span>
             {% else %}
-                <span style="color: #ffffff;">{{ barbearia.nome }}</span>
+                <span style="color: #1e293b;">{{ barbearia.nome }}</span>
             {% endif %}
         </div>
         <button id="sidebarClose" class="sidebar-close" onclick="closeSidebar()">✕</button>
@@ -157,7 +157,7 @@
         left: 0;
         width: 320px;
         height: 100vh;
-        background: linear-gradient(180deg, rgba(0, 0, 0, 0.98) 0%, rgba(13, 13, 13, 0.98) 100%);
+        background: #000;
         border-right: 3px solid #4a9eff;
         box-shadow: 4px 0 30px rgba(0, 0, 0, 0.5);
         z-index: 1000;
@@ -172,13 +172,13 @@
 
     .sidebar-header {
         padding: 2rem 1.5rem;
-        border-bottom: 1px solid rgba(74, 158, 255, 0.2);
+        border-bottom: 1px solid rgba(74, 158, 255, 0.1);
         display: flex;
         justify-content: space-between;
         align-items: center;
         position: sticky;
         top: 0;
-        background: rgba(0, 0, 0, 0.95);
+        background: #000;
         z-index: 10;
     }
 
@@ -186,11 +186,12 @@
         font-size: 1.3rem;
         font-weight: 700;
         letter-spacing: -0.5px;
+        color: #fff;
     }
 
     .sidebar-close {
-        background: rgba(255, 59, 48, 0.1);
-        border: 1px solid rgba(255, 59, 48, 0.3);
+        background: rgba(255, 59, 48, 0.05);
+        border: 1px solid rgba(255, 59, 48, 0.2);
         color: #ff3b30;
         width: 35px;
         height: 35px;
@@ -208,7 +209,7 @@
     }
 
     .sidebar-close:hover {
-        background: rgba(255, 59, 48, 0.2);
+        background: rgba(255, 59, 48, 0.1);
         transform: rotate(90deg);
     }
 
@@ -220,7 +221,7 @@
         display: flex;
         align-items: center;
         padding: 1rem 1.5rem;
-        color: rgba(255, 255, 255, 0.7);
+        color: #64748b;
         text-decoration: none;
         transition: all 0.3s ease;
         border-left: 3px solid transparent;
@@ -228,14 +229,14 @@
     }
 
     .sidebar-item:hover {
-        background: rgba(74, 158, 255, 0.1);
-        color: #ffffff;
+        background: rgba(74, 158, 255, 0.05);
+        color: #4a9eff;
         border-left-color: #4a9eff;
         padding-left: 2rem;
     }
 
     .sidebar-item.active {
-        background: rgba(74, 158, 255, 0.15);
+        background: rgba(74, 158, 255, 0.1);
         color: #4a9eff;
         border-left-color: #4a9eff;
         font-weight: 600;
@@ -460,9 +461,10 @@
         max-width: calc(100vw - 40px);
         max-height: 400px;
         overflow-y: auto;
-        background: white;
+        background: #0a0a0a;
         border-radius: 15px;
-        box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+        border: 1px solid rgba(74, 158, 255, 0.3);
         z-index: 1000;
         padding: 20px;
         animation: slideIn 0.3s ease;
@@ -490,11 +492,12 @@
         margin-bottom: 15px;
         transition: all 0.3s ease;
         overflow: hidden;
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3);
     }
     
     .agendamento-card:hover {
         transform: translateY(-4px);
-        box-shadow: 0 8px 24px rgba(74, 158, 255, 0.2);
+        box-shadow: 0 10px 20px rgba(74, 158, 255, 0.2);
         border-color: #4a9eff;
         background: rgba(255, 255, 255, 0.05);
     }
@@ -701,7 +704,7 @@
     
     .card-cliente-nome {
         font-weight: 700;
-        color: #fff;
+        color: #1e293b;
         font-size: 1.15rem;
         margin-bottom: 0.25rem;
         letter-spacing: -0.3px;
@@ -741,7 +744,7 @@
     }
     
     .card-info-text {
-        color: rgba(255, 255, 255, 0.7);
+        color: #64748b;
     }
     
     .card-right-section {
@@ -765,7 +768,7 @@
     }
     
     .card-duracao {
-        color: rgba(255, 255, 255, 0.5);
+        color: #64748b;
         font-size: 0.85rem;
         margin-top: 0.25rem;
         font-weight: 600;
@@ -1136,7 +1139,12 @@
 <!-- Agendamentos -->
 <div style="background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(74, 158, 255, 0.2); border-radius: 16px; padding: 2rem; margin-bottom: 2rem; max-width: 1400px; margin-left: auto; margin-right: auto;">
     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
-        <h2 style="margin: 0; color: #4a9eff; font-size: 1.8rem; font-weight: 700; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.5px;">📋 Agendamentos</h2>
+        <div>
+            <h2 style="margin: 0; color: #4a9eff; font-size: 1.8rem; font-weight: 700; font-family: 'Plus Jakarta Sans', sans-serif; letter-spacing: -0.5px;">📋 Painel de Visualização Rápida!</h2>
+            <p style="margin: 5px 0 0; color: rgba(255, 255, 255, 0.6); font-size: 0.9rem;">
+                Caso deseje visualizar de forma completa <a href="{{ url_for('admin_agendamentos_slug', slug=barbearia.slug) }}" style="color: #4a9eff; text-decoration: none; font-weight: 700; border-bottom: 1px dashed #4a9eff;">acesse aqui ➔</a>
+            </p>
+        </div>
         <span id="dataHoje" style="color: rgba(255, 255, 255, 0.6); font-size: 0.95rem; font-family: 'Plus Jakarta Sans', sans-serif;"></span>
     </div>
     
@@ -1230,6 +1238,8 @@
 </div>
 
 <script>
+const barbearia_nome = "{{ barbearia.nome }}";
+
 // Menu Mobile Toggle
 function toggleMobileMenu() {
     const mobileMenu = document.getElementById('mobileMenu');
@@ -1652,6 +1662,12 @@ function renderizarAgendamentos(agendamentos) {
                         
                         ${r.status !== 'concluida' || r.status !== 'cancelada' ? `
                         <div class="card-actions">
+                            ${(r.status === 'agendada' || r.status === 'confirmada') && r.cliente_telefone && r.cliente_telefone !== 'Não informado' ? `
+                            <a href="https://wa.me/${r.cliente_telefone.replace(/\D/g, '')}?text=${encodeURIComponent(`Olá ${r.cliente_nome}! Aqui é da ${barbearia_nome}. Confirmamos seu horário para o dia ${dataFormatada} às ${r.hora_inicio}. Podemos confirmar sua presença?`)}" 
+                               target="_blank" class="card-action-btn btn-whatsapp" title="Enviar WhatsApp">
+                                💬 WhatsApp
+                            </a>
+                            ` : ''}
                             ${r.status !== 'concluida' ? `
                             <button class="card-action-btn btn-concluir" 
                                     onclick="concluirAtendimentoDashboard('${r.uuid}', '${r.cliente_nome}')">
@@ -1673,66 +1689,27 @@ function renderizarAgendamentos(agendamentos) {
     }).join('');
 }
 
-// Carregar todos os agendamentos
+// Carregar todos os agendamentos (histórico completo)
 async function carregarTodosAgendamentos() {
     try {
-        console.log('🔄 Carregando agendamentos...');
+        console.log('🔄 Carregando histórico completo de agendamentos...');
         const response = await fetch('{{ url_for("api_agendamentos_todos", slug=barbearia.slug) }}');
         
-        console.log('📡 Response status:', response.status);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
         
         const agendamentos = await response.json();
-        console.log('📥 Agendamentos recebidos:', agendamentos.length);
         
         // Verificar se é um array válido
         if (!Array.isArray(agendamentos)) {
-            console.error('❌ Resposta não é um array:', agendamentos);
             throw new Error('Resposta inválida da API');
         }
         
-        console.log('📊 UUIDs atuais no servidor:', agendamentos.map(a => a.uuid));
-        console.log('💾 UUIDs já vistos:', Array.from(idsAgendamentosVistos));
-        
-        // Detectar novos agendamentos após primeira carga
-        if (!primeiraVerificacao) {
-            console.log('🔍 Verificando novos agendamentos...');
-            let novosDetectados = 0;
-            
-            agendamentos.forEach(agendamento => {
-                const uuid = agendamento.uuid;
-                const jaVisto = idsAgendamentosVistos.has(uuid);
-                console.log(`  UUID ${uuid} - ${agendamento.cliente_nome}: ${jaVisto ? '✅ já visto' : '🆕 NOVO!'}`);
-                
-                if (!jaVisto) {
-                    // Novo agendamento detectado!
-                    novosDetectados++;
-                    console.log('🎉 NOVO AGENDAMENTO DETECTADO:', agendamento);
-                    const mensagem = `🎉 Novo agendamento: ${agendamento.cliente_nome} às ${agendamento.hora_inicio}`;
-                    console.log('📢 Chamando addNotification com:', mensagem);
-                    addNotification(mensagem, 'success');
-                    idsAgendamentosVistos.add(uuid);
-                    
-                    // Tocar som de notificação usando Web Audio API
-                    tocarSomNotificacao();
-                }
-            });
-            
-            console.log(`✅ Verificação completa: ${novosDetectados} novo(s) agendamento(s)`);
-        } else {
-            // Primeira carga - apenas marcar os UUIDs existentes
-            console.log('📋 Primeira carga - marcando', agendamentos.length, 'agendamentos existentes');
-            agendamentos.forEach(agendamento => {
-                idsAgendamentosVistos.add(agendamento.uuid);
-            });
+        // Marcar todos como vistos na primeira carga completa
+        if (primeiraVerificacao) {
+            agendamentos.forEach(a => idsAgendamentosVistos.add(a.uuid));
             primeiraVerificacao = false;
-            console.log('✅ IDs iniciais marcados:', Array.from(idsAgendamentosVistos));
         }
         
-        // Atualizar array global e aplicar filtros
         todosAgendamentos = agendamentos;
         
         // Se não houver agendamentos, mostrar mensagem amigável
@@ -1752,17 +1729,49 @@ async function carregarTodosAgendamentos() {
         }
         
     } catch (error) {
-        console.error('❌ Erro ao carregar todos agendamentos:', error);
-        const container = document.getElementById('agendamentosTodos');
-        if (container) {
-            container.innerHTML = `
-                <div style="text-align: center; padding: 40px; color: #ef4444;">
-                    <div style="font-size: 3em; margin-bottom: 10px;">⚠️</div>
-                    <p>Erro ao carregar agendamentos</p>
-                    <p style="font-size: 0.9em; color: #94a3b8; margin-top: 10px;">${error.message}</p>
-                </div>
-            `;
+        console.error('❌ Erro ao carregar histórico:', error);
+    }
+}
+
+// Sincronizar apenas novos e ativos (Otimizado para economia de recursos)
+async function sincronizarAgendamentosOtimizado() {
+    try {
+        // Busca apenas agendada, confirmada + o que foi concluído HOJE
+        const response = await fetch('{{ url_for("api_agendamentos_todos", slug=barbearia.slug) }}?status=ativos');
+        if (!response.ok) return;
+        
+        const ativos = await response.json();
+        let mudancaDetectada = false;
+        
+        ativos.forEach(agendamento => {
+            const index = todosAgendamentos.findIndex(a => a.uuid === agendamento.uuid);
+            
+            if (index !== -1) {
+                // Se o status ou dados mudaram, atualiza na lista local
+                if (JSON.stringify(todosAgendamentos[index]) !== JSON.stringify(agendamento)) {
+                    todosAgendamentos[index] = agendamento;
+                    mudancaDetectada = true;
+                    console.log(`📝 Atualizado: ${agendamento.cliente_nome}`);
+                }
+            } else {
+                // NOVO agendamento detectado (não existia no histórico local)
+                todosAgendamentos.unshift(agendamento);
+                idsAgendamentosVistos.add(agendamento.uuid);
+                mudancaDetectada = true;
+                
+                // Notificar novo agendamento
+                const mensagem = `🎉 Novo agendamento: ${agendamento.cliente_nome} às ${agendamento.hora_inicio}`;
+                addNotification(mensagem, 'success');
+                tocarSomNotificacao();
+                console.log(`🎉 Novo: ${agendamento.cliente_nome}`);
+            }
+        });
+        
+        if (mudancaDetectada) {
+            aplicarFiltros();
         }
+    } catch (error) {
+        console.error('Erro na sincronização otimizada:', error);
     }
 }
 
@@ -1884,16 +1893,16 @@ function criarGraficoSemana() {
 // Inicializar
 document.addEventListener('DOMContentLoaded', () => {
     carregarAgendamentosHoje();
-    carregarTodosAgendamentos(); // Carregar todos os agendamentos na inicialização
+    carregarTodosAgendamentos(); // Carrega o histórico completo apenas na abertura
     criarGraficoSemana();
     
     // Notificação de boas-vindas removida para evitar mensagens automáticas no login
     
-    // Recarregar a cada 10 segundos para notificações em tempo real
+    // Ciclo de sincronização em tempo real (Otimizado)
     setInterval(() => {
-        carregarAgendamentosHoje();
-        carregarTodosAgendamentos();
-    }, 5000); // Reduzido para 5 segundos para detecção mais rápida
+        carregarAgendamentosHoje(); // Mantém o faturamento atualizado
+        sincronizarAgendamentosOtimizado(); // Sincroniza apenas novos/ativos
+    }, 5000); 
 });
 
 // Função para cancelar agendamento

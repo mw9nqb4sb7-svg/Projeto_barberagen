@@ -59,7 +59,7 @@
         }
         
         .nav-link {
-            color: #fff;
+            color: #1e293b;
             text-decoration: none;
             padding: 0.7rem 1.5rem;
             border-radius: 8px;
@@ -298,6 +298,7 @@
             border: 1px solid rgba(74, 158, 255, 0.2);
             border-radius: 16px;
             padding: 1.5rem;
+        }
             margin-bottom: 2rem;
             animation: slideDown 0.3s ease;
         }
@@ -1014,6 +1015,9 @@
                     </div>
                 </div>
                 <div class="header-actions">
+                    <a href="{{ url_for('dashboard', slug=barbearia.slug) }}" class="btn-action" style="background: rgba(139, 92, 246, 0.2); color: #fff; text-decoration: none; border: 1px solid #8b5cf6;">
+                        🏠 Voltar ao Painel
+                    </a>
                     <button class="btn-action btn-search" onclick="toggleSearch()">
                         🔍 Buscar
                     </button>
@@ -1027,12 +1031,13 @@
             </div>
             
             <!-- Search Bar (oculto por padrão) -->
-            <div class="search-container" id="searchContainer" style="display: none;">
+            <div class="search-container" id="searchContainer" style="{% if search_term %}display: block;{% else %}display: none;{% endif %}">
                 <input type="text" 
                        class="search-input" 
                        id="buscaCliente" 
-                       placeholder="Buscar por nome do cliente..."
-                       onkeyup="filtrarAgendamentos()">
+                       placeholder="Buscar por nome do cliente e pressione Enter..."
+                       value="{{ search_term or '' }}"
+                       onkeyup="filtrarAgendamentos(event)">
             </div>
         </div>
         
@@ -1062,29 +1067,29 @@
         </div>
         
         <!-- Filtros Modernos (ocultos por padrão) -->
-        <div class="filter-section" id="filterSection" style="display: none;">
+        <div class="filter-section" id="filterSection" style="{% if filtro_periodo or status_filtro != 'todos' %}display: block;{% else %}display: none;{% endif %}">
             <div class="filter-chips">
-                <a href="{{ url_for('admin_agendamentos_slug', slug=barbearia.slug, filtro='hoje') }}" 
+                <a href="{{ url_for('admin_agendamentos_slug', slug=barbearia.slug, filtro='hoje', status=status_filtro, search=search_term) }}" 
                    class="filter-chip {{ 'active' if filtro_periodo == 'hoje' else '' }}">
                     📅 Hoje
                 </a>
-                <a href="{{ url_for('admin_agendamentos_slug', slug=barbearia.slug, filtro='amanha') }}" 
+                <a href="{{ url_for('admin_agendamentos_slug', slug=barbearia.slug, filtro='amanha', status=status_filtro, search=search_term) }}" 
                    class="filter-chip {{ 'active' if filtro_periodo == 'amanha' else '' }}">
                     🔔 Amanhã
                 </a>
-                <a href="{{ url_for('admin_agendamentos_slug', slug=barbearia.slug, filtro='semana') }}" 
+                <a href="{{ url_for('admin_agendamentos_slug', slug=barbearia.slug, filtro='semana', status=status_filtro, search=search_term) }}" 
                    class="filter-chip {{ 'active' if filtro_periodo == 'semana' else '' }}">
                     📆 Esta Semana
                 </a>
-                <a href="{{ url_for('admin_agendamentos_slug', slug=barbearia.slug, filtro='mes') }}" 
+                <a href="{{ url_for('admin_agendamentos_slug', slug=barbearia.slug, filtro='mes', status=status_filtro, search=search_term) }}" 
                    class="filter-chip {{ 'active' if filtro_periodo == 'mes' else '' }}">
                     📊 Este Mês
                 </a>
-                <a href="{{ url_for('admin_agendamentos_slug', slug=barbearia.slug) }}" 
+                <a href="{{ url_for('admin_agendamentos_slug', slug=barbearia.slug, status=status_filtro, search=search_term) }}" 
                    class="filter-chip {{ 'active' if not filtro_periodo else '' }}">
                     🌍 Todos
                 </a>
-                <a href="{{ url_for('admin_agendamentos_slug', slug=barbearia.slug, status='concluidos') }}" 
+                <a href="{{ url_for('admin_agendamentos_slug', slug=barbearia.slug, status='concluidos', filtro=filtro_periodo, search=search_term) }}" 
                    class="filter-chip {{ 'active' if status_filtro == 'concluidos' else '' }}">
                     ✅ Concluídos
                 </a>
@@ -1092,12 +1097,13 @@
             
             <div class="filter-dropdown-row">
                 <select class="filter-select" id="filtroStatus" onchange="filtrarPorStatus()">
-                    <option value="">Todos os Status</option>
-                    <option value="agendada">📅 Agendada</option>
-                    <option value="confirmada">✅ Confirmada</option>
-                    <option value="atendendo">✂️ Atendendo</option>
-                    <option value="concluida">✅ Concluída</option>
-                    <option value="cancelada">❌ Cancelada</option>
+                    <option value="todos" {% if status_filtro == 'todos' %}selected{% endif %}>Todos os Status</option>
+                    <option value="ativos" {% if status_filtro == 'ativos' %}selected{% endif %}>🔥 Somente Ativos</option>
+                    <option value="agendada" {% if status_filtro == 'agendada' %}selected{% endif %}>📅 Agendada</option>
+                    <option value="confirmada" {% if status_filtro == 'confirmada' %}selected{% endif %}>✅ Confirmada</option>
+                    <option value="atendendo" {% if status_filtro == 'atendendo' %}selected{% endif %}>✂️ Atendendo</option>
+                    <option value="concluida" {% if status_filtro == 'concluida' %}selected{% endif %}>✅ Concluída</option>
+                    <option value="cancelada" {% if status_filtro == 'cancelada' %}selected{% endif %}>❌ Cancelada</option>
                 </select>
             </div>
         </div>
@@ -1419,7 +1425,7 @@
             const isHidden = searchContainer.style.display === 'none';
             searchContainer.style.display = isHidden ? 'block' : 'none';
             if (isHidden) {
-                document.getElementById('searchInput').focus();
+                document.getElementById('buscaCliente').focus();
             }
         }
         
@@ -1431,32 +1437,45 @@
         
         // Limpar filtros
         function limparFiltros() {
-            document.getElementById('searchInput').value = '';
-            const urlBase = '{{ url_for("admin_agendamentos", slug=g.tenant.slug) }}';
+            const urlBase = '{{ url_for("admin_agendamentos_slug", slug=barbearia.slug) }}';
             window.location.href = urlBase;
         }
         
         // Filtrar por status
         function filtrarPorStatus() {
-            const status = document.getElementById('statusFilter').value;
-            const urlBase = '{{ url_for("admin_agendamentos", slug=g.tenant.slug) }}';
-            if (status) {
-                window.location.href = `${urlBase}?status=${status}`;
-            } else {
-                window.location.href = urlBase;
-            }
+            const status = document.getElementById('filtroStatus').value;
+            const urlBase = '{{ url_for("admin_agendamentos_slug", slug=barbearia.slug) }}';
+            
+            // Manter filtros existentes
+            const urlParams = new URLSearchParams(window.location.search);
+            const filtroPeriodo = urlParams.get('filtro');
+            const searchTerm = urlParams.get('search');
+            
+            let url = `${urlBase}?status=${status}`;
+            if (filtroPeriodo) url += `&filtro=${filtroPeriodo}`;
+            if (searchTerm) url += `&search=${encodeURIComponent(searchTerm)}`;
+            
+            window.location.href = url;
         }
         
         // Buscar agendamentos
-        function filtrarAgendamentos(event) {
-            event.preventDefault();
-            const searchTerm = document.getElementById('searchInput').value;
-            const urlBase = '{{ url_for("admin_agendamentos", slug=g.tenant.slug) }}';
-            if (searchTerm) {
-                window.location.href = `${urlBase}?search=${encodeURIComponent(searchTerm)}`;
-            } else {
-                window.location.href = urlBase;
-            }
+        function filtrarAgendamentos(e) {
+            // Se for chamado por onkeyup, só filtrar se for Enter
+            if (e && e.type === 'keyup' && e.key !== 'Enter') return;
+            
+            const searchTerm = document.getElementById('buscaCliente').value;
+            const urlBase = '{{ url_for("admin_agendamentos_slug", slug=barbearia.slug) }}';
+            
+            // Manter filtros existentes
+            const urlParams = new URLSearchParams(window.location.search);
+            const status = urlParams.get('status');
+            const filtroPeriodo = urlParams.get('filtro');
+            
+            let url = `${urlBase}?search=${encodeURIComponent(searchTerm)}`;
+            if (status) url += `&status=${status}`;
+            if (filtroPeriodo) url += `&filtro=${filtroPeriodo}`;
+            
+            window.location.href = url;
         }
     </script>
 </body>

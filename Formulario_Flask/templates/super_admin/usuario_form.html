@@ -1,0 +1,316 @@
+{% extends "base.html" %}
+{% block title %}Super Admin - Novo Usuário{% endblock %}
+{% block extra_head %}
+<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}?v=1.0">
+{% endblock %}
+
+{% block content %}
+<div class="super-admin-form">
+    <!-- Header -->
+    <div class="page-header">
+        <div class="header-info">
+            <div class="super-badge">
+                <span class="badge-icon">⚡</span>
+                <span class="badge-text">SUPER ADMIN</span>
+            </div>
+            <h1>➕ Novo Usuário</h1>
+            <p>Crie um novo usuário e defina seu nível de acesso</p>
+        </div>
+        
+        <div class="header-actions">
+            <a href="{{ url_for('super_admin_usuarios') }}" class="action-btn btn-back">
+                <span class="btn-icon">← </span>
+                Voltar
+            </a>
+        </div>
+    </div>
+
+    <!-- Formulário -->
+    <div class="form-container">
+        <form method="POST" class="usuario-form">
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+            <div class="form-grid">
+                <!-- Nome -->
+                <div class="form-group full-width">
+                    <label for="nome" class="form-label">
+                        <span class="label-icon">👤</span>
+                        Nome Completo *
+                    </label>
+                    <input type="text" id="nome" name="nome" 
+                           class="form-input" 
+                           placeholder="Ex: João Silva" 
+                           required>
+                </div>
+
+                <!-- Nome de Usuário -->
+                <div class="form-group">
+                    <label for="username" class="form-label">
+                        <span class="label-icon">🆔</span>
+                        Nome de Usuário *
+                    </label>
+                    <input type="text" id="username" name="username" 
+                           class="form-input" 
+                           placeholder="Ex: joaosilva" 
+                           required>
+                </div>
+
+                <!-- Email (Opcional) -->
+                <div class="form-group">
+                    <label for="email" class="form-label">
+                        <span class="label-icon">📧</span>
+                        E-mail (Opcional)
+                    </label>
+                    <input type="email" id="email" name="email" 
+                           class="form-input" 
+                           placeholder="joao@email.com">
+                </div>
+
+                <!-- Telefone -->
+                <div class="form-group">
+                    <label for="telefone" class="form-label">
+                        <span class="label-icon">📞</span>
+                        Telefone
+                    </label>
+                    <input type="tel" id="telefone" name="telefone" 
+                           class="form-input" 
+                           placeholder="(11) 99999-9999">
+                </div>
+
+                <!-- Tipo de Conta -->
+                <div class="form-group">
+                    <label for="tipo_conta" class="form-label">
+                        <span class="label-icon">🛡️</span>
+                        Tipo de Conta *
+                    </label>
+                    <select id="tipo_conta" name="tipo_conta" class="form-input" required onchange="toggleBarbeariaSelect()">
+                        <option value="cliente">Cliente</option>
+                        <option value="barbeiro">Barbeiro</option>
+                        <option value="admin_barbearia">Admin de Barbearia</option>
+                    </select>
+                </div>
+
+                <!-- Barbearia (Opcional dependendo do tipo) -->
+                <div class="form-group" id="barbearia_group">
+                    <label for="barbearia_id" class="form-label">
+                        <span class="label-icon">🏢</span>
+                        Vincular à Barbearia
+                    </label>
+                    <select id="barbearia_id" name="barbearia_id" class="form-input">
+                        <option value="">-- Selecione uma barbearia --</option>
+                        {% for b in barbearias %}
+                        <option value="{{ b.id }}">{{ b.nome }}</option>
+                        {% endfor %}
+                    </select>
+                    <small class="form-help">Obrigatório para Barbeiros e Admins de Barbearia</small>
+                </div>
+
+                <!-- Senha -->
+                <div class="form-group">
+                    <label for="senha" class="form-label">
+                        <span class="label-icon">🔑</span>
+                        Senha *
+                    </label>
+                    <input type="password" id="senha" name="senha" 
+                           class="form-input" 
+                           required>
+                </div>
+
+                <!-- Confirmar Senha -->
+                <div class="form-group">
+                    <label for="confirmar_senha" class="form-label">
+                        <span class="label-icon">🔄</span>
+                        Confirmar Senha *
+                    </label>
+                    <input type="password" id="confirmar_senha" name="confirmar_senha" 
+                           class="form-input" 
+                           required>
+                </div>
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="submit-btn">
+                    <span class="btn-icon">💾</span>
+                    Criar Usuário
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function toggleBarbeariaSelect() {
+    const tipo = document.getElementById('tipo_conta').value;
+    const group = document.getElementById('barbearia_group');
+    const select = document.getElementById('barbearia_id');
+    
+    if (tipo === 'super_admin') {
+        group.style.display = 'none';
+        select.required = false;
+    } else {
+        group.style.display = 'block';
+        if (tipo === 'admin_barbearia' || tipo === 'barbeiro') {
+            select.required = true;
+        } else {
+            select.required = false;
+        }
+    }
+}
+
+// Inicializar
+document.addEventListener('DOMContentLoaded', toggleBarbeariaSelect);
+</script>
+
+<style>
+/* Estilos específicos para o formulário de super admin */
+.super-admin-form {
+    max-width: 1000px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+}
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding: 2rem;
+    background: rgba(139, 92, 246, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+}
+
+.super-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(139, 92, 246, 0.1);
+    padding: 0.4rem 1rem;
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    border-radius: 50px;
+    margin-bottom: 1rem;
+}
+
+.badge-text {
+    color: #a78bfa;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 1px;
+}
+
+.form-container {
+    background: #0b0f14;
+    padding: 2.5rem;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+}
+
+@media (max-width: 600px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .full-width {
+        grid-column: auto;
+    }
+
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1.5rem;
+    }
+
+    .form-container {
+        padding: 1.5rem;
+    }
+
+    .submit-btn {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+.full-width {
+    grid-column: span 2;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #e6eef8;
+    font-size: 0.95rem;
+}
+
+.form-input {
+    padding: 0.8rem 1rem;
+    background: #07101a;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-input:focus {
+    border-color: #8b5cf6;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+}
+
+.form-actions {
+    margin-top: 2.5rem;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.submit-btn {
+    background: #8b5cf6;
+    color: #fff;
+    padding: 1rem 2.5rem;
+    border: none;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.submit-btn:hover {
+    background: #7c3aed;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(139, 92, 246, 0.2);
+}
+
+.action-btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-back {
+    background: rgba(255, 255, 255, 0.05);
+    color: #e6eef8;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.btn-back:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+</style>
+{% endblock %}

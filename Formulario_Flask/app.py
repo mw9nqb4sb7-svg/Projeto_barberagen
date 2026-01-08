@@ -15,6 +15,7 @@ from datetime import datetime
 import requests
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
+from whitenoise import WhiteNoise
 
 # Importar módulo de segurança
 from security import (
@@ -32,6 +33,9 @@ DB_PATH = os.path.join(BASE_DIR, 'meubanco.db')
 
 # Cria app com template_folder apontando para templates principal
 app = Flask(__name__, template_folder=TEMPLATES_DIR, static_folder=STATIC_DIR)
+
+# Configuração WhiteNoise para arquivos estáticos em produção
+app.wsgi_app = WhiteNoise(app.wsgi_app, root=STATIC_DIR, prefix='static/')
 
 # Segurança: SECRET_KEY forte
 import secrets
@@ -54,7 +58,12 @@ app.jinja_loader = ChoiceLoader([
     app.jinja_loader
 ])
 
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DATABASE_URL', f'sqlite:///{DB_PATH}')
+# Configuração do Banco de Dados com suporte a PostgreSQL (Railway)
+database_url = os.environ.get('DATABASE_URL')
+if database_url and database_url.startswith('postgres://'):
+    database_url = database_url.replace('postgres://', 'postgresql://', 1)
+
+app.config['SQLALCHEMY_DATABASE_URI'] = database_url or f'sqlite:///{DB_PATH}'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Configuração de upload de imagens - ajustada para Railway
@@ -186,6 +195,9 @@ class Barbearia(db.Model):
     cor_secundaria = db.Column(db.String(10), nullable=True)
     cor_texto = db.Column(db.String(10), nullable=True)
     
+    # Segurança de Faturamento
+    senha_financeira = db.Column(db.String(200), nullable=True)  # Senha hashed para faturamento
+    
     # Cards de serviços personalizáveis
     card1_icone = db.Column(db.String(10), nullable=True)
     card1_titulo = db.Column(db.String(100), nullable=True)
@@ -202,6 +214,19 @@ class Barbearia(db.Model):
     card4_icone = db.Column(db.String(10), nullable=True)
     card4_titulo = db.Column(db.String(100), nullable=True)
     card4_descricao = db.Column(db.Text, nullable=True)
+    
+    # Seção de estatísticas personalizáveis
+    stat1_valor = db.Column(db.String(20), nullable=True)
+    stat1_label = db.Column(db.String(100), nullable=True)
+    
+    stat2_valor = db.Column(db.String(20), nullable=True)
+    stat2_label = db.Column(db.String(100), nullable=True)
+    
+    stat3_valor = db.Column(db.String(20), nullable=True)
+    stat3_label = db.Column(db.String(100), nullable=True)
+    
+    stat4_valor = db.Column(db.String(20), nullable=True)
+    stat4_label = db.Column(db.String(100), nullable=True)
     
     # Relacionamentos
     usuarios = db.relationship('UsuarioBarbearia', back_populates='barbearia', cascade="all, delete-orphan")
@@ -225,7 +250,8 @@ class Usuario(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     uuid = db.Column(db.String(36), unique=True, nullable=False, default=lambda: str(uuid.uuid4()))
     nome = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(100), unique=True, nullable=False)
+    apelido = db.Column(db.String(50), nullable=True)
+    email = db.Column(db.String(100), unique=True, nullable=True)
     username = db.Column(db.String(50), unique=True, nullable=True)  # Para admins
     senha = db.Column(db.String(200), nullable=False)
     # Campo telefone do usuário
@@ -239,6 +265,9 @@ class Usuario(db.Model):
     # Relacionamentos
     barbearias = db.relationship('UsuarioBarbearia', back_populates='usuario', cascade="all, delete-orphan")
     
+    def set_senha(self, senha_plana):
+        self.senha = generate_password_hash(senha_plana)
+        
     def __repr__(self):
         return f'<Usuario {self.nome}>'
 
@@ -646,6 +675,18 @@ def enviar_email_reset(destino, assunto, corpo_html, corpo_texto=None):
     except Exception as e:
         print('[EMAIL-TEST] Erro ao preparar email:', e)
 
+@app.template_filter('format_phone')
+def format_phone(value):
+    if not value:
+        return ""
+    # Remove caracteres não numéricos
+    digits = "".join(filter(str.isdigit, str(value)))
+    if len(digits) == 11:
+        return f"({digits[:2]}) {digits[2:7]}-{digits[7:]}"
+    elif len(digits) == 10:
+        return f"({digits[:2]}) {digits[2:6]}-{digits[6:]}"
+    return value
+
 # ---------- ROTAS ----------
 
 # ============= ÁREA ADMINISTRATIVA (SUPER ADMIN) =============
@@ -694,6 +735,20 @@ def admin_index():
     return render_template('barbearias_lista.html', barbearias=barbearias)
 
 # ============= REDIRECIONAMENTOS LEGADOS =============
+@app.context_processor
+def inject_planos_navbar():
+    """Injeta a variável tem_planos em todos os templates para controle da navbar"""
+    def check_planos():
+        try:
+            from tenant import get_current_barbearia_id
+            b_id = get_current_barbearia_id()
+            if b_id:
+                return PlanoMensal.query.filter_by(barbearia_id=b_id, ativo=True).count() > 0
+            return False
+        except:
+            return False
+    return dict(tem_planos_sistema=check_planos())
+
 @app.route('/nova_reserva')
 def nova_reserva_redirect():
     """Redireciona /nova_reserva para barbearia principal"""
@@ -728,15 +783,28 @@ def barbearia_publica(slug):
     # Define contexto da barbearia
     session['barbearia_id'] = barbearia.id
     
-    # Mostra página da barbearia com serviços
+    # Mostra página da barbearia com serviços e planos ativos
     servicos = Servico.query.filter_by(barbearia_id=barbearia.id, ativo=True).all()
+    planos = PlanoMensal.query.filter_by(barbearia_id=barbearia.id, ativo=True).all()
+    
     return render_template('barbearia_home.html', 
                          barbearia=barbearia, 
-                         servicos=servicos)
+                         servicos=servicos,
+                         planos=planos)
 
 @app.route('/recuperar_senha', methods=['GET','POST'])
 def recuperar_senha():
     if request.method == 'POST':
+        # Rate limiting por IP
+        client_ip = get_client_ip()
+        allowed, remaining, lockout_seconds = check_rate_limit(client_ip, max_attempts=3, window=300) # 3 tentativas a cada 5 min
+        
+        if not allowed:
+            minutes = lockout_seconds // 60
+            flash(f'Muitas solicitações. Tente novamente em {minutes} minutos.', 'error')
+            audit_log('recuperar_senha_blocked', details={'ip': client_ip})
+            return render_template('recuperar_senha.html')
+
         email = sanitize_input(request.form.get('email','').strip())
         mensagem_generica = 'Se houver uma conta com este e-mail, você receberá um link para recuperação.'
         if not email:
@@ -761,6 +829,63 @@ def recuperar_senha():
         flash('Se enviamos um e-mail, verifique sua caixa de entrada (ou console do servidor em modo teste).', 'info')
         return redirect(url_for('recuperar_senha'))
     return render_template('recuperar_senha.html')
+
+@app.route('/recuperar_senha/<token>', methods=['GET','POST'])
+def recuperar_senha_token(token):
+    # Log de segurança: tentativa de verificação de token
+    client_ip = get_client_ip()
+    
+    # Busca o token no banco
+    rec = RecuperacaoSenha.query.filter_by(token=token, usado=False).first()
+    
+    if not rec:
+        audit_log('FAIL_PASSWORD_TOKEN', details=f"Token inexistente: {token[:10]}...")
+        flash('Link de recuperação inválido ou já utilizado.', 'error')
+        return redirect(url_for('recuperar_senha'))
+    
+    # Verifica validade
+    if datetime.utcnow() > rec.expira_em:
+        audit_log('FAIL_PASSWORD_TOKEN', user_id=rec.usuario_id, details="Token expirado")
+        flash('Este link de recuperação expirou. Solicite um novo.', 'error')
+        return redirect(url_for('recuperar_senha'))
+    
+    if request.method == 'POST':
+        nova_senha = request.form.get('senha')
+        confirmacao = request.form.get('senha_confirm')
+        
+        if not nova_senha or len(nova_senha) < 6:
+            flash('A senha deve ter pelo menos 6 caracteres.', 'error')
+            return render_template('nova_senha.html', token=token)
+            
+        if nova_senha != confirmacao:
+            flash('As senhas não coincidem.', 'error')
+            return render_template('nova_senha.html', token=token)
+            
+        # Atualiza a senha do usuário
+        usuario = Usuario.query.get(rec.usuario_id)
+        if usuario:
+            usuario.set_senha(nova_senha)
+            rec.usado = True
+            rec.data_uso = datetime.utcnow()
+            db.session.commit()
+            
+            audit_log('SUCCESS_PASSWORD_RESET', user_id=usuario.id, details="Senha alterada via token")
+            flash('Sua senha foi alterada com sucesso! Agora você pode fazer login.', 'success')
+            
+            # Tentar encontrar a barbearia do usuário para redirecionar melhor
+            barbearia = None
+            if usuario.barbearias:
+                # Pega a primeira barbearia vinculada
+                primeiro_vinculo = usuario.barbearias[0]
+                barbearia = Barbearia.query.get(primeiro_vinculo.barbearia_id)
+            
+            if barbearia:
+                return redirect(url_for('login', slug=barbearia.slug))
+            return redirect('/')
+        else:
+            flash('Erro ao encontrar usuário associado.', 'error')
+            
+    return render_template('nova_senha.html', token=token)
 
 @app.route('/<slug>/login', methods=['GET','POST'])
 def login(slug):
@@ -979,7 +1104,22 @@ def dashboard(slug):
     except Exception:
         is_super = False
     if is_super or (usuario and usuario.tipo_conta in ('admin_barbearia', 'barbeiro', 'admin_sistema')):
-        return render_template('admin/dashboard.html', barbearia=barbearia)
+        # Buscar estatísticas para o dashboard admin
+        servicos_ativos = Servico.query.filter_by(barbearia_id=barbearia.id, ativo=True).all()
+        
+        # Buscar clientes que já agendaram nesta barbearia
+        clientes_ids = db.session.query(Reserva.cliente_id).filter_by(barbearia_id=barbearia.id).distinct().all()
+        clientes_ids = [c[0] for c in clientes_ids]
+        clientes_vinculados = UsuarioBarbearia.query.filter_by(barbearia_id=barbearia.id, role='cliente').all()
+        vinculos_ids = [v.usuario_id for v in clientes_vinculados]
+        
+        todos_clientes_ids = list(set(clientes_ids + vinculos_ids))
+        usuarios_lista = Usuario.query.filter(Usuario.id.in_(todos_clientes_ids)).all() if todos_clientes_ids else []
+
+        return render_template('admin/dashboard.html', 
+                             barbearia=barbearia, 
+                             servicos=servicos_ativos,
+                             usuarios=usuarios_lista)
 
     # caso contrário, mostrar dashboard do cliente
     reservas = []
@@ -988,7 +1128,8 @@ def dashboard(slug):
         reservas = Reserva.query.filter_by(barbearia_id=barbearia.id, cliente_id=session['usuario_id']).filter(Reserva.status.in_(['agendada', 'confirmada'])).all()
         total_reservas = Reserva.query.filter_by(barbearia_id=barbearia.id, cliente_id=session['usuario_id']).filter(Reserva.status != 'cancelada').count()
     servicos = Servico.query.filter_by(barbearia_id=barbearia.id, ativo=True).all()
-    return render_template('usuario_dashboard.html', reservas=reservas, total_reservas=total_reservas, servicos=servicos, barbearia=barbearia, user_type='cliente', filtro='pendentes')
+    planos = PlanoMensal.query.filter_by(barbearia_id=barbearia.id, ativo=True).all()
+    return render_template('usuario_dashboard.html', reservas=reservas, total_reservas=total_reservas, servicos=servicos, planos=planos, barbearia=barbearia, user_type='cliente', filtro='pendentes')
 
 @app.route('/<slug>/logout')
 def logout(slug):
@@ -1011,6 +1152,9 @@ def planos_mensais(slug):
     
     # Buscar planos ativos da barbearia
     planos = PlanoMensal.query.filter_by(barbearia_id=barbearia.id, ativo=True).all()
+    
+    if not planos:
+        return redirect(url_for('dashboard', slug=slug))
     
     # Verificar se o usuário já tem assinatura ativa
     assinatura_ativa = AssinaturaPlano.query.join(PlanoMensal).filter(
@@ -1226,14 +1370,19 @@ def nova_reserva(slug):
             flash('Data ou horário inválido.', 'danger')
             return redirect(url_for('nova_reserva', slug=slug))
         
-        # Verificar se já existe reserva para este horário na barbearia atual
-        if Reserva.query.filter_by(
+        # Verificar capacidade da barbearia para este horário
+        config = barbearia.get_configuracoes()
+        capacidade = config.get('vagas_por_horario', 1)
+        
+        agendamentos_no_horario = Reserva.query.filter_by(
             barbearia_id=barbearia.id, 
-            servico_id=servico_id, 
             data=data, 
             hora_inicio=hora
-        ).first():
-            flash('Horário já reservado.', 'danger'); return redirect(url_for('nova_reserva', slug=slug))
+        ).filter(Reserva.status.in_(['agendada', 'confirmada'])).count()
+        
+        if agendamentos_no_horario >= capacidade:
+            flash(f'Desculpe, este horário já está totalmente preenchido (máximo {capacidade} clientes).', 'danger')
+            return redirect(url_for('nova_reserva', slug=slug))
         
         # Calcular hora fim baseado na duração do serviço
         servico = Servico.query.get(servico_id)
@@ -1640,15 +1789,37 @@ def admin_agendamentos_slug(slug):
     session['barbearia_id'] = barbearia.id
     barbearia_id = barbearia.id
     
-    # Obter filtro de status da query string (padrão: todos)
+    # Obter filtros da query string
     status_filtro = request.args.get('status', 'todos')
-    
-    # DEBUG: Verificar quantos agendamentos existem
-    total_agendamentos = Reserva.query.filter_by(barbearia_id=barbearia_id).count()
-    print(f"📊 DEBUG: Total de agendamentos na barbearia: {total_agendamentos}")
+    filtro_periodo = request.args.get('filtro', '')  # Filtro de período (hoje, semana, etc)
+    search_term = request.args.get('search', '')     # Busca por nome do cliente
     
     # Construir query base
     query = Reserva.query.filter_by(barbearia_id=barbearia_id)
+    
+    # Aplicar busca por nome se houver
+    if search_term:
+        query = query.join(Usuario, Reserva.cliente_id == Usuario.id).filter(
+            Usuario.nome.ilike(f'%{search_term}%')
+        )
+
+    # Aplicar filtro de período
+    if filtro_periodo == 'hoje':
+        hoje_str = datetime.now().strftime('%Y-%m-%d')
+        query = query.filter(Reserva.data == hoje_str)
+    elif filtro_periodo == 'amanha':
+        from datetime import timedelta
+        amanha = (datetime.now() + timedelta(days=1)).strftime('%Y-%m-%d')
+        query = query.filter(Reserva.data == amanha)
+    elif filtro_periodo == 'semana':
+        from datetime import timedelta
+        hoje = datetime.now()
+        inicio_semana = (hoje - timedelta(days=hoje.weekday())).strftime('%Y-%m-%d')
+        fim_semana = (hoje + timedelta(days=(6 - hoje.weekday()))).strftime('%Y-%m-%d')
+        query = query.filter(Reserva.data >= inicio_semana, Reserva.data <= fim_semana)
+    elif filtro_periodo == 'mes':
+        mes_atual = datetime.now().strftime('%Y-%m')
+        query = query.filter(Reserva.data.like(f'{mes_atual}%'))
     
     # Aplicar filtro de status
     if status_filtro == 'ativos':
@@ -1666,12 +1837,6 @@ def admin_agendamentos_slug(slug):
     # Ordenar por data e hora
     reservas = query.order_by(Reserva.data.desc(), Reserva.hora_inicio.desc()).all()
     
-    # DEBUG: Mostrar informações
-    print(f"📋 DEBUG: Filtro aplicado: {status_filtro}")
-    print(f"📋 DEBUG: Reservas encontradas: {len(reservas)}")
-    if reservas:
-        print(f"📋 DEBUG: Status das reservas: {[r.status for r in reservas[:5]]}")
-    
     # Contar por status
     status_counts = {
         'ativos': Reserva.query.filter_by(barbearia_id=barbearia_id).filter(
@@ -1685,8 +1850,6 @@ def admin_agendamentos_slug(slug):
         'confirmada': Reserva.query.filter_by(barbearia_id=barbearia_id, status='confirmada').count(),
         'atendendo': Reserva.query.filter_by(barbearia_id=barbearia_id, status='atendendo').count()
     }
-    
-    print(f"📊 DEBUG: Contadores - Ativos: {status_counts['ativos']}, Concluídos: {status_counts['concluidos']}, Todos: {status_counts['todos']}")
     
     # Adicionar informação de plano para cada reserva
     for reserva in reservas:
@@ -1711,9 +1874,11 @@ def admin_agendamentos_slug(slug):
                          reservas=reservas,
                          barbearia=barbearia,
                          status_filtro=status_filtro,
+                         filtro_periodo=filtro_periodo,
+                         search_term=search_term,
                          status_counts=status_counts)
 
-@app.route('/<slug>/admin/faturamento')
+@app.route('/<slug>/admin/faturamento', methods=['GET', 'POST'])
 def admin_faturamento(slug):
     """Dashboard de faturamento com análise por período"""
     if 'usuario_id' not in session:
@@ -1723,6 +1888,47 @@ def admin_faturamento(slug):
         flash('Acesso negado - apenas administradores', 'error')
         return redirect(url_for('dashboard', slug=slug))
     
+    barbearia_id = get_current_barbearia_id()
+    barbearia = get_current_barbearia()
+    
+    # --- Verificação de Senha Financeira ---
+    if barbearia.senha_financeira:
+        # Se houver senha, verificar se a sessão já está autorizada
+        auth_key = f'financeiro_auth_{barbearia_id}'
+        if not session.get(auth_key):
+            if request.method == 'POST' and request.form.get('acao') == 'verificar_senha':
+                senha_digitada = request.form.get('senha_financeira')
+                if check_password_hash(barbearia.senha_financeira, senha_digitada):
+                    session[auth_key] = True
+                    # Permanecer na mesma página (GET)
+                    return redirect(url_for('admin_faturamento', slug=slug))
+                else:
+                    flash('Senha financeira incorreta!', 'danger')
+            
+            return render_template('admin/faturamento_lock.html', barbearia=barbearia, locked=True)
+    
+    # Se não houver senha, permitir acesso mas enviar flag para o template sugerir criar uma
+    mostrar_setup_senha = not barbearia.senha_financeira
+
+    if request.method == 'POST':
+        acao = request.form.get('acao')
+        if acao == 'definir_senha':
+            nova_senha = request.form.get('nova_senha')
+            confirmar = request.form.get('confirmar_senha')
+            if nova_senha and nova_senha == confirmar:
+                barbearia.senha_financeira = generate_password_hash(nova_senha)
+                db.session.commit()
+                session[f'financeiro_auth_{barbearia_id}'] = True
+                flash('Senha financeira definida com sucesso!', 'success')
+                return redirect(url_for('admin_faturamento', slug=slug))
+            else:
+                flash('As senhas não coincidem!', 'danger')
+        
+        elif acao == 'bloquear':
+            session.pop(f'financeiro_auth_{barbearia_id}', None)
+            flash('Acesso financeiro bloqueado com sucesso.', 'info')
+            return redirect(url_for('dashboard', slug=slug))
+
     from datetime import datetime, timedelta
     from sqlalchemy import func, extract
     
@@ -1854,7 +2060,8 @@ def admin_faturamento(slug):
                          inicio_semana=inicio_semana,
                          fim_semana=fim_semana,
                          inicio_mes=inicio_mes,
-                         fim_mes=fim_mes)
+                         fim_mes=fim_mes,
+                         mostrar_setup_senha=mostrar_setup_senha)
 
 @app.route('/<slug>/admin/disponibilidade')
 def admin_disponibilidade_slug(slug):
@@ -2093,7 +2300,9 @@ def admin_agendamentos():
         flash('Acesso negado - apenas administradores', 'error')
         return redirect(url_for('dashboard', slug=get_current_barbearia_slug()))
     reservas = Reserva.query.all()
-    return render_template('admin/admin_agendamentos.html', reservas=reservas)
+    return render_template('admin/admin_agendamentos.html', 
+                         reservas=reservas,
+                         barbearia=get_current_barbearia())
 
 @app.route('/admin/disponibilidade')
 def admin_disponibilidade():
@@ -2129,7 +2338,9 @@ def admin_disponibilidade():
             'config_id': config_semana.id if config_semana else None
         })
     
-    return render_template('admin/disponibilidade.html', semanas=semanas)
+    return render_template('admin/disponibilidade.html', 
+                         semanas=semanas, 
+                         barbearia=get_current_barbearia())
 
 @app.route('/admin/disponibilidade/semana/<data_inicio>', methods=['GET', 'POST'])
 def admin_disponibilidade_semana(data_inicio):
@@ -2198,7 +2409,8 @@ def admin_disponibilidade_semana(data_inicio):
                          config=config,
                          data_inicio=data_obj,
                          data_fim=data_fim,
-                         dias_opcoes=dias_opcoes)
+                         dias_opcoes=dias_opcoes,
+                         barbearia=get_current_barbearia())
 
 @app.route('/admin_home')
 def admin_home():
@@ -2213,10 +2425,22 @@ def clientes():
         return redirect(url_for('dashboard', slug=get_current_barbearia_slug()))
     if request.method == 'POST':
         nome = request.form.get('nome','').strip(); email = request.form.get('email','').strip()
+        apelido = request.form.get('apelido','').strip()
         if not nome or not email: flash('Preencha campos!', 'warning'); return redirect(url_for('clientes'))
         if Usuario.query.filter_by(email=email).first(): flash('Email já cadastrado!', 'warning'); return redirect(url_for('clientes'))
-        novo = Usuario(nome=nome, email=email, senha=generate_password_hash('senha123'), tipo_conta='cliente', ativo=True)
-        db.session.add(novo); db.session.commit(); flash('Cliente adicionado!', 'success'); return redirect(url_for('clientes'))
+        
+        # Criar usuário
+        novo = Usuario(nome=nome, apelido=apelido, email=email, senha=generate_password_hash('senha123'), tipo_conta='cliente', ativo=True)
+        db.session.add(novo)
+        db.session.flush() # Para pegar o ID do novo usuário
+        
+        # Vincular à barbearia atual
+        vinculo = UsuarioBarbearia(usuario_id=novo.id, barbearia_id=get_current_barbearia_id(), role='cliente')
+        db.session.add(vinculo)
+        
+        db.session.commit()
+        flash('Cliente adicionado!', 'success')
+        return redirect(url_for('clientes'))
     barbearia_id = get_current_barbearia_id()
     clientes_list = db.session.query(Usuario).join(UsuarioBarbearia).filter(
         UsuarioBarbearia.barbearia_id == barbearia_id,
@@ -2261,8 +2485,35 @@ def deletar_cliente(cliente_uuid):
     for assinatura in assinaturas_cliente:
         db.session.delete(assinatura)
     
-    db.session.delete(cliente); db.session.commit()
-    flash(f'Cliente "{cliente.nome}" deletado!', 'success')
+    # Remover vínculos com barbearias
+    UsuarioBarbearia.query.filter_by(usuario_id=cliente.id).delete()
+    
+    db.session.delete(cliente)
+    db.session.commit()
+    flash('Cliente excluído com sucesso!', 'success')
+    return redirect(url_for('clientes'))
+
+@app.route('/editar_cliente/<string:cliente_uuid>', methods=['POST'])
+def editar_cliente(cliente_uuid):
+    if 'usuario_id' not in session:
+        return redirect(url_for('login', slug=get_current_barbearia_slug()))
+    if not hasattr(g, 'tenant') or not g.tenant or not g.tenant.is_admin():
+        flash('Acesso negado', 'error')
+        return redirect(url_for('dashboard', slug=get_current_barbearia_slug()))
+        
+    cliente = Usuario.query.filter_by(uuid=cliente_uuid).first_or_404()
+    apelido = request.form.get('apelido', '').strip()
+    nome = request.form.get('nome', '').strip()
+    telefone = request.form.get('telefone', '').strip()
+    
+    if nome:
+        cliente.nome = nome
+    cliente.apelido = apelido
+    if telefone:
+        cliente.telefone = telefone
+        
+    db.session.commit()
+    flash('Dados do cliente atualizados!', 'success')
     return redirect(url_for('clientes'))
 
 @app.route('/deletar_servico/<string:servico_uuid>')
@@ -2385,7 +2636,7 @@ def api_agendamentos_hoje(slug):
 
 @app.route('/<slug>/api/agendamentos_todos')
 def api_agendamentos_todos(slug):
-    """API para buscar todos os agendamentos"""
+    """API para buscar agendamentos. Suporta filtro por status para otimização."""
     try:
         print(f"🔵 API agendamentos_todos chamada para slug: {slug}")
         
@@ -2398,15 +2649,25 @@ def api_agendamentos_todos(slug):
             print(f"❌ API: Barbearia não encontrada com slug: {slug}")
             return jsonify({'error': 'Barbearia não encontrada'}), 404
         
-        print(f"✅ API: Barbearia encontrada: {barbearia.nome} (ID: {barbearia.id})")
+        # Filtros de otimização
+        filtro_status = request.args.get('status') # 'ativos' = agendada/confirmada
         
-        reservas = Reserva.query.filter_by(
-            barbearia_id=barbearia.id
-        ).filter(
-            Reserva.status != 'cancelada'
-        ).order_by(Reserva.data.desc(), Reserva.hora_inicio.desc()).all()
+        query = Reserva.query.filter_by(barbearia_id=barbearia.id)
         
-        print(f"✅ API: Encontradas {len(reservas)} reservas totais na barbearia {barbearia.nome}")
+        if filtro_status == 'ativos':
+            # Retorna apenas novos/pendentes + o que foi concluído hoje para sincronizar
+            hoje = datetime.now().strftime('%Y-%m-%d')
+            query = query.filter(
+                (Reserva.status.in_(['agendada', 'confirmada'])) | 
+                ((Reserva.status == 'concluida') & (Reserva.data == hoje))
+            )
+        else:
+            # Padrão: tudo exceto cancelado
+            query = query.filter(Reserva.status != 'cancelada')
+            
+        reservas = query.order_by(Reserva.data.desc(), Reserva.hora_inicio.desc()).all()
+        
+        print(f"✅ API: Encontradas {len(reservas)} reservas (Filtro: {filtro_status})")
         
         result = []
         for r in reservas:
@@ -2695,6 +2956,76 @@ def super_admin_barbearias():
     barbearias = Barbearia.query.all()
     return render_template('super_admin/barbearias.html', barbearias=barbearias)
 
+@app.route('/super_admin/usuario/novo', methods=['GET', 'POST'])
+@require_super_admin
+def super_admin_novo_usuario():
+    """Criar novo usuário pelo super admin"""
+    if request.method == 'POST':
+        nome = request.form.get('nome', '').strip()
+        username = request.form.get('username', '').strip()
+        email = request.form.get('email', '').strip()
+        telefone = request.form.get('telefone', '').strip()
+        tipo_conta = request.form.get('tipo_conta', 'cliente')
+        # Bloquear criação de super_admin por esta rota
+        if tipo_conta == 'super_admin':
+            tipo_conta = 'cliente'
+            
+        barbearia_id = request.form.get('barbearia_id')
+        senha = request.form.get('senha', '')
+        confirmar_senha = request.form.get('confirmar_senha', '')
+
+        if not nome or not username or not senha:
+            flash('Nome, usuário e senha são obrigatórios!', 'error')
+            return redirect(url_for('super_admin_novo_usuario'))
+
+        if senha != confirmar_senha:
+            flash('As senhas não coincidem!', 'error')
+            return redirect(url_for('super_admin_novo_usuario'))
+
+        if Usuario.query.filter_by(username=username).first():
+            flash('Nome de usuário já cadastrado!', 'error')
+            return redirect(url_for('super_admin_novo_usuario'))
+
+        if email and Usuario.query.filter_by(email=email).first():
+            flash('Email já cadastrado!', 'error')
+            return redirect(url_for('super_admin_novo_usuario'))
+
+        # Criar usuário
+        novo_usuario = Usuario(
+            nome=nome,
+            username=username,
+            email=email if email else None,
+            telefone=telefone,
+            senha=generate_password_hash(senha),
+            tipo_conta=tipo_conta,
+            ativo=True
+        )
+        db.session.add(novo_usuario)
+        db.session.commit()
+
+        # Vincular à barbearia se necessário
+        if tipo_conta != 'super_admin' and barbearia_id:
+            role = 'cliente'
+            if tipo_conta == 'admin_barbearia':
+                role = 'admin'
+            elif tipo_conta == 'barbeiro':
+                role = 'barbeiro'
+            
+            vinculo = UsuarioBarbearia(
+                usuario_id=novo_usuario.id,
+                barbearia_id=barbearia_id,
+                role=role,
+                ativo=True
+            )
+            db.session.add(vinculo)
+            db.session.commit()
+
+        flash(f'Usuário {nome} criado com sucesso!', 'success')
+        return redirect(url_for('super_admin_usuarios'))
+
+    barbearias = Barbearia.query.filter_by(ativa=True).all()
+    return render_template('super_admin/usuario_form.html', barbearias=barbearias)
+
 @app.route('/super_admin/usuarios')
 @require_super_admin
 def super_admin_usuarios():
@@ -2889,17 +3220,17 @@ def super_admin_editar_plano(plano_uuid):
 @app.route('/super_admin/plano/<string:plano_uuid>/excluir', methods=['POST'])
 @require_super_admin
 def super_admin_excluir_plano(plano_uuid):
-    """Desativar um plano"""
+    """Excluir permanentemente um plano"""
     plano = PlanoMensal.query.filter_by(uuid=plano_uuid).first_or_404()
+    nome = plano.nome
     
     try:
-        # Apenas desativar, não deletar
-        plano.ativo = False
+        db.session.delete(plano)
         db.session.commit()
-        flash(f'Plano "{plano.nome}" desativado com sucesso!', 'success')
+        flash(f'Plano "{nome}" excluído permanentemente!', 'success')
     except Exception as e:
         db.session.rollback()
-        flash(f'Erro ao desativar plano: {str(e)}', 'error')
+        flash(f'Erro ao excluir plano: {str(e)}', 'error')
     
     return redirect(url_for('super_admin_planos'))
 
@@ -2997,6 +3328,25 @@ def super_admin_editar_barbearia(barbearia_uuid):
         card4_icone = request.form.get('card4_icone', '').strip()
         card4_titulo = request.form.get('card4_titulo', '').strip()
         card4_descricao = request.form.get('card4_descricao', '').strip()
+
+        # Estatísticas
+        stat1_valor = request.form.get('stat1_valor', '').strip()
+        stat1_label = request.form.get('stat1_label', '').strip()
+        
+        stat2_valor = request.form.get('stat2_valor', '').strip()
+        stat2_label = request.form.get('stat2_label', '').strip()
+        
+        stat3_valor = request.form.get('stat3_valor', '').strip()
+        stat3_label = request.form.get('stat3_label', '').strip()
+        
+        stat4_valor = request.form.get('stat4_valor', '').strip()
+        stat4_label = request.form.get('stat4_label', '').strip()
+
+        # Capacidade (Vagas por horário)
+        vagas = request.form.get('vagas_por_horario', '1')
+        config = barbearia.get_configuracoes()
+        config['vagas_por_horario'] = int(vagas) if vagas.isdigit() else 1
+        barbearia.set_configuracoes(config)
         
         # Atualizar os dados
         barbearia.nome = nome
@@ -3007,29 +3357,42 @@ def super_admin_editar_barbearia(barbearia_uuid):
         barbearia.ativa = ativa
         
         # Atualizar personalização visual
-        barbearia.hero_titulo = hero_titulo if hero_titulo else 'Seu visual|no nível máximo'
-        barbearia.hero_subtitulo = hero_subtitulo if hero_subtitulo else 'Mais que um corte de cabelo, uma experiência completa'
-        barbearia.slogan = slogan if slogan else 'Estilo e Tradição'
+        barbearia.hero_titulo = hero_titulo if hero_titulo else None
+        barbearia.hero_subtitulo = hero_subtitulo if hero_subtitulo else None
+        barbearia.slogan = slogan if slogan else None
         barbearia.cor_primaria = cor_primaria if cor_primaria else '#8b5cf6'
         barbearia.cor_secundaria = cor_secundaria if cor_secundaria else '#A78BFA'
         barbearia.cor_texto = cor_texto if cor_texto else '#1f2937'
         
         # Atualizar cards
-        barbearia.card1_icone = card1_icone if card1_icone else '✂️'
-        barbearia.card1_titulo = card1_titulo if card1_titulo else 'Corte masculino'
-        barbearia.card1_descricao = card1_descricao if card1_descricao else 'Cortes modernos e clássicos'
+        barbearia.card1_icone = card1_icone if card1_icone else None
+        barbearia.card1_titulo = card1_titulo if card1_titulo else None
+        barbearia.card1_descricao = card1_descricao if card1_descricao else None
         
-        barbearia.card2_icone = card2_icone if card2_icone else '🧔'
-        barbearia.card2_titulo = card2_titulo if card2_titulo else 'Barba completa'
-        barbearia.card2_descricao = card2_descricao if card2_descricao else 'Design e tratamento completo'
+        barbearia.card2_icone = card2_icone if card2_icone else None
+        barbearia.card2_titulo = card2_titulo if card2_titulo else None
+        barbearia.card2_descricao = card2_descricao if card2_descricao else None
         
-        barbearia.card3_icone = card3_icone if card3_icone else '💈'
-        barbearia.card3_titulo = card3_titulo if card3_titulo else 'Combo premium'
-        barbearia.card3_descricao = card3_descricao if card3_descricao else 'Corte + barba + finalização'
+        barbearia.card3_icone = card3_icone if card3_icone else None
+        barbearia.card3_titulo = card3_titulo if card3_titulo else None
+        barbearia.card3_descricao = card3_descricao if card3_descricao else None
         
-        barbearia.card4_icone = card4_icone if card4_icone else '📅'
-        barbearia.card4_titulo = card4_titulo if card4_titulo else 'Agendamento fácil'
-        barbearia.card4_descricao = card4_descricao if card4_descricao else 'Reserve online de forma prática'
+        barbearia.card4_icone = card4_icone if card4_icone else None
+        barbearia.card4_titulo = card4_titulo if card4_titulo else None
+        barbearia.card4_descricao = card4_descricao if card4_descricao else None
+        
+        # Atualizar estatísticas
+        barbearia.stat1_valor = stat1_valor if stat1_valor else None
+        barbearia.stat1_label = stat1_label if stat1_label else None
+        
+        barbearia.stat2_valor = stat2_valor if stat2_valor else None
+        barbearia.stat2_label = stat2_label if stat2_label else None
+        
+        barbearia.stat3_valor = stat3_valor if stat3_valor else None
+        barbearia.stat3_label = stat3_label if stat3_label else None
+        
+        barbearia.stat4_valor = stat4_valor if stat4_valor else None
+        barbearia.stat4_label = stat4_label if stat4_label else None
         
         try:
             db.session.commit()
@@ -3110,8 +3473,22 @@ def super_admin_nova_barbearia():
             card3_descricao='Corte + barba + finalização, o pacote completo para você sair renovado',
             card4_icone='📅',
             card4_titulo='Agendamento fácil',
-            card4_descricao='Reserve seu horário online de forma rápida e prática, sem complicação'
+            card4_descricao='Reserve seu horário online de forma rápida e prática, sem complicação',
+            # Estatísticas padrão
+            stat1_valor='5+',
+            stat1_label='Anos de experiência',
+            stat2_valor='1000+',
+            stat2_label='Clientes satisfeitos',
+            stat3_valor='100%',
+            stat3_label='Profissionais qualificados',
+            stat4_valor='★★★★★',
+            stat4_label='Avaliação dos clientes'
         )
+        
+        # Capacidade (Vagas por horário)
+        vagas = request.form.get('vagas_por_horario', '1')
+        config_dict = {'vagas_por_horario': int(vagas) if vagas.isdigit() else 1}
+        nova_barbearia.set_configuracoes(config_dict)
         
         try:
             db.session.add(nova_barbearia)
@@ -3566,19 +3943,13 @@ def iniciar_scheduler_sincronizacao():
     except Exception as e:
         print(f"❌ Erro ao iniciar scheduler: {e}")
 
+# Inicializar componentes globais (Scheduler, etc)
+# Para Gunicorn, isso precisa ser chamado fora do bloco if __name__ == '__main__':
+iniciar_scheduler_sincronizacao()
+
 # ---------- START ----------
 if __name__ == '__main__':
     with app.app_context():
-        db.create_all()
-        # cria admin padrão se não existir
-        if not Usuario.query.filter_by(email='admin@admin.com').first():
-            # Admin já criado via setup_db.py
-            pass
-        db.session.commit()
-
-    # Iniciar scheduler de sincronização automática
-    print("🔄 Iniciando scheduler de sincronizacao de chamados...")
-    iniciar_scheduler_sincronizacao()
 
     # checa templates requeridos (avisa, mas não interrompe)
     missing = check_required_templates(REQUIRED_TEMPLATES)

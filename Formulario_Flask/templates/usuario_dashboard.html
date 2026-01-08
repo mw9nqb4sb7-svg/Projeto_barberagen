@@ -717,9 +717,11 @@
                     ⚙️ SERVIÇOS
                 </a>
                 {% else %}
-                <a href="{{ url_for('planos_mensais', slug=barbearia.slug) }}" class="btn-secondary">
-                    💎 PLANOS
-                </a>
+                    {% if planos %}
+                    <a href="{{ url_for('planos_mensais', slug=barbearia.slug) }}" class="btn-secondary">
+                        💎 PLANOS
+                    </a>
+                    {% endif %}
                 {% endif %}
                 
                 <a href="{{ url_for('logout', slug=barbearia.slug if barbearia else 'principal') }}" class="btn-danger">
@@ -936,9 +938,11 @@
                 ⚙️ SERVIÇOS
             </a>
             {% else %}
-            <a href="{{ url_for('planos_mensais', slug=barbearia.slug) }}" class="btn-secondary">
-                💎 PLANOS
-            </a>
+                {% if planos %}
+                <a href="{{ url_for('planos_mensais', slug=barbearia.slug) }}" class="btn-secondary">
+                    💎 PLANOS
+                </a>
+                {% endif %}
             {% endif %}
             <a href="{{ url_for('perfil') }}" class="btn-secondary">👤 Meu Perfil</a>
             <a href="{{ url_for('logout', slug=barbearia.slug if barbearia else 'principal') }}" class="btn-danger">

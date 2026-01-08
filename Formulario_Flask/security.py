@@ -198,13 +198,12 @@ def get_client_ip():
     else:
         return request.remote_addr
 
-def audit_log(action, user_id=None, details=None):
+def audit_log(action, user_id=None, details=None, **kwargs):
     """
-    Registra ações importantes para auditoria
-    (Em produção, salvar em arquivo ou banco de dados)
+    Registra ações importantes para auditoria em arquivo JSON
     """
     timestamp = datetime.now().isoformat()
-    ip = get_client_ip()
+    ip = kwargs.get('ip') or get_client_ip()
     user_agent = request.headers.get('User-Agent', 'Unknown')
     
     log_entry = {
@@ -216,8 +215,27 @@ def audit_log(action, user_id=None, details=None):
         'details': details
     }
     
-    # TODO: Salvar em arquivo de log ou banco de dados
-    # Por enquanto, apenas print para debug
+    # Mesclar outros argumentos extras se existirem
+    if kwargs:
+        for k, v in kwargs.items():
+            if k not in log_entry:
+                log_entry[k] = v
+    
+    # Salvar em arquivo de log
+    try:
+        import os
+        import json
+        log_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'logs')
+        if not os.path.exists(log_dir):
+            os.makedirs(log_dir)
+            
+        log_file = os.path.join(log_dir, f'audit_{datetime.now().strftime("%Y-%m")}.jsonl')
+        with open(log_file, 'a', encoding='utf-8') as f:
+            f.write(json.dumps(log_entry) + '\n')
+    except Exception as e:
+        print(f"[ERROR] Falha ao gravar log de auditoria: {str(e)}")
+    
+    # Manter print para debug no console
     print(f"[AUDIT] {log_entry}")
     
     return log_entry

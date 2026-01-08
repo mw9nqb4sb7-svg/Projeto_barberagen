@@ -1,259 +1,147 @@
-/* admin.css — estilos unificados para a área Super Admin */
-:root{
-    --admin-bg: #040405; /* fundo preto profundo */
-    --admin-panel: #0b0f14; /* painel levemente mais claro */
-    --admin-accent: #8b5cf6; /* roxo primário */
-    --admin-accent-2: #a78bfa;
-    --admin-accent-3: #7c3aed;
-    --admin-text: #e6eef8; /* texto claro */
-    --admin-muted: rgba(230,238,248,0.55);
-    --admin-border: rgba(255,255,255,0.04);
-
-    /* Mapear variáveis usadas globalmente pelos templates para tema escuro */
-    --gold: var(--admin-accent);
-    --gold-light: var(--admin-accent-2);
-    --gold-dark: var(--admin-accent-3);
-    --bg-dark: #071018;
-    --bg-card: #08121a;
-    --bg-hover: #09121a;
-    --text-color: var(--admin-text);
+/* admin.css  Estilos Unificados (Tema Total Black / Dark Mode) */
+:root {
+    --admin-bg: #040405; 
+    --admin-panel: #0a0a0c; 
+    --admin-accent: #8b5cf6; 
+    --admin-accent-hover: #7c3aed;
+    --admin-accent-glow: rgba(139, 92, 246, 0.4);
+    --admin-secondary: #4a9eff; 
+    
+    --admin-text: #ffffff;
+    --admin-muted: #94a3b8;
+    --admin-border: rgba(255, 255, 255, 0.08);
+    
+    --spacing-xs: 0.5rem;
+    --spacing-sm: 0.75rem;
+    --spacing-md: 1rem;
+    --spacing-lg: 1.5rem;
+    --spacing-xl: 2rem;
+    
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    
+    --gold: var(--admin-secondary);
+    --gold-light: #60a5fa;
+    --gold-dark: #2563eb;
+    --bg-dark: #000000;
+    --bg-card: #0a0a0c;
+    --bg-hover: #111114;
+    --text-color: #ffffff;
 }
 
-html,body{background:var(--admin-bg); color:var(--admin-text); font-family:'Plus Jakarta Sans',sans-serif;}
+* { margin: 0; padding: 0; box-sizing: border-box; }
 
-/* Layout */
-.admin-wrapper{max-width:1200px;margin:2rem auto;padding:2rem;background:linear-gradient(180deg,var(--admin-panel), #071018);border:1px solid var(--admin-border);border-radius:12px;box-shadow:0 10px 30px rgba(2,6,23,0.6)}
-.form-section{margin-bottom:1.25rem}
-.form-label{display:block;font-weight:700;color:var(--admin-text);margin-bottom:0.4rem}
-.form-input, .form-textarea{width:100%;padding:0.6rem;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:#07101a;color:var(--admin-text);font-size:0.95rem}
-.form-textarea{min-height:68px}
-.form-help{display:block;color:var(--admin-muted);font-size:0.85rem;margin-top:0.35rem}
-
-/* Buttons */
-.btn{display:inline-flex;align-items:center;gap:0.5rem;padding:0.6rem 1rem;border-radius:10px;border:none;cursor:pointer;font-weight:700}
-.btn-primary{background:var(--admin-accent);color:#fff}
-.btn-secondary{background:transparent;border:1px solid var(--admin-border);color:var(--admin-text)}
-.btn-success{background:#10b981;color:#fff}
-.btn-danger{background:#ef4444;color:#fff}
-
-/* Header */
-.admin-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1.25rem}
-.admin-title{font-size:1.4rem;font-weight:800;color:var(--admin-accent)}
-
-/* Form layout helpers */
-.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-.form-row{display:flex;gap:1rem}
-
-/* Cards & sections */
-.admin-card{background:linear-gradient(180deg,#071018,#08121a);border:1px solid rgba(255,255,255,0.03);padding:1rem;border-radius:10px}
-.small-muted{color:var(--admin-muted);font-size:0.875rem}
-
-/* Responsive */
-@media (max-width:900px){
-    .form-grid{grid-template-columns:1fr}
-    .admin-wrapper{margin:1rem;padding:1rem}
-}
-
-/* Normalize inline styles that conflict (evita afetar inputs/textarea/buttons) */
-[style*="box-shadow"]{box-shadow:none !important}
-
-/* Quick utility */
-.text-accent{color:var(--admin-accent)}
-.align-right{display:flex;justify-content:flex-end}
-
-/* Accessibility focus */
-.form-input:focus,.form-textarea:focus{outline:3px solid rgba(139,92,246,0.12);outline-offset:2px}
-
-/* ============================================
-   Overrides para neutralizar estilos inline
-   (gradientes, fundos escuros, sombras) usados nos templates
-   ============================================ */
-
-/* Remove gradientes e fundos escuros aplicados inline */
-[style*="linear-gradient"],
-[style*="background: linear-gradient"],
-[style*="background: #0a0a0a"],
-[style*="background: var(--bg-dark)"],
-[style*="background: rgba(0, 0, 0"],
-[style*="background: rgba(16, 185, 129"] {
-    background: none !important;
+body {
+    background-color: var(--admin-bg) !important;
     color: var(--admin-text) !important;
-    box-shadow: none !important;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    line-height: 1.6;
+}
+
+.admin-wrapper { max-width: 1400px; margin: 2rem auto; padding: 2rem; }
+
+.page-header {
+    background: linear-gradient(135deg, #1e1b4b 0%, #0c0a09 100%) !important;
     border: 1px solid var(--admin-border) !important;
+    padding: 2.5rem;
+    border-radius: var(--radius-lg);
+    margin-bottom: 2.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
 }
 
-/* Remover sombras inline */
-[style*="box-shadow"]{ box-shadow: none !important }
+.page-header h1 { font-size: 2.2rem; font-weight: 800; color: #fff !important; }
+.page-header p { color: var(--admin-muted) !important; }
 
-/* Forçar cores de texto legíveis */
-[style*="color: white"],
-[style*="color: #fff"],
-[style*="color: #f5f5dc"] {
-    color: var(--admin-text) !important;
+.super-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(139, 92, 246, 0.15) !important;
+    color: var(--admin-accent) !important;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    font-weight: 700;
+    border: 1px solid rgba(139, 92, 246, 0.3) !important;
 }
 
-/* Ajustes para headers, cards e seções comuns */
-.page-header, .barbearias-header, .dashboard-card, .growth-card, .admin-card, .report-section, .section-header, .super-admin-form, .super-admin-relatorios {
-    background: linear-gradient(90deg, rgba(139,92,246,0.06), rgba(124,58,237,0.02)) !important;
-    color: var(--admin-text) !important;
-    border: 1px solid rgba(255,255,255,0.02) !important;
-    box-shadow: 0 6px 24px rgba(2,6,23,0.6) !important;
+.btn, .action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.8rem 1.4rem;
+    border-radius: var(--radius-md);
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-/* Reaplicar cor controlada para header principal */
-.page-header{ background: linear-gradient(135deg, rgba(139,92,246,0.16), rgba(124,58,237,0.12)) !important; color: #fff !important; border: none !important }
-.page-header h1{ color: #fff !important }
-.super-badge{ background: rgba(255,255,255,0.04); padding:0.4rem 0.75rem; border-radius:999px; display:inline-flex; align-items:center; gap:0.5rem }
+.btn-primary, .btn-success { background: var(--admin-accent) !important; color: #fff !important; border: none !important; }
+.btn-secondary, .btn-back { background: rgba(255, 255, 255, 0.05) !important; color: #fff !important; border: 1px solid var(--admin-border) !important; }
 
-/* Forçar inputs e textareas legíveis (corrige campos com background removido por overrides) */
-.form-input, .form-textarea{ background: #07101a !important; color: var(--admin-text) !important; border:1px solid rgba(255,255,255,0.04) !important }
-.form-textarea{ min-height:80px }
-
-/* Botões com gradiente leve para dar personalidade */
-.btn-primary{ background: linear-gradient(135deg, var(--admin-accent), var(--admin-accent-3)) !important; color:#fff !important }
-.btn-primary:hover{ filter:brightness(0.98) }
-
-/* Tornar links do nav com destaque */
-nav.custom-nav a{ color: var(--admin-text) !important; font-weight:700 }
-nav.custom-nav a:hover{ color: var(--admin-accent) !important }
-
-/* Normalizar navegação do admin */
-nav.custom-nav{ background: transparent !important; box-shadow: none !important; border-bottom: 1px solid var(--admin-border) !important }
-
-/* Tornar links e botões visíveis */
-nav.custom-nav a, .action-btn, a[style], button[style] { color: var(--admin-text) !important }
-
-/* Remover transições agressivas inline */
-a[style*="transform"], div[style*="transform"] { transition: none !important }
-
-/* Ajuste de borda radius padrão */
-[style*="border-radius: 4px"]{ border-radius: 8px !important }
-
-/* Pequena melhoria: garantir contraste nos badges */
-.super-badge, .badge-text { color: var(--admin-accent) !important }
-
-/* Fallback para elementos com estilos inline muito específicos */
-.form-container * { color: var(--admin-text) !important }
-
-/* ==========================
-   Paleta e elementos visuais
-   ========================== */
-
-/* Paleta adicional */
-:root{
-    --admin-accent-2: #a78bfa; /* lilás claro */
-    --admin-accent-3: #7c3aed; /* roxo escuro */
-    --admin-success: #10b981;
-    --admin-warn: #f59e0b;
+.form-container, .admin-card, .info-panel, .report-section {
+    background: var(--admin-panel) !important;
+    border: 1px solid var(--admin-border) !important;
+    padding: 2rem;
+    border-radius: var(--radius-lg);
+    color: #fff !important;
 }
 
-/* Header decorado */
-.page-header{ position: relative; overflow: visible; padding: 2rem; border-radius: 12px }
-.page-header::after{ content: ''; position: absolute; right: -40px; top: -40px; width: 160px; height: 160px; background: radial-gradient(circle at 30% 30%, rgba(139,92,246,0.12), transparent 40%), radial-gradient(circle at 70% 70%, rgba(167,139,250,0.08), transparent 50%); border-radius: 50%; z-index:0 }
-.page-header > *{ position: relative; z-index:1 }
-
-.admin-title { font-size: 1.6rem; color: var(--admin-accent) }
-.page-subtitle { color: var(--admin-muted); margin-top: 0.4rem }
-
-/* Card variants */
-.card-variant { background: linear-gradient(180deg, #fff 0%, #fbfdff 100%); border:1px solid rgba(31,41,55,0.06); padding:1.25rem; border-radius:12px }
-.card-variant .card-icon{ font-size:2rem; display:inline-flex; align-items:center; justify-content:center; width:48px; height:48px; border-radius:10px; background: linear-gradient(135deg, var(--admin-accent), var(--admin-accent-2)); color: #fff }
-.card-variant h4{ margin:0; font-size:1.05rem; font-weight:800; color:var(--admin-text) }
-.card-variant p{ color:var(--admin-muted); margin-top:0.5rem }
-
-/* Tabelas e listas */
-.admin-table{ width:100%; border-collapse:collapse; background:transparent }
-.admin-table th{ text-align:left; padding:0.75rem; font-weight:800; color:var(--admin-text); border-bottom:1px solid rgba(31,41,55,0.04) }
-.admin-table td{ padding:0.75rem; border-bottom:1px solid rgba(31,41,55,0.03); color:var(--admin-text) }
-
-/* Botões e badges */
-.badge { display:inline-block; padding:0.25rem 0.6rem; border-radius:999px; font-weight:700; font-size:0.85rem }
-.badge-accent{ background: linear-gradient(135deg, var(--admin-accent), var(--admin-accent-2)); color:#fff }
-.badge-muted{ background:rgba(31,41,55,0.06); color:var(--admin-muted) }
-
-/* Form fields com ícone */
-.input-icon{ position:relative }
-.input-icon input, .input-icon textarea{ padding-left:3.2rem }
-.input-icon .icon{ position:absolute; left:0.75rem; top:50%; transform:translateY(-50%); font-size:1.05rem; color:var(--admin-muted) }
-
-/* Feedback de validação */
-.field-error{ border-color:#ef4444 !important; box-shadow:0 0 0 4px rgba(239,68,68,0.06) }
-.field-success{ border-color:var(--admin-success) !important; box-shadow:0 0 0 4px rgba(16,185,129,0.06) }
-
-/* Mobile tweaks */
-@media(max-width:720px){
-    .page-header::after{ display:none }
-    .form-grid{ grid-template-columns: 1fr }
+.form-label { color: #e2e8f0 !important; font-weight: 600; display: block; margin-bottom: 0.5rem; }
+.form-input, .form-textarea, .form-select {
+    width: 100%;
+    padding: 0.9rem 1rem;
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid var(--admin-border) !important;
+    border-radius: var(--radius-md);
+    color: #fff !important;
 }
 
-/* ==========================
-   Mais cor e vivacidade
-   ========================== */
+.form-input:focus { border-color: var(--admin-accent) !important; }
 
-/* Fundo mais vivo: gradient + padrão sutil */
-/* remove backgrounds anteriores e usar cor sólida fixa para escuro */
-html,body{ background: var(--admin-bg) !important; }
+.admin-table th { color: var(--admin-muted) !important; border-bottom: 1px solid var(--admin-border) !important; }
+.admin-table td { color: #fff !important; border-bottom: 1px solid var(--admin-border) !important; }
 
-/* Wrapper com borda de destaque e sombra suave */
-.admin-wrapper{ border-left: 6px solid var(--admin-accent-3) !important; box-shadow: 0 10px 40px rgba(2,6,23,0.7) !important }
+/* Responsividade Admin */
+@media (max-width: 768px) {
+    .admin-wrapper {
+        margin: 1rem auto;
+        padding: 1rem;
+    }
 
-/* Cards com borda colorida e sombra para profundidade */
-.card-variant{ border-left:6px solid var(--admin-accent) !important; box-shadow: 0 8px 30px rgba(99,102,241,0.06) !important; background: linear-gradient(180deg,#071018,#08121a)}
-.card-variant:hover{ transform: translateY(-6px); box-shadow: 0 18px 40px rgba(99,102,241,0.14) !important }
+    .page-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.5rem;
+        padding: 1.5rem;
+    }
 
-/* Overrides específicos para editar_barbearia (corrigir blocos com fundo claro) */
-.super-admin-form .form-section[style*="rgba(139, 92, 246")],
-.super-admin-form .form-section[style*="rgba(139,92,246"],
-.super-admin-form .form-section[style*="rgba(139, 92, 246, 0.05)"] {
-    background: linear-gradient(180deg, rgba(124,58,237,0.06), rgba(11,16,26,0.02)) !important;
-    border: 1px solid rgba(124,58,237,0.12) !important;
-    color: var(--admin-text) !important;
+    .page-header h1 {
+        font-size: 1.8rem;
+    }
+
+    .form-container, .admin-card, .info-panel, .report-section {
+        padding: 1.5rem;
+    }
+
+    .form-input, .form-textarea, .form-select {
+        font-size: 16px; /* Evita zoom no iOS */
+    }
+
+    /* Tabelas responsivas */
+    .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+    }
 }
 
-.super-admin-form .form-section h4,
-.super-admin-form .form-section h3 { color: var(--admin-accent-2) !important }
-
-/* Garantir que pequenos textos de ajuda sejam visíveis */
-.super-admin-form .form-help { color: rgba(230,238,248,0.6) !important }
-
-/* Ajustes para painéis de informação à direita da página */
-.info-panel{ background: linear-gradient(180deg,#071018,#061019); border:1px solid rgba(255,255,255,0.03); padding:1rem; border-radius:10px; margin-top:1.5rem }
-.info-panel h3{ color: var(--admin-accent-2); margin-bottom:0.5rem }
-.info-grid{ display:grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap:0.75rem }
-.info-item{ background: rgba(255,255,255,0.02); padding:0.65rem; border-radius:8px }
-.info-label{ color: var(--admin-muted); font-weight:700 }
-.info-value{ color: var(--admin-text); font-weight:800 }
-
-/* Forçar que qualquer elemento inline com background claro dentro do form seja escurecido */
-.super-admin-form [style*="background: #fff"],
-.super-admin-form [style*="background: #ffffff"],
-.super-admin-form [style*="background: white"] {
-    background: transparent !important;
-    color: var(--admin-text) !important;
-    border-color: rgba(255,255,255,0.03) !important;
+/* Forçar reset de fundos brancos residuais */
+[style*="background: white"], [style*="background:#fff"], [style*="background: #fff"], 
+[style*="background-color: white"], [style*="background-color:#fff"] {
+    background: var(--admin-panel) !important;
+    color: #fff !important;
 }
-
-/* Destaque de seção */
-.section-title{ font-size:1.6rem; font-weight:900; color:var(--admin-accent-3); margin-bottom:0.5rem }
-.section-subtitle{ color:var(--admin-muted); margin-bottom:1.25rem }
-
-/* Botões com mais personalidade */
-.btn{ transition: all 180ms ease-in-out }
-.btn-primary{ box-shadow: 0 8px 24px rgba(124,58,237,0.12); border: none }
-.btn-primary:active{ transform: translateY(1px) }
-.btn-secondary{ background: linear-gradient(180deg, rgba(255,255,255,0.6), rgba(250,250,250,0.9)); }
-
-/* Badges mais chamativas */
-.badge-accent{ box-shadow: 0 6px 18px rgba(139,92,246,0.12); }
-
-/* Inputs com foco colorido e sombra leve */
-.form-input:focus, .form-textarea:focus{ outline: none !important; box-shadow: 0 8px 30px rgba(124,58,237,0.08) !important; border-color: var(--admin-accent-3) !important }
-
-/* Melhor contraste para cabeçalhos dentro dos cards */
-.card-variant h4{ color: #111827 }
-
-/* Pequeno detalhe decorativo nos títulos */
-.admin-title::before{ content: ''; display:inline-block; width:36px; height:6px; background: linear-gradient(90deg, var(--admin-accent-3), var(--admin-accent-2)); margin-right:0.75rem; border-radius:999px; vertical-align:middle }
-
-
-

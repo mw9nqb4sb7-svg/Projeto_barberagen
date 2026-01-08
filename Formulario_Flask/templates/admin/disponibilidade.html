@@ -22,20 +22,20 @@
         
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
-            background: #ffffff;
-            color: #1f2937;
+            background: #0a0a0a;
+            color: #ffffff;
             line-height: 1.6;
             letter-spacing: -0.5px;
         }
         
         .navbar {
-            background: rgba(255, 255, 255, 0.95);
+            background: rgba(10, 10, 10, 0.9);
             backdrop-filter: blur(10px);
             padding: 1.2rem 2rem;
             position: sticky;
             top: 0;
             z-index: 100;
-            border-bottom: 1px solid rgba(139, 92, 246, 0.2);
+            border-bottom: 1px solid rgba(139, 92, 246, 0.3);
         }
         
         .nav-content {
@@ -55,20 +55,21 @@
         }
         
         .nav-link {
-            color: #1f2937;
+            color: #ffffff;
             text-decoration: none;
             padding: 0.7rem 1.5rem;
             border-radius: 8px;
             font-weight: 600;
             font-size: 0.95rem;
             transition: all 0.3s ease;
-            background: rgba(139, 92, 246, 0.1);
+            background: rgba(139, 92, 246, 0.2);
             letter-spacing: -0.3px;
         }
         
         .nav-link:hover {
             background: #8b5cf6;
             transform: translateY(-2px);
+            color: #fff;
         }
         
         .container {
@@ -89,10 +90,11 @@
             margin-bottom: 0.5rem;
             letter-spacing: -2px;
             line-height: 1.2;
+            color: #fff;
         }
         
         .intro-text {
-            color: rgba(31, 41, 55, 0.7);
+            color: rgba(255, 255, 255, 0.6);
             font-size: 1.1rem;
             margin-bottom: 2rem;
         }
@@ -108,22 +110,23 @@
             border-radius: 16px;
             padding: 2rem;
             transition: all 0.3s ease;
+            color: #fff;
         }
         
         .semana-item:hover {
-            background: rgba(139, 92, 246, 0.05);
+            background: rgba(139, 92, 246, 0.08);
             border-color: #8b5cf6;
             transform: translateY(-3px);
         }
         
         .semana-item.configurada {
             border-color: rgba(52, 211, 153, 0.4);
-            background: rgba(52, 211, 153, 0.05);
+            background: rgba(52, 211, 153, 0.08);
         }
         
         .semana-item.nao-configurada {
             border-color: rgba(251, 191, 36, 0.4);
-            background: rgba(251, 191, 36, 0.05);
+            background: rgba(251, 191, 36, 0.08);
         }
         
         .semana-header {
@@ -137,6 +140,7 @@
             font-size: 1.5rem;
             font-weight: 700;
             letter-spacing: -1px;
+            color: #fff;
         }
         
         .status-badge {
@@ -255,11 +259,16 @@
     
     <div class="container">
         <!-- Hero Section -->
-        <div class="hero-section">
-            <h1 class="hero-title">🕐 Calendário de Disponibilidade</h1>
-            <p class="intro-text">
-                Configure a disponibilidade semana por semana. Clique em uma semana para definir horários específicos para cada dia.
-            </p>
+        <div class="hero-section" style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h1 class="hero-title">🕐 Calendário de Disponibilidade</h1>
+                <p class="intro-text">
+                    Configure a disponibilidade semana por semana. Clique em uma semana para definir horários específicos para cada dia.
+                </p>
+            </div>
+            <a href="{{ url_for('dashboard', slug=barbearia.slug) }}" style="background: rgba(139, 92, 246, 0.2); border: 1px solid #8b5cf6; padding: 0.8rem 1.5rem; border-radius: 12px; text-decoration: none; font-weight: 600; font-size: 0.9rem; color: #fff; display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease; white-space: nowrap;">
+                🏠 Voltar ao Painel
+            </a>
         </div>
         
         <!-- Calendário -->

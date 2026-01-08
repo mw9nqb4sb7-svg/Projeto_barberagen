@@ -37,7 +37,8 @@ def init_database():
 
 def check_environment():
     """Verifica se todas as variáveis de ambiente necessárias estão configuradas"""
-    required_vars = ['DATABASE_URL', 'FLASK_SECRET']
+    # DATABASE_URL é opcional, se faltar usa SQLite
+    required_vars = ['FLASK_SECRET']
     missing_vars = []
 
     for var in required_vars:
@@ -45,10 +46,13 @@ def check_environment():
             missing_vars.append(var)
 
     if missing_vars:
-        print(f"⚠️  Variáveis de ambiente faltando: {', '.join(missing_vars)}")
+        print(f"⚠️  Variáveis de ambiente críticas faltando: {', '.join(missing_vars)}")
         return False
 
-    print("✅ Variáveis de ambiente configuradas")
+    if not os.environ.get('DATABASE_URL'):
+        print("ℹ️  DATABASE_URL não configurada. Usando SQLite local (não recomendado para produção persistente).")
+
+    print("✅ Variáveis de ambiente verificadas")
     return True
 
 if __name__ == '__main__':

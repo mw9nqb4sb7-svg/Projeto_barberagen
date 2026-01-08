@@ -29,21 +29,21 @@
     }
     
     body {
-        background: #ffffff;
-        color: #1f2937;
+        background: #000;
+        color: #fff;
         padding: 0;
         margin: 0;
     }
 
     .navbar {
-        background: linear-gradient(180deg, rgba(0, 0, 0, 0.95) 0%, rgba(13, 13, 13, 0.98) 100%);
-        border-bottom: 3px solid #8b5cf6;
+        background: #000;
+        border-bottom: 3px solid #4a9eff;
         position: fixed;
         top: 0;
         left: 0;
         right: 0;
         z-index: 1000;
-        box-shadow: 0 4px 12px rgba(139, 92, 246, 0.15);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
         padding: 1.5rem 2rem;
     }
 
@@ -384,9 +384,14 @@
                 Clientes com assinaturas de planos mensais ativas
             </p>
         </div>
-        <button onclick="location.reload()" style="padding: 0.75rem 1.5rem; background: #8b5cf6; color: #1f2937; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease; font-family: 'Plus Jakarta Sans', sans-serif;" onmouseover="this.style.background='#357abd'" onmouseout="this.style.background='#8b5cf6'">
-            🔄 Atualizar Dados
-        </button>
+        <div style="display: flex; gap: 1rem; align-items: center;">
+            <a href="{{ url_for('dashboard', slug=barbearia.slug) }}" style="background: rgba(139, 92, 246, 0.2); border: 1px solid #8b5cf6; padding: 0.75rem 1.5rem; border-radius: 8px; text-decoration: none; font-weight: 600; font-size: 0.9rem; color: #fff; display: inline-flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease;">
+                🏠 Voltar ao Painel
+            </a>
+            <button onclick="location.reload()" style="padding: 0.75rem 1.5rem; background: #8b5cf6; color: #000; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.9rem; display: flex; align-items: center; gap: 0.5rem; transition: all 0.3s ease; font-family: 'Plus Jakarta Sans', sans-serif;" onmouseover="this.style.background='#7c3aed'" onmouseout="this.style.background='#8b5cf6'">
+                🔄 Atualizar Dados
+            </button>
+        </div>
     </div>
 
     <!-- Formulário rápido para atribuir plano a um cliente -->
@@ -396,7 +401,7 @@
             <select name="cliente_id" required style="padding:0.75rem 1rem; border-radius:8px; background: rgba(249, 250, 251, 0.8); color: #1f2937; border:1px solid rgba(139, 92, 246,0.12);">
                 <option value="">— Selecionar cliente —</option>
                 {% for c in clientes %}
-                <option value="{{ c.id }}">{{ c.nome }} — {{ c.email }}</option>
+                <option value="{{ c.id }}">{{ c.nome }} — {{ c.telefone | format_phone if c.telefone else 'Sem telefone' }}</option>
                 {% endfor %}
             </select>
             <select name="plano_id" required style="padding:0.75rem 1rem; border-radius:8px; background: rgba(249, 250, 251, 0.8); color: #1f2937; border:1px solid rgba(139, 92, 246,0.12);">
@@ -452,7 +457,7 @@
                             </div>
                             <div class="cliente-details">
                                 <div class="cliente-nome">{{ assinatura.cliente.nome }}</div>
-                                <div class="cliente-email">{{ assinatura.cliente.email }}</div>
+                                <div class="cliente-telefone" style="color: rgba(255,255,255,0.6); font-size: 0.85rem;">{{ assinatura.cliente.telefone | format_phone if assinatura.cliente.telefone else '-' }}</div>
                             </div>
                         </div>
                     </td>
