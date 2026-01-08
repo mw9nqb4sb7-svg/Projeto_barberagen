@@ -23,7 +23,7 @@ def init_database():
 
             # Verificar se já existe super admin
             from app import Usuario
-            super_admin = Usuario.query.filter_by(role='super_admin').first()
+            super_admin = Usuario.query.filter_by(tipo_conta='super_admin').first()
             if not super_admin:
                 print("⚠️  Nenhum super admin encontrado. Execute o script configurar_super_admin.py")
             else:
