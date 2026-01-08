@@ -25,9 +25,20 @@ def init_database():
             from app import Usuario
             super_admin = Usuario.query.filter_by(tipo_conta='super_admin').first()
             if not super_admin:
-                print("⚠️  Nenhum super admin encontrado. Execute o script configurar_super_admin.py")
+                print("⚠️ Criando super admin padrão...")
+                novo_admin = Usuario(
+                    nome="Super Admin",
+                    username="lualmeida",
+                    email="admin@barberconnect.com",
+                    tipo_conta="super_admin",
+                    ativo=True
+                )
+                novo_admin.set_senha("562402")
+                db.session.add(novo_admin)
+                db.session.commit()
+                print("✅ Super admin 'lualmeida' criado com sucesso!")
             else:
-                print("✅ Super admin já configurado")
+                print(f"✅ Super admin já configurado: {super_admin.username}")
 
     except Exception as e:
         print(f"❌ Erro ao inicializar banco de dados: {e}")
