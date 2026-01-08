@@ -3950,6 +3950,8 @@ iniciar_scheduler_sincronizacao()
 # ---------- START ----------
 if __name__ == '__main__':
     with app.app_context():
+        db.create_all()
+        db.session.commit()
 
     # checa templates requeridos (avisa, mas não interrompe)
     missing = check_required_templates(REQUIRED_TEMPLATES)
