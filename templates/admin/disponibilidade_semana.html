@@ -173,10 +173,16 @@
                             {% endif %}
                         </div>
                         
-                        <button type="button" class="btn-secondary btn-small" 
-                                onclick="adicionarHorario('{{ dia_codigo }}')" style="margin-top: 10px;">
-                            + Adicionar Horário
-                        </button>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                            <button type="button" class="btn-secondary btn-small" 
+                                    onclick="adicionarHorario('{{ dia_codigo }}')" style="margin-top: 10px;">
+                                + Adicionar Horário
+                            </button>
+                            <button type="button" class="btn-secondary btn-small" 
+                                    onclick="adicionarVariosHorarios('{{ dia_codigo }}')" style="margin-top: 10px; background: rgba(139, 92, 246, 0.15);">
+                                📝 Adicionar Vários
+                            </button>
+                        </div>
                     </div>
                 </div>
             {% endfor %}
@@ -190,13 +196,9 @@
 
     <script>
     let contadores = {
-        'monday': 6,
-        'tuesday': 6,
-        'wednesday': 6,
-        'thursday': 6,
-        'friday': 6,
-        'saturday': 1,
-        'sunday': 1
+        {% for dia_codigo, _ in dias_opcoes %}
+        '{{ dia_codigo }}': {{ config.get(dia_codigo, {}).get('horarios', [])|length if config.get(dia_codigo, {}).get('horarios') else 6 }},
+        {% endfor %}
     };
 
     function toggleDia(diaCodigo) {
@@ -210,18 +212,52 @@
         }
     }
 
-    function adicionarHorario(diaCodigo) {
+    function inserirCampoHorario(diaCodigo, valor = "") {
         contadores[diaCodigo]++;
         const container = document.getElementById(`${diaCodigo}_container`);
         const div = document.createElement('div');
         div.className = 'horario-item';
         div.innerHTML = `
             <input type="text" name="${diaCodigo}_horario_${contadores[diaCodigo]}" 
-                   placeholder="Ex: 17:00" pattern="^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$" 
+                   value="${valor}" placeholder="Ex: 17:00" pattern="^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$" 
                    class="form-input horario-input">
             <button type="button" class="btn-remove" onclick="removerHorario(this, '${diaCodigo}')">×</button>
         `;
         container.appendChild(div);
+    }
+
+    function adicionarHorario(diaCodigo) {
+        inserirCampoHorario(diaCodigo);
+    }
+
+    function adicionarVariosHorarios(diaCodigo) {
+        const input = prompt("Digite os horários separados por ponto e vírgula, vírgula ou espaço (Ex: 14:00; 15:00; 16:00):");
+        if (input) {
+            // Divide por ponto e vírgula, vírgula, espaço ou quebra de linha
+            const partes = input.split(/[;,\s\n]+/);
+            let adicionados = 0;
+            
+            partes.forEach(p => {
+                let h = p.trim();
+                if (!h) return;
+
+                // Tenta corrigir formatos comuns como 1400 ou 14;00
+                let formatado = h.replace('.', ':').replace(',', ':').replace(';', ':');
+                if (formatado.length === 4 && !formatado.includes(':') && !isNaN(formatado)) {
+                    formatado = formatado.slice(0, 2) + ':' + formatado.slice(2);
+                }
+                
+                // Validação do formato HH:MM
+                if (/^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/.test(formatado)) {
+                    inserirCampoHorario(diaCodigo, formatado);
+                    adicionados++;
+                }
+            });
+
+            if (adicionados === 0) {
+                alert("Nenhum horário válido encontrado. Use o formato HH:MM (ex: 14:00).");
+            }
+        }
     }
 
     function removerHorario(button, diaCodigo) {

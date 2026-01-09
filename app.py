@@ -2377,11 +2377,26 @@ def admin_disponibilidade_semana(data_inicio):
             ativo = request.form.get(f'{dia}_ativo') == 'on'
             horarios = []
             
-            # Processar horários para este dia
-            for i in range(1, 25):  # Máximo 24 horários por dia
-                horario = request.form.get(f'{dia}_horario_{i}')
-                if horario and horario.strip():
-                    horarios.append(horario.strip())
+            # Processar horários para este dia (suporta múltiplos horários por campo e limite maior)
+            for key in request.form:
+                if key.startswith(f'{dia}_horario_'):
+                    valor = request.form.get(key)
+                    if valor and valor.strip():
+                        # Suporte a múltiplos horários separados por ; , ou espaço no mesmo campo
+                        import re
+                        # Normalizar separadores comuns para : antes de validar
+                        valor_normalizado = valor.strip().replace('.', ':').replace(',', ':').replace(';', ':')
+                        partes = re.split(r'[;,\s]+', valor_normalizado)
+                        for p in partes:
+                            p_clean = p.strip()
+                            # Tenta corrigir 1400 -> 14:00
+                            if len(p_clean) == 4 and ':' not in p_clean and p_clean.isdigit():
+                                p_clean = p_clean[:2] + ':' + p_clean[2:]
+                                
+                            # Validação básica HH:MM
+                            if p_clean and re.match(r'^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$', p_clean):
+                                if p_clean not in horarios:
+                                    horarios.append(p_clean)
             
             nova_config[dia] = {
                 'ativo': ativo,
