@@ -88,6 +88,11 @@ os.makedirs(LOGS_DIR, exist_ok=True)
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+# Rota para servir logos de upload (Necessário para Railway/Produção)
+@app.route('/static/uploads/logos/<filename>')
+def serve_logo(filename):
+    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+
 db = SQLAlchemy(app)
 
 # Isentar rotas de API da proteção CSRF (somente JSON)
