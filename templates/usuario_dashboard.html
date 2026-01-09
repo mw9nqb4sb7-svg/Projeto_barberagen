@@ -692,7 +692,7 @@
         <div class="navbar-content">
             <div class="navbar-brand">
                 {% if barbearia.logo %}
-                <img src="{{ url_for('static', filename='uploads/logos/' + barbearia.logo) }}" 
+                <img src="{{ url_for('serve_logo', filename=barbearia.logo) }}" 
                      alt="{{ barbearia.nome }}" 
                      class="navbar-logo">
                 {% endif %}
@@ -957,7 +957,7 @@
             <div>
                 <div class="footer-brand">
                     {% if barbearia.logo %}
-                    <img src="{{ url_for('static', filename='uploads/logos/' + barbearia.logo) }}" 
+                    <img src="{{ url_for('serve_logo', filename=barbearia.logo) }}" 
                          alt="{{ barbearia.nome }}" 
                          class="footer-logo">
                     {% endif %}

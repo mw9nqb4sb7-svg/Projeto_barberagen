@@ -89,9 +89,26 @@ def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 # Rota para servir logos de upload (Necessário para Railway/Produção)
-@app.route('/static/uploads/logos/<filename>')
+@app.route('/logo-server/<filename>')
 def serve_logo(filename):
-    return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+    if not filename:
+        return abort(404)
+        
+    # Limpar o nome do arquivo caso venha com caminhos (segurança)
+    filename = os.path.basename(filename)
+    
+    # 1. Tenta na pasta de uploads de logos
+    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    if os.path.exists(file_path):
+        return send_from_directory(app.config['UPLOAD_FOLDER'], filename)
+        
+    # 2. Tenta na pasta static/images (fallback para logos em cache/git)
+    images_dir = os.path.join(STATIC_DIR, 'images')
+    if os.path.exists(os.path.join(images_dir, filename)):
+        return send_from_directory(images_dir, filename)
+        
+    # 3. Se nada funcionar, tenta enviar uma imagem padrão ou 404
+    return abort(404)
 
 db = SQLAlchemy(app)
 

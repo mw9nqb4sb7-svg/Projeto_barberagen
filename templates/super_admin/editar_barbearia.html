@@ -38,7 +38,7 @@
                         Logo Atual
                     </label>
                     <div style="padding: 1rem; background: var(--bg-dark); border: 2px solid var(--gold-dark); border-radius: 4px; text-align: center;">
-                        <img src="{{ url_for('static', filename='uploads/logos/' + barbearia.logo) }}" 
+                        <img src="{{ url_for('serve_logo', filename=barbearia.logo) }}" 
                              alt="Logo {{ barbearia.nome }}" 
                              style="max-height: 150px; max-width: 100%; object-fit: contain;">
                     </div>
