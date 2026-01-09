@@ -501,6 +501,22 @@
         border-color: #4a9eff;
         background: rgba(255, 255, 255, 0.05);
     }
+
+    /* Reforço do Botão WhatsApp */
+    .btn-whatsapp {
+        background: #25d366 !important;
+        color: #000 !important;
+        border: none !important;
+        box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4) !important;
+        font-weight: 800 !important;
+    }
+
+    .btn-whatsapp:hover {
+        background: #128c7e !important;
+        color: #fff !important;
+        transform: scale(1.05) !important;
+        box-shadow: 0 6px 20px rgba(37, 211, 102, 0.6) !important;
+    }
     
     .card-left-accent {
         width: 5px;
@@ -1665,7 +1681,7 @@ function renderizarAgendamentos(agendamentos) {
                             ${(r.status === 'agendada' || r.status === 'confirmada') && r.cliente_telefone && r.cliente_telefone !== 'Não informado' ? `
                             <a href="https://wa.me/${r.cliente_telefone.replace(/\D/g, '')}?text=${encodeURIComponent(`Olá ${r.cliente_nome}! Aqui é da ${barbearia_nome}. Confirmamos seu horário para o dia ${dataFormatada} às ${r.hora_inicio}. Podemos confirmar sua presença?`)}" 
                                target="_blank" class="card-action-btn btn-whatsapp" title="Enviar WhatsApp">
-                                💬 WhatsApp
+                               <i class="fab fa-whatsapp" style="font-size: 1.2rem;"></i> WhatsApp
                             </a>
                             ` : ''}
                             ${r.status !== 'concluida' ? `
