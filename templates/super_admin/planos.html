@@ -1,152 +1,252 @@
 {% extends "base.html" %}
 {% block title %}Gerenciar Planos - Super Admin{% endblock %}
 {% block extra_head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}?v=1.0">
-{% endblock %}
-
-{% block content %}
 <style>
     :root {
-        --bg-color: #0a0a0a;
-        --card-bg: #1a1a1a;
-        --text-color: #f5f5dc;
-        --primary-color: #8b5cf6;
-        --border-color: rgba(139, 92, 246, 0.2);
+        --bg-color: #000000;
+        --card-bg: #0a0a0a;
+        --border-color: #1a1a1a;
+        --accent-color: #ffffff;
+        --text-color: #ffffff;
+        --text-muted: #888888;
     }
 
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Inter', -apple-system, sans-serif;
+    }
+    
     body {
-        background: var(--bg-color);
-        color: var(--text-color);
-        font-family: 'Plus Jakarta Sans', sans-serif;
-        padding: 2rem;
+        background-color: var(--bg-color) !important;
+        color: var(--text-color) !important;
+        min-height: 100vh;
     }
-
-    .container {
-        max-width: 1400px;
+    
+    .super-admin-container {
+        max-width: 1200px;
         margin: 0 auto;
-    }
-
-    .header {
-        margin-bottom: 2rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 1rem;
-    }
-
-    h1 {
-        font-size: 2rem;
-        font-weight: 800;
-        background: linear-gradient(135deg, #fff 0%, var(--primary-color) 100%);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    .btn {
-        padding: 0.75rem 1.5rem;
-        border-radius: 12px;
-        text-decoration: none;
-        font-weight: 600;
-        transition: all 0.3s;
-        border: none;
-        cursor: pointer;
-        display: inline-block;
-    }
-
-    .btn-primary {
-        background: var(--primary-color);
-        color: #000;
-    }
-
-    .btn-primary:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
-    }
-
-    .btn-back {
-        background: transparent;
-        border: 2px solid var(--border-color);
-        color: var(--text-color);
-    }
-
-    .btn-back:hover {
-        border-color: var(--primary-color);
-        background: rgba(139, 92, 246, 0.1);
-    }
-
-    .barbearia-section {
-        background: var(--card-bg);
-        border: 2px solid var(--border-color);
-        border-radius: 20px;
         padding: 2rem;
-        margin-bottom: 2rem;
     }
 
-    .barbearia-header {
+    /* Header */
+    .page-header {
+        padding: 4rem 0;
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 3rem;
         display: flex;
         justify-content: space-between;
-        align-items: center;
-        margin-bottom: 1.5rem;
-        flex-wrap: wrap;
+        align-items: flex-end;
+    }
+
+    .header-content h1 {
+        font-size: 3rem;
+        font-weight: 900;
+        letter-spacing: -1px;
+    }
+
+    .header-content p {
+        color: var(--text-muted);
+        margin-top: 0.5rem;
+    }
+
+    .header-actions {
+        display: flex;
         gap: 1rem;
     }
 
-    .barbearia-nome {
-        font-size: 1.5rem;
+    .btn-minimal {
+        padding: 0.8rem 1.5rem;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        background: transparent;
+        color: #fff;
+        text-decoration: none;
+        font-size: 0.75rem;
         font-weight: 700;
-        color: var(--primary-color);
-    }
-
-    .stats {
-        display: flex;
-        gap: 2rem;
-        flex-wrap: wrap;
-        margin-bottom: 1.5rem;
-    }
-
-    .stat-item {
-        display: flex;
-        flex-direction: column;
-    }
-
-    .stat-label {
-        font-size: 0.85rem;
-        color: rgba(245, 245, 220, 0.6);
         text-transform: uppercase;
-        letter-spacing: 0.5px;
+        letter-spacing: 1px;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        cursor: pointer;
     }
 
-    .stat-value {
+    .btn-minimal:hover {
+        background: #fff;
+        color: #000;
+        border-color: #fff;
+    }
+
+    .btn-minimal.primary {
+        background: #fff;
+        color: #000;
+        border-color: #fff;
+    }
+
+    /* Barbearia Section */
+    .barbearia-section {
+        margin-bottom: 5rem;
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        margin-bottom: 2rem;
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 1rem;
+    }
+
+    .section-header h2 {
         font-size: 1.5rem;
-        font-weight: 700;
-        color: var(--primary-color);
+        font-weight: 800;
     }
 
+    .section-header .stats {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        display: flex;
+        gap: 1rem;
+    }
+
+    /* Plan Grid */
     .planos-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        grid-template-columns: repeat(3, 1fr);
         gap: 1.5rem;
     }
 
     .plano-card {
-        background: rgba(249, 250, 251, 0.5);
-        border: 2px solid var(--border-color);
-        border-radius: 15px;
-        padding: 1.5rem;
-        transition: all 0.3s;
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        padding: 2.5rem;
+        border-radius: 8px;
+        transition: border-color 0.3s;
+        display: flex;
+        flex-direction: column;
     }
 
     .plano-card:hover {
-        transform: translateY(-5px);
-        border-color: var(--primary-color);
-        box-shadow: 0 10px 30px rgba(139, 92, 246, 0.2);
+        border-color: #333;
     }
 
-    .plano-card.inativo {
+    .plano-card.inactive {
         opacity: 0.5;
-        border-color: rgba(31, 41, 55, 0.1);
     }
+
+    .plano-nome {
+        font-size: 0.75rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+        color: var(--text-muted);
+        margin-bottom: 1.5rem;
+    }
+
+    .plano-preco {
+        font-size: 2.5rem;
+        font-weight: 900;
+        margin-bottom: 2rem;
+    }
+
+    .plano-preco span {
+        font-size: 0.9rem;
+        color: var(--text-muted);
+        font-weight: 500;
+    }
+
+    .plano-features {
+        list-style: none;
+        margin-bottom: 2.5rem;
+        flex-grow: 1;
+    }
+
+    .plano-features li {
+        font-size: 0.85rem;
+        margin-bottom: 1rem;
+        color: var(--text-muted);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .plano-features li::before {
+        content: '—';
+        color: #fff;
+    }
+
+    .plano-actions {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    @media (max-width: 1024px) {
+        .planos-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 640px) {
+        .planos-grid { grid-template-columns: 1fr; }
+        .page-header { flex-direction: column; align-items: flex-start; gap: 2rem; }
+        .section-header { flex-direction: column; gap: 1rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="super-admin-container">
+    <header class="page-header">
+        <div class="header-content">
+            <h1>SaaS & Planos</h1>
+            <p>Configuração comercial e recursos de monetização.</p>
+        </div>
+        <div class="header-actions">
+            <a href="{{ url_for('super_admin_dashboard') }}" class="btn-minimal">Dashboard</a>
+            <a href="{{ url_for('super_admin_novo_plano') }}" class="btn-minimal primary">Criar Plano</a>
+        </div>
+    </header>
+
+    {% for barbearia, dados in barbearia_planos.items() %}
+    <section class="barbearia-section">
+        <div class="section-header">
+            <h2>{{ barbearia.nome }}</h2>
+            <div class="stats">
+                <span>{{ dados.planos|length }} PLANOS</span>
+                <span>ID: {{ barbearia.id }}</span>
+            </div>
+        </div>
+
+        <div class="planos-grid">
+            {% for plano in dados.planos %}
+            <article class="plano-card {{ 'inactive' if not plano.ativo else '' }}">
+                <div class="plano-nome">{{ plano.nome }}</div>
+                <div class="plano-preco">
+                    R$ {{ "%.2f"|format(plano.valor) }}
+                    <span>/mês</span>
+                </div>
+
+                <ul class="plano-features">
+                    <li>Max Usuários: {{ plano.max_usuarios or 'Ilimitado' }}</li>
+                    <li>Max Serviços: {{ plano.max_servicos or 'Ilimitado' }}</li>
+                    <li>Max Agendamentos: {{ plano.max_agendamentos or 'Ilimitado' }}</li>
+                </ul>
+
+                <div class="plano-actions">
+                    <a href="{{ url_for('super_admin_editar_plano', id=plano.id) }}" class="btn-minimal">Editar</a>
+                    <form action="{{ url_for('super_admin_deletar_plano', id=plano.id) }}" method="POST" onsubmit="return confirm('Excluir este plano?')">
+                        <button type="submit" class="btn-minimal" style="width: 100%; border-color: rgba(239, 68, 68, 0.2); color: #ef4444;">Excluir</button>
+                    </form>
+                </div>
+            </article>
+            {% endfor %}
+        </div>
+    </section>
+    {% endfor %}
+</div>
+{% endblock %}
 
     .plano-nome {
         font-size: 1.25rem;

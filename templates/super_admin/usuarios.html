@@ -2,140 +2,291 @@
 {% block title %}Super Admin - Usuários{% endblock %}
 
 {% block extra_head %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/admin.css') }}?v=1.0">
-{% endblock %}
-{% block content %}
-<!-- Header -->
-<div style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); padding: 3rem 2rem; margin-bottom: 3rem; border: 3px solid var(--gold); border-radius: 4px;">
-    <div style="max-width: 1400px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem;">
-        <div>
-            <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(0, 0, 0, 0.3); padding: 0.5rem 1.5rem; border: 2px solid var(--gold); margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 2px;">
-                <span style="font-size: 1.2rem;">⚡</span>
-                <span style="color: var(--gold); font-weight: 700; font-size: 0.9rem;">SUPER ADMIN</span>
-            </div>
-            <h1 style="font-size: 2.5rem; font-weight: 800; color: #fff; margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 2px;">Gerenciamento de Usuários</h1>
-            <p style="color: rgba(255, 255, 255, 0.7); font-size: 1.1rem;">Visualize todos os usuários organizados por barbearia</p>
-        </div>
-        
-        <div style="display: flex; gap: 1rem;">
-            <a href="{{ url_for('super_admin_novo_usuario') }}" style="display: flex; align-items: center; gap: 0.5rem; background: #10b981; color: #000; padding: 1rem 1.5rem; border: 2px solid #059669; text-decoration: none; font-weight: 600; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px; border-radius: 4px;">
-                <span style="font-size: 1.2rem;">➕</span>
-                Novo Usuário
-            </a>
-            <a href="{{ url_for('super_admin_dashboard') }}" style="display: flex; align-items: center; gap: 0.5rem; background: rgba(255, 255, 255, 0.05); color: #fff; padding: 1rem 1.5rem; border: 2px solid var(--gold-dark); text-decoration: none; font-weight: 600; transition: all 0.3s ease; text-transform: uppercase; letter-spacing: 1px; border-radius: 4px;">
-                <span style="font-size: 1.2rem;">🏠</span>
-                Dashboard
-            </a>
-        </div>
-    </div>
-</div>
+<style>
+    :root {
+        --bg-color: #000000;
+        --card-bg: #0a0a0a;
+        --border-color: #1a1a1a;
+        --accent-color: #ffffff;
+        --text-color: #ffffff;
+        --text-muted: #888888;
+        --tag-admin: #ef4444;
+        --tag-barbeiro: #f59e0b;
+        --tag-cliente: #06b6d4;
+    }
 
-<!-- Usuários por Barbearia -->
-<div style="max-width: 1400px; margin: 0 auto; padding: 0 2rem 3rem;">
-    {% for barbearia_nome, usuarios_lista in usuarios_organizados.items() %}
-    <div style="margin-bottom: 3rem;">
-        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; padding: 1.5rem; background: var(--bg-dark); border: 2px solid var(--gold-dark); border-radius: 4px; border-left: 4px solid var(--gold);">
-            <h2 style="display: flex; align-items: center; gap: 0.75rem; font-size: 1.75rem; font-weight: 700; color: var(--gold); text-transform: uppercase; letter-spacing: 1px; margin: 0;">
-                {% if barbearia_nome == 'Sistema' %}
-                <span style="font-size: 1.5rem;">⚡</span>
-                {{ barbearia_nome }}
-                {% else %}
-                <span style="font-size: 1.5rem;">🏢</span>
-                {{ barbearia_nome }}
-                {% endif %}
-            </h2>
-            <div style="display: flex; align-items: center; gap: 0.5rem; background: rgba(0, 0, 0, 0.3); padding: 0.75rem 1.25rem; border: 2px solid var(--gold-dark); border-radius: 4px;">
-                <span style="font-size: 1.25rem; font-weight: 700; color: var(--gold);">{{ usuarios_lista|length }}</span>
-                <span style="color: rgba(255, 255, 255, 0.6); font-size: 0.9rem;">usuário{{ 's' if usuarios_lista|length != 1 else '' }}</span>
-            </div>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Inter', -apple-system, sans-serif;
+    }
+    
+    body {
+        background-color: var(--bg-color) !important;
+        color: var(--text-color) !important;
+        min-height: 100vh;
+    }
+    
+    .super-admin-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    /* Header */
+    .page-header {
+        padding: 4rem 0;
+        border-bottom: 1px solid var(--border-color);
+        margin-bottom: 3rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+    }
+
+    .header-content h1 {
+        font-size: 3rem;
+        font-weight: 900;
+        letter-spacing: -1px;
+    }
+
+    .header-content p {
+        color: var(--text-muted);
+        margin-top: 0.5rem;
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .btn-minimal {
+        padding: 0.8rem 1.5rem;
+        border: 1px solid var(--border-color);
+        border-radius: 4px;
+        background: transparent;
+        color: #fff;
+        text-decoration: none;
+        font-size: 0.75rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        transition: all 0.2s;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-minimal:hover {
+        background: #fff;
+        color: #000;
+        border-color: #fff;
+    }
+
+    .btn-minimal.primary {
+        background: #fff;
+        color: #000;
+        border-color: #fff;
+    }
+
+    /* Group (Barbearia) */
+    .barbearia-group {
+        margin-bottom: 4rem;
+    }
+
+    .group-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #fff;
+    }
+
+    .group-header h2 {
+        font-size: 1.2rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        letter-spacing: 2px;
+    }
+
+    .group-count {
+        font-size: 0.8rem;
+        color: var(--text-muted);
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    /* User Grid */
+    .user-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.5rem;
+    }
+
+    .user-card {
+        background: var(--card-bg);
+        border: 1px solid var(--border-color);
+        padding: 2rem;
+        border-radius: 8px;
+        transition: border-color 0.3s;
+    }
+
+    .user-card:hover {
+        border-color: #333;
+    }
+
+    .user-main {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .user-avatar {
+        width: 48px;
+        height: 48px;
+        background: #111;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        border: 1px solid var(--border-color);
+    }
+
+    .user-info h4 {
+        font-size: 1rem;
+        font-weight: 800;
+        margin-bottom: 0.2rem;
+    }
+
+    .user-info .contact {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+    }
+
+    .user-details {
+        font-size: 0.8rem;
+        padding-top: 1rem;
+        border-top: 1px solid var(--border-color);
+        margin-bottom: 1.5rem;
+    }
+
+    .detail-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 0.5rem;
+    }
+
+    .detail-row .lbl {
+        color: var(--text-muted);
+        font-weight: 600;
+    }
+
+    .detail-row .val {
+        font-weight: 700;
+    }
+
+    .role-tags {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+    }
+
+    .role-tag {
+        font-size: 0.65rem;
+        font-weight: 800;
+        padding: 0.2rem 0.6rem;
+        border-radius: 3px;
+        text-transform: uppercase;
+        background: #111;
+        border: 1px solid var(--border-color);
+        color: #fff;
+    }
+
+    .role-tag.admin { color: var(--tag-admin); border-color: rgba(239, 68, 68, 0.2); }
+    .role-tag.barbeiro { color: var(--tag-barbeiro); border-color: rgba(245, 158, 11, 0.2); }
+    .role-tag.cliente { color: var(--tag-cliente); border-color: rgba(6, 182, 212, 0.2); }
+
+    @media (max-width: 1024px) {
+        .user-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 640px) {
+        .user-grid { grid-template-columns: 1fr; }
+        .page-header { flex-direction: column; align-items: flex-start; gap: 2rem; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="super-admin-container">
+    <header class="page-header">
+        <div class="header-content">
+            <h1>Usuários</h1>
+            <p>Controle global de acessos e permissões.</p>
         </div>
-        
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 1.5rem;">
+        <div class="header-actions">
+            <a href="{{ url_for('super_admin_dashboard') }}" class="btn-minimal">Dashboard</a>
+            <a href="{{ url_for('super_admin_novo_usuario') }}" class="btn-minimal primary">Novo Usuário</a>
+        </div>
+    </header>
+
+    {% for barbearia_nome, usuarios_lista in usuarios_organizados.items() %}
+    <section class="barbearia-group">
+        <div class="group-header">
+            <h2>{{ barbearia_nome }}</h2>
+            <div class="group-count">{{ usuarios_lista|length }} registros</div>
+        </div>
+
+        <div class="user-grid">
             {% for item in usuarios_lista %}
             {% set usuario = item.usuario %}
             {% set vinculos = item.vinculos %}
-            <div style="background: var(--bg-dark); padding: 1.5rem; border: 2px solid var(--gold-dark); border-radius: 4px; transition: all 0.3s ease;" onmouseover="this.style.borderColor='var(--gold)'; this.style.transform='translateY(-2px)'" onmouseout="this.style.borderColor='var(--gold-dark)'; this.style.transform='translateY(0)'">
-                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.25rem;">
-                    <div style="width: 3rem; height: 3rem; border-radius: 50%; background: rgba(0, 0, 0, 0.4); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; border: 2px solid var(--gold-dark);">
+            <div class="user-card" style="{{ 'opacity: 0.5;' if not usuario.ativo else '' }}">
+                <div class="user-main">
+                    <div class="user-avatar">
                         {% if usuario.tipo_conta == 'super_admin' %}⚡
                         {% elif vinculos and vinculos[0].role == 'admin' %}🛡️
                         {% elif vinculos and vinculos[0].role == 'barbeiro' %}✂️
                         {% else %}👤{% endif %}
                     </div>
-                    <div style="flex: 1;">
-                        <h4 style="font-size: 1.125rem; font-weight: 700; color: var(--gold); margin-bottom: 0.25rem;">{{ usuario.nome }}</h4>
-                        <div style="color: rgba(245, 245, 220, 0.6); font-size: 0.875rem;">
-                            {% if usuario.username %}
-                                <span style="color: var(--gold-dark);">@{{ usuario.username }}</span>
-                                {% if usuario.email %} • {{ usuario.email }}{% endif %}
-                            {% else %}
-                                {{ usuario.email }}
-                            {% endif %}
+                    <div class="user-info">
+                        <h4>{{ usuario.nome }}</h4>
+                        <div class="contact">
+                            {% if usuario.username %}@{{ usuario.username }}{% else %}{{ usuario.email }}{% endif %}
                         </div>
                     </div>
-                    <div style="font-size: 1.25rem;">
-                        {{ '🟢' if usuario.ativo else '🔴' }}
+                </div>
+
+                <div class="user-details">
+                    <div class="detail-row">
+                        <span class="lbl">ID</span>
+                        <span class="val">{{ usuario.id }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="lbl">Status</span>
+                        <span class="val">{{ '🟢 ATIVO' if usuario.ativo else '🔴 INATIVO' }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="lbl">Cadastro</span>
+                        <span class="val">{{ usuario.data_criacao.strftime('%d/%m/%Y') if usuario.data_criacao else '--' }}</span>
                     </div>
                 </div>
-                
-                <div style="margin-bottom: 1rem; border-top: 1px solid var(--gold-dark); padding-top: 1rem;">
-                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid rgba(245, 245, 220, 0.1);">
-                        <span style="color: rgba(245, 245, 220, 0.6); font-size: 0.875rem; font-weight: 600;">ID:</span>
-                        <span style="color: var(--text-color); font-size: 0.875rem;">{{ usuario.id }}</span>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid rgba(245, 245, 220, 0.1);">
-                        <span style="color: rgba(245, 245, 220, 0.6); font-size: 0.875rem; font-weight: 600;">Tipo:</span>
-                        <span style="color: {% if usuario.tipo_conta == 'super_admin' %}#8b5cf6{% elif usuario.tipo_conta == 'admin_barbearia' %}#ef4444{% elif usuario.tipo_conta == 'barbeiro' %}#f59e0b{% else %}#06b6d4{% endif %}; font-size: 0.875rem; font-weight: 700;">{{ usuario.tipo_conta|replace('_', ' ')|title }}</span>
-                    </div>
-                    {% if usuario.telefone %}
-                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid rgba(245, 245, 220, 0.1);">
-                        <span style="color: rgba(245, 245, 220, 0.6); font-size: 0.875rem; font-weight: 600;">Telefone:</span>
-                        <span style="color: var(--text-color); font-size: 0.875rem;">{{ usuario.telefone | format_phone }}</span>
-                    </div>
+
+                <div class="role-tags">
+                    {% if usuario.tipo_conta == 'super_admin' %}
+                        <span class="role-tag admin">Super Admin</span>
                     {% endif %}
-                    <div style="display: flex; justify-content: space-between; padding: 0.5rem 0;">
-                        <span style="color: rgba(245, 245, 220, 0.6); font-size: 0.875rem; font-weight: 600;">Cadastro:</span>
-                        <span style="color: var(--text-color); font-size: 0.875rem;">{{ usuario.data_criacao.strftime('%d/%m/%Y') if usuario.data_criacao else 'N/A' }}</span>
-                    </div>
+                    {% for vinculo in vinculos %}
+                        <span class="role-tag {{ vinculo.role }}">{{ vinculo.role|title }}</span>
+                    {% endfor %}
                 </div>
-                
-                {% if vinculos %}
-                <div style="background: rgba(255, 255, 255, 0.05); padding: 1rem; border-radius: 4px; border: 1px solid var(--gold-dark);">
-                    <div style="font-size: 0.875rem; font-weight: 600; color: rgba(255, 255, 255, 0.7); margin-bottom: 0.5rem;">Funções:</div>
-                    <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                        {% for vinculo in vinculos %}
-                        <div style="display: flex; align-items: center; gap: 0.375rem; padding: 0.375rem 0.75rem; border-radius: 4px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; background: {% if vinculo.role == 'admin' %}#ef4444{% elif vinculo.role == 'barbeiro' %}#f59e0b{% else %}#06b6d4{% endif %}; color: white;">
-                            {% if vinculo.role == 'admin' %}🛡️
-                            {% elif vinculo.role == 'barbeiro' %}✂️
-                            {% else %}👤{% endif %}
-                            {{ vinculo.role|title }}
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-                {% endif %}
             </div>
             {% endfor %}
         </div>
-    </div>
+    </section>
     {% endfor %}
 </div>
-
-<style>
-a[href]:hover {
-    border-color: var(--gold) !important;
-    background: rgba(139, 92, 246, 0.2) !important;
-    transform: translateY(-2px);
-}
-
-@media (max-width: 768px) {
-    div[style*="display: flex"] {
-        flex-direction: column !important;
-    }
-    
-    div[style*="display: grid"] {
-        grid-template-columns: 1fr !important;
-    }
-}
-</style>
 {% endblock %}
