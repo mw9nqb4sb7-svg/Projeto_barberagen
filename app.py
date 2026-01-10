@@ -3731,28 +3731,11 @@ def admin_chamados(slug):
 @app.route('/<slug>/admin/chamados/sincronizar', methods=['POST'])
 @csrf.exempt
 def sincronizar_chamados_manual(slug):
-    """Endpoint para sincronizar chamados manualmente via AJAX"""
-    print("\n" + "="*80)
-    print(f"🔄 [DEBUG] >>> FUNÇÃO CHAMADA! Slug: {slug}")
-    print(f"🔄 [DEBUG] >>> Session: {dict(session)}")
-    print(f"🔄 [DEBUG] >>> Request method: {request.method}")
-    print("="*80 + "\n")
-    
-    if 'usuario_id' not in session:
-        print("❌ [DEBUG] Usuário não autenticado")
-        return jsonify({'success': False, 'error': 'Não autenticado'}), 401
-    
-    # Verificar se é admin pela sessão
-    tipo_conta = session.get('tipo_conta')
-    print(f"🔍 [DEBUG] Tipo de conta: {tipo_conta}")
-    
-    if tipo_conta not in ['admin', 'super_admin']:
-        print("❌ [DEBUG] Usuário não é admin")
-        return jsonify({'success': False, 'error': 'Acesso negado'}), 403
-    
-    try:
-        print("🔄 [DEBUG] Executando sincronização...")
-        # Executar sincronização
+    """Endpoint desativado para melhorar performance do sistema"""
+    return jsonify({
+        'success': True, 
+        'message': 'Sincronização automática desativada para otimização do sistema.'
+    })
         sincronizar_chamados_automatica()
         
         print("✅ [DEBUG] Sincronização executada com sucesso!")
@@ -3988,7 +3971,7 @@ def iniciar_scheduler_sincronizacao():
 
 # Inicializar componentes globais (Scheduler, etc)
 # Para Gunicorn, isso precisa ser chamado fora do bloco if __name__ == '__main__':
-iniciar_scheduler_sincronizacao()
+# iniciar_scheduler_sincronizacao()
 
 # ---------- START ----------
 if __name__ == '__main__':
