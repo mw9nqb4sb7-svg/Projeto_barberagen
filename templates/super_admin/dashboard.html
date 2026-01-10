@@ -122,7 +122,6 @@
             <li><a href="{{ url_for('super_admin_barbearias') }}" class="nav-link">BARBEARIAS</a></li>
             <li><a href="{{ url_for('super_admin_usuarios') }}" class="nav-link">USUÁRIOS</a></li>
             <li><a href="{{ url_for('super_admin_planos') }}" class="nav-link">💎 PLANOS</a></li>
-            <li><a href="{{ url_for('super_admin_relatorios') }}" class="nav-link">RELATÓRIOS</a></li>
             <li><a href="/super_admin/logout" class="nav-link">SAIR</a></li>
         </ul>
     </div>
@@ -265,9 +264,6 @@
             </div>
             
             <div style="display: flex; gap: 1rem;">
-                <a href="/teste-isolamento?b={{ stats.barbearia.slug }}" style="flex: 1; text-align: center; padding: 0.75rem; background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(79, 70, 229, 0.2)); border: 2px solid #6366f1; color: #818cf8; border-radius: 10px; text-decoration: none; font-weight: 700; text-transform: uppercase; transition: all 0.3s ease; font-size: 0.85rem; letter-spacing: 1px;">
-                    🔍 DETALHES
-                </a>
                 <a href="/?b={{ stats.barbearia.slug }}" style="flex: 1; text-align: center; padding: 0.75rem; background: linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(99, 102, 241, 0.2)); border: 2px solid #8b5cf6; color: #a78bfa; border-radius: 10px; text-decoration: none; font-weight: 700; text-transform: uppercase; transition: all 0.3s ease; font-size: 0.85rem; letter-spacing: 1px;">
                     🏠 VISITAR
                 </a>
@@ -296,16 +292,10 @@
             <div style="color: rgba(249, 168, 212, 0.7); font-size: 0.85rem; font-weight: 600;">Ver todos os usuários</div>
         </a>
         
-        <a href="{{ url_for('super_admin_relatorios') }}" style="display: block; padding: 2rem; background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(5, 150, 105, 0.15)); border: 2px solid #10b981; border-radius: 16px; text-decoration: none; text-align: center; transition: all 0.4s ease; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);">
-            <div style="font-size: 3rem; margin-bottom: 1rem;">📊</div>
-            <div style="color: #6ee7b7; font-weight: 800; font-size: 1.1rem; text-transform: uppercase; margin-bottom: 0.5rem; letter-spacing: 1px;">Relatórios Avançados</div>
-            <div style="color: rgba(110, 231, 183, 0.7); font-size: 0.85rem; font-weight: 600;">Análises e métricas</div>
-        </a>
-        
-        <a href="/teste-isolamento" style="display: block; padding: 2rem; background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(217, 119, 6, 0.15)); border: 2px solid #f59e0b; border-radius: 16px; text-decoration: none; text-align: center; transition: all 0.4s ease; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);">
-            <div style="font-size: 3rem; margin-bottom: 1rem;">🧪</div>
-            <div style="color: #fbbf24; font-weight: 800; font-size: 1.1rem; text-transform: uppercase; margin-bottom: 0.5rem; letter-spacing: 1px;">Testar Isolamento</div>
-            <div style="color: rgba(251, 191, 36, 0.7); font-size: 0.85rem; font-weight: 600;">Validar multi-tenancy</div>
+        <a href="{{ url_for('super_admin_planos') }}" style="display: block; padding: 2rem; background: linear-gradient(135deg, rgba(245, 158, 11, 0.15), rgba(217, 119, 6, 0.15)); border: 2px solid #f59e0b; border-radius: 16px; text-decoration: none; text-align: center; transition: all 0.4s ease; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);">
+            <div style="font-size: 3rem; margin-bottom: 1rem;">💎</div>
+            <div style="color: #fbbf24; font-weight: 800; font-size: 1.1rem; text-transform: uppercase; margin-bottom: 0.5rem; letter-spacing: 1px;">Gerenciar Planos</div>
+            <div style="color: rgba(251, 191, 36, 0.7); font-size: 0.85rem; font-weight: 600;">Configurar mensalidades</div>
         </a>
     </div>
 </div>
