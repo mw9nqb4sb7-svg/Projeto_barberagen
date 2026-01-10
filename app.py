@@ -3736,21 +3736,6 @@ def sincronizar_chamados_manual(slug):
         'success': True, 
         'message': 'Sincronização automática desativada para otimização do sistema.'
     })
-        sincronizar_chamados_automatica()
-        
-        print("✅ [DEBUG] Sincronização executada com sucesso!")
-        return jsonify({
-            'success': True,
-            'message': 'Sincronização executada com sucesso!'
-        })
-    except Exception as e:
-        print(f"❌ [DEBUG] Erro na sincronização: {e}")
-        import traceback
-        traceback.print_exc()
-        return jsonify({
-            'success': False,
-            'error': str(e)
-        }), 500
 
 @app.route('/_endpoints_debug')
 def endpoints_debug():
