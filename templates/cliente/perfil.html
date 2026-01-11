@@ -224,7 +224,7 @@
     <div class="acoes-rapidas">
         <button onclick="LoadingOverlay.show('Testando...', 'O loading está funcionando!'); setTimeout(() => LoadingOverlay.hide(), 3000);" class="btn-secondary" type="button" style="cursor: pointer;">🔄 Testar Loading</button>
         <a href="{{ url_for('dashboard', slug=barbearia.slug if barbearia else 'principal') }}" class="btn-secondary">🏠 Dashboard</a>
-        <a href="{{ url_for('logout', slug=barbearia.slug if barbearia else 'principal') }}" class="btn-primary">🚪 Sair</a>
+        <a href="{{ url_for('logout', slug=barbearia.slug if barbearia else 'principal') }}" class="btn-primary" data-loading="true" data-loading-text="Saindo..." data-loading-subtext="Encerrando sua sessão">🚪 Sair</a>
     </div>
         <!-- bloco de plano duplicado removido (já exibido acima do formulário) -->
 </div>

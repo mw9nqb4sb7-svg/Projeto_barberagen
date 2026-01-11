@@ -119,7 +119,7 @@
             {% if extra_nav_html is defined and extra_nav_html %}
                 {{ extra_nav_html|safe }}
             {% endif %}
-            <a href="{{ url_for('logout', slug=barbearia.slug if barbearia else 'principal') }}" class="btn-primary">🚪 SAIR</a>
+            <a href="{{ url_for('logout', slug=barbearia.slug if barbearia else 'principal') }}" class="btn-primary" data-loading="true" data-loading-text="Saindo..." data-loading-subtext="Encerrando sessão">🚪 SAIR</a>
         </div>
 
         <div id="mobileMenu" role="menu" aria-hidden="true" style="display: none;">
@@ -140,7 +140,7 @@
                 {% if extra_nav_html is defined and extra_nav_html %}
                     {{ extra_nav_html|safe }}
                 {% endif %}
-                <a href="{{ url_for('logout', slug=barbearia.slug if barbearia else 'principal') }}" style="padding: 0.85rem 1rem; background: rgba(255, 59, 48, 0.06); color: #ff3b30; text-decoration: none; border-radius: 8px;">🚪 SAIR</a>
+                <a href="{{ url_for('logout', slug=barbearia.slug if barbearia else 'principal') }}" style="padding: 0.85rem 1rem; background: rgba(255, 59, 48, 0.06); color: #ff3b30; text-decoration: none; border-radius: 8px;" data-loading="true" data-loading-text="Saindo..." data-loading-subtext="Encerrando sessão">🚪 SAIR</a>
             </div>
         </div>
     </div>

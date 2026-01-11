@@ -724,7 +724,7 @@
                     {% endif %}
                 {% endif %}
                 
-                <a href="{{ url_for('logout', slug=barbearia.slug if barbearia else 'principal') }}" class="btn-danger">
+                <a href="{{ url_for('logout', slug=barbearia.slug if barbearia else 'principal') }}" class="btn-danger" data-loading="true" data-loading-text="Saindo..." data-loading-subtext="Encerrando sessão">
                     🚪 SAIR
                 </a>
             </div>

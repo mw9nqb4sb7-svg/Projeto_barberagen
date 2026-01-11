@@ -73,7 +73,7 @@
         
         <div class="sidebar-divider"></div>
         
-        <a href="{{ url_for('logout', slug=barbearia.slug) }}" class="sidebar-item sidebar-logout">
+        <a href="{{ url_for('logout', slug=barbearia.slug) }}" class="sidebar-item sidebar-logout" data-loading="true" data-loading-text="Saindo..." data-loading-subtext="Encerrando sessão">
             <span class="sidebar-icon">🚪</span>
             <span class="sidebar-text">Sair</span>
         </a>
