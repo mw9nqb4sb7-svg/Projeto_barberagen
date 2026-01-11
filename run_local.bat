@@ -33,18 +33,22 @@ if not exist "venv" (
 echo.
 
 echo [3/4] Ativando ambiente virtual e instalando dependências...
-call venv\Scripts\activate.bat
-if %ERRORLEVEL% NEQ 0 (
-    echo ❌ ERRO ao ativar ambiente virtual!
+if exist "venv\Scripts\activate.bat" (
+    call venv\Scripts\activate.bat
+    echo ✅ Ambiente virtual ativado
+) else (
+    echo ❌ ERRO: Ambiente virtual não encontrado!
     pause
     exit /b 1
 )
 
+echo.
 echo Instalando/Atualizando dependências...
-pip install -r requirements.txt
+python -m pip install --upgrade pip
+python -m pip install -r requirements_local.txt
 if %ERRORLEVEL% NEQ 0 (
     echo ⚠️ AVISO: Algumas dependências podem ter falhado
-    echo Continuando mesmo assim...
+    echo Tentando continuar...
 )
 echo ✅ Dependências instaladas
 echo.
@@ -66,6 +70,6 @@ echo 💡 DICA: Mantenha esta janela aberta!
 echo ⏹️  Pressione CTRL+C para parar o servidor
 echo.
 
-py app.py
+python app.py
 
 pause

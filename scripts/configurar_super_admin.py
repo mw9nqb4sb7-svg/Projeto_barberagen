@@ -5,6 +5,7 @@ Senha: 562402
 """
 import sqlite3
 import os
+import uuid as uuid_lib
 from werkzeug.security import generate_password_hash
 import logging, sys
 
@@ -15,8 +16,8 @@ _handler = logging.StreamHandler(sys.stdout)
 _handler.setFormatter(logging.Formatter('%(asctime)s %(levelname)s %(message)s'))
 logger.addHandler(_handler)
 
-# Caminho do banco de dados
-db_path = os.path.join(os.path.dirname(__file__), 'meubanco.db')
+# Caminho do banco de dados (subir um nível da pasta scripts)
+db_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'meubanco.db')
 
 logger.info(f"Conectando ao banco de dados: {db_path}")
 
@@ -57,11 +58,14 @@ try:
         logger.info('Nenhum super admin encontrado no sistema')
         logger.info('Criando novo super admin...')
         
+        # Gerar UUID
+        user_uuid = str(uuid_lib.uuid4())
+        
         # Criar novo super admin
         cursor.execute("""
-            INSERT INTO usuario (nome, email, username, senha, tipo_conta, ativo)
-            VALUES (?, ?, ?, ?, ?, ?)
-        """, ('Super Admin', 'superadmin@sistema.com', username, senha_hash, 'super_admin', 1))
+            INSERT INTO usuario (uuid, nome, email, username, senha, tipo_conta, ativo)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (user_uuid, 'Super Admin', 'superadmin@sistema.com', username, senha_hash, 'super_admin', 1))
         conn.commit()
         
         logger.info('Super Admin criado com sucesso')

@@ -177,3 +177,72 @@ logs/*.log
 
 # Backups locais do banco
 meubanco.backup.*.db
+
+# ===== SEGURANÇA - NÃO COMMITAR ESTES ARQUIVOS =====
+# Banco de dados local (contém dados sensíveis de usuários)
+meubanco.db
+*.db
+*.sqlite
+*.sqlite3
+
+# Variáveis de ambiente e segredos
+.env
+.env.*
+!.env.example
+*.secret
+secrets.txt
+config.secret.py
+
+# Logs (podem conter informações sensíveis)
+logs/
+*.log
+audit_*.jsonl
+
+# Uploads de usuários (podem conter dados pessoais)
+static/uploads/
+static/uploads/**/*
+uploads/
+!static/uploads/.gitkeep
+
+# Ambiente virtual (muito grande e desnecessário)
+venv/
+.venv/
+env/
+ENV/
+
+# Cache Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Certificados e chaves
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+
+# Backups
+*.backup
+*.bak
+backup/
+backups/
+
+# Arquivos temporários
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Arquivos do sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDEs
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+*~
