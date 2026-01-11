@@ -2,37 +2,39 @@
 
 // ========== LOADING OVERLAY ==========
 window.LoadingOverlay = {
-    show: function(text = 'Por favor, aguarde...', subtext = 'Processando sua solicitação') {
-        console.log('LoadingOverlay.show() chamado:', text);
-        const overlay = document.getElementById('loading-overlay');
+    show: function(text, subtext) {
+        text = text || 'Por favor, aguarde...';
+        subtext = subtext || 'Processando sua solicitação';
+        var overlay = document.getElementById('loading-overlay');
         if (overlay) {
-            const textElement = overlay.querySelector('.loading-text');
-            const subtextElement = overlay.querySelector('.loading-subtext');
+            var textElement = overlay.querySelector('.loading-text');
+            var subtextElement = overlay.querySelector('.loading-subtext');
             if (textElement) textElement.textContent = text;
             if (subtextElement) subtextElement.textContent = subtext;
-            overlay.classList.add('active');
-            console.log('Loading overlay ativado!');
-        } else {
-            console.error('Loading overlay não encontrado!');
+            overlay.style.display = 'flex';
         }
     },
     
     hide: function() {
-        console.log('LoadingOverlay.hide() chamado');
-        const overlay = document.getElementById('loading-overlay');
+        var overlay = document.getElementById('loading-overlay');
         if (overlay) {
-            overlay.classList.remove('active');
+            overlay.style.display = 'none';
         }
     }
 };
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('Script carregado - LoadingOverlay disponível:', typeof LoadingOverlay);
-    console.log('Loading overlay element:', document.getElementById('loading-overlay'));
+    
+    // Verificar se LoadingOverlay está disponível
+    if (typeof window.LoadingOverlay === 'undefined') {
+        console.error('LoadingOverlay não está disponível!');
+    } else {
+        console.log('LoadingOverlay carregado com sucesso!');
+    }
     
     // ========== MENU HAMBÚRGUER ==========
-    const navToggle = document.querySelector('.nav-toggle');
-    const navList = document.querySelector('.nav-list');
+    var navToggle = document.querySelector('.nav-toggle');
+    var navList = document.querySelector('.nav-list');
     
     if (navToggle && navList) {
         navToggle.addEventListener('click', function(e) {
@@ -54,74 +56,75 @@ document.addEventListener('DOMContentLoaded', function() {
         });
         
         // Fechar menu ao clicar em um link
-        const navLinks = document.querySelectorAll('.nav-link');
-        navLinks.forEach(link => {
-            link.addEventListener('click', function() {
+        var navLinks = document.querySelectorAll('.nav-link');
+        for (var i = 0; i < navLinks.length; i++) {
+            navLinks[i].addEventListener('click', function() {
                 navToggle.classList.remove('active');
                 navList.classList.remove('active');
                 document.body.style.overflow = '';
             });
-        });
+        }
     }
     
     // ========== CONFIGURAÇÕES GERAIS ==========
     console.log('Sistema de Agendamentos carregado');
     
-    // Funcionalidade para melhorar a experiência do usuário
-    
     // Auto-focus no primeiro campo de formulário
-    const firstInput = document.querySelector('input[type="text"], input[type="email"], input[type="password"], select');
+    var firstInput = document.querySelector('input[type="text"], input[type="email"], input[type="password"], select');
     if (firstInput) {
         firstInput.focus();
     }
     
     // Confirmação antes de deletar
-    const deleteLinks = document.querySelectorAll('a[href*="deletar"]');
-    deleteLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
+    var deleteLinks = document.querySelectorAll('a[href*="deletar"]');
+    for (var i = 0; i < deleteLinks.length; i++) {
+        deleteLinks[i].addEventListener('click', function(e) {
             if (!confirm('Tem certeza que deseja deletar este item?')) {
                 e.preventDefault();
             }
         });
-    });
+    }
     
     // Auto-hide de mensagens flash após 5 segundos
-    const alerts = document.querySelectorAll('.custom-alert');
-    alerts.forEach(alert => {
-        setTimeout(() => {
-            alert.style.opacity = '0';
-            setTimeout(() => {
-                alert.style.display = 'none';
-            }, 300);
-        }, 5000);
-    });
+    var alerts = document.querySelectorAll('.custom-alert');
+    for (var i = 0; i < alerts.length; i++) {
+        (function(alert) {
+            setTimeout(function() {
+                alert.style.opacity = '0';
+                setTimeout(function() {
+                    alert.style.display = 'none';
+                }, 300);
+            }, 5000);
+        })(alerts[i]);
+    }
     
     // ========== AUTO LOADING EM FORMULÁRIOS ==========
     // Adiciona loading automático em formulários com data-loading
-    const loadingForms = document.querySelectorAll('form[data-loading="true"]');
+    var loadingForms = document.querySelectorAll('form[data-loading="true"]');
     console.log('Formulários com data-loading encontrados:', loadingForms.length);
-    loadingForms.forEach(form => {
-        console.log('Registrando loading para formulário:', form);
-        form.addEventListener('submit', function(e) {
-            const text = form.getAttribute('data-loading-text') || 'Processando...';
-            const subtext = form.getAttribute('data-loading-subtext') || 'Por favor, aguarde';
-            console.log('Formulário submetido, ativando loading:', text);
-            LoadingOverlay.show(text, subtext);
+    for (var i = 0; i < loadingForms.length; i++) {
+        loadingForms[i].addEventListener('submit', function(e) {
+            var text = this.getAttribute('data-loading-text') || 'Processando...';
+            var subtext = this.getAttribute('data-loading-subtext') || 'Por favor, aguarde';
+            console.log('Ativando loading para formulário:', text);
+            window.LoadingOverlay.show(text, subtext);
         });
-    });
+    }
     
     // Adiciona loading automático em links com data-loading
-    const loadingLinks = document.querySelectorAll('a[data-loading="true"]');
-    loadingLinks.forEach(link => {
-        link.addEventListener('click', function(e) {
-            const text = link.getAttribute('data-loading-text') || 'Carregando...';
-            const subtext = link.getAttribute('data-loading-subtext') || 'Por favor, aguarde';
-            LoadingOverlay.show(text, subtext);
+    var loadingLinks = document.querySelectorAll('a[data-loading="true"]');
+    console.log('Links com data-loading encontrados:', loadingLinks.length);
+    for (var i = 0; i < loadingLinks.length; i++) {
+        loadingLinks[i].addEventListener('click', function(e) {
+            var text = this.getAttribute('data-loading-text') || 'Carregando...';
+            var subtext = this.getAttribute('data-loading-subtext') || 'Por favor, aguarde';
+            console.log('Ativando loading para link:', text);
+            window.LoadingOverlay.show(text, subtext);
         });
-    });
+    }
     
     // Auto-loading em operações específicas (agendamentos, pagamentos, relatórios)
-    const autoLoadingSelectors = [
+    var autoLoadingSelectors = [
         'form[action*="agendar"]',
         'form[action*="pagamento"]',
         'form[action*="relatorio"]',
@@ -131,49 +134,53 @@ document.addEventListener('DOMContentLoaded', function() {
         'button[data-action="process"]'
     ];
     
-    autoLoadingSelectors.forEach(selector => {
-        document.querySelectorAll(selector).forEach(element => {
-            const eventType = element.tagName === 'FORM' ? 'submit' : 'click';
+    for (var i = 0; i < autoLoadingSelectors.length; i++) {
+        var elements = document.querySelectorAll(autoLoadingSelectors[i]);
+        for (var j = 0; j < elements.length; j++) {
+            var element = elements[j];
+            var eventType = element.tagName === 'FORM' ? 'submit' : 'click';
             element.addEventListener(eventType, function() {
-                LoadingOverlay.show('Processando...', 'Esta operação pode levar alguns segundos');
+                window.LoadingOverlay.show('Processando...', 'Esta operação pode levar alguns segundos');
             });
-        });
-    });
+        }
+    }
     
     // Desativa o loading se houver erros de validação
     window.addEventListener('pageshow', function(event) {
         if (event.persisted) {
-            LoadingOverlay.hide();
+            window.LoadingOverlay.hide();
         }
     });
     
     // Validação básica de formulários
-    const forms = document.querySelectorAll('form');
-    forms.forEach(form => {
-        form.addEventListener('submit', function(e) {
-            const requiredFields = form.querySelectorAll('[required]');
-            let isValid = true;
+    var forms = document.querySelectorAll('form');
+    for (var i = 0; i < forms.length; i++) {
+        forms[i].addEventListener('submit', function(e) {
+            var requiredFields = this.querySelectorAll('[required]');
+            var isValid = true;
             
-            requiredFields.forEach(field => {
+            for (var j = 0; j < requiredFields.length; j++) {
+                var field = requiredFields[j];
                 if (!field.value.trim()) {
                     field.style.borderColor = '#e74c3c';
                     isValid = false;
                 } else {
                     field.style.borderColor = '#bdc3c7';
                 }
-            });
+            }
             
             if (!isValid) {
                 e.preventDefault();
+                window.LoadingOverlay.hide();
                 alert('Por favor, preencha todos os campos obrigatórios.');
             }
         });
-    });
+    }
 });
 
 // Função utilitária para formatar datas
 function formatDate(dateString) {
-    const date = new Date(dateString);
+    var date = new Date(dateString);
     return date.toLocaleDateString('pt-BR');
 }
 

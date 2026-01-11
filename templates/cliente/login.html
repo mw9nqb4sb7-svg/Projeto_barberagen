@@ -305,6 +305,44 @@
             <a href="{{ url_for('barbearia_publica', slug=barbearia.slug) }}">← Voltar para página inicial</a>
         </div>
     </div>
+    
+    <!-- Loading Overlay -->
+    <div id="loading-overlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);backdrop-filter:blur(5px);z-index:99999;justify-content:center;align-items:center;flex-direction:column;">
+        <div style="width:60px;height:60px;border:5px solid rgba(255,255,255,0.3);border-top:5px solid var(--cor-primaria);border-radius:50%;animation:spin 1s linear infinite;"></div>
+        <div class="loading-text" style="color:#fff;font-size:1.2rem;font-weight:700;margin-top:1.5rem;">Por favor, aguarde...</div>
+        <div class="loading-subtext" style="color:rgba(255,255,255,0.8);font-size:0.95rem;margin-top:0.5rem;">Processando sua solicitação</div>
+    </div>
+    <style>
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+    
+    <script>
+    window.LoadingOverlay = {
+        show: function(text, subtext) {
+            var overlay = document.getElementById('loading-overlay');
+            if (overlay) {
+                overlay.querySelector('.loading-text').textContent = text || 'Por favor, aguarde...';
+                overlay.querySelector('.loading-subtext').textContent = subtext || 'Processando';
+                overlay.style.display = 'flex';
+            }
+        },
+        hide: function() {
+            var overlay = document.getElementById('loading-overlay');
+            if (overlay) overlay.style.display = 'none';
+        }
+    };
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        var form = document.querySelector('form[data-loading="true"]');
+        if (form) {
+            form.addEventListener('submit', function() {
+                var text = this.getAttribute('data-loading-text') || 'Processando...';
+                var subtext = this.getAttribute('data-loading-subtext') || 'Aguarde';
+                window.LoadingOverlay.show(text, subtext);
+            });
+        }
+    });
+    </script>
         <!-- Script de integração Firebase removido; formulário usa autenticação no servidor -->
 </body>
 </html>

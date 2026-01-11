@@ -4,8 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>{% block title %}Barbearia Premium{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}?v=4.2">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}?v=4.3">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -26,16 +29,12 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.8);
             backdrop-filter: blur(5px);
             z-index: 99999;
             justify-content: center;
             align-items: center;
             flex-direction: column;
-        }
-        
-        #loading-overlay.active {
-            display: flex;
         }
         
         .loading-spinner {
@@ -67,6 +66,28 @@
             100% { transform: rotate(360deg); }
         }
     </style>
+    <script>
+    // LoadingOverlay - Disponível globalmente
+    window.LoadingOverlay = {
+        show: function(text, subtext) {
+            text = text || 'Por favor, aguarde...';
+            subtext = subtext || 'Processando sua solicitação';
+            var overlay = document.getElementById('loading-overlay');
+            if (overlay) {
+                var textEl = overlay.querySelector('.loading-text');
+                var subtextEl = overlay.querySelector('.loading-subtext');
+                if (textEl) textEl.textContent = text;
+                if (subtextEl) subtextEl.textContent = subtext;
+                overlay.style.display = 'flex';
+            }
+        },
+        hide: function() {
+            var overlay = document.getElementById('loading-overlay');
+            if (overlay) overlay.style.display = 'none';
+        }
+    };
+    console.log('✅ LoadingOverlay definido no HEAD do base.html');
+    </script>
     {% block extra_head %}{% endblock %}
 </head>
 <body{% block body_class %}{% endblock %}>
@@ -94,6 +115,37 @@
         {% block content %}{% endblock %}
     </div>
 
-    <script src="{{ url_for('static', filename='js/script.js') }}?v=2.0"></script>
+    <script>
+    // Ativar loading em links e formulários
+    document.addEventListener('DOMContentLoaded', function() {
+        console.log('✅ DOMContentLoaded disparado');
+        
+        // Links com data-loading
+        var loadingLinks = document.querySelectorAll('a[data-loading="true"]');
+        console.log('📊 Links com data-loading:', loadingLinks.length);
+        for (var i = 0; i < loadingLinks.length; i++) {
+            loadingLinks[i].addEventListener('click', function() {
+                var text = this.getAttribute('data-loading-text') || 'Carregando...';
+                var subtext = this.getAttribute('data-loading-subtext') || 'Aguarde';
+                console.log('🔄 Loading ativado:', text);
+                window.LoadingOverlay.show(text, subtext);
+            });
+        }
+        
+        // Formulários com data-loading
+        var loadingForms = document.querySelectorAll('form[data-loading="true"]');
+        console.log('📊 Formulários com data-loading:', loadingForms.length);
+        for (var i = 0; i < loadingForms.length; i++) {
+            loadingForms[i].addEventListener('submit', function() {
+                var text = this.getAttribute('data-loading-text') || 'Processando...';
+                var subtext = this.getAttribute('data-loading-subtext') || 'Aguarde';
+                console.log('🔄 Loading ativado:', text);
+                window.LoadingOverlay.show(text, subtext);
+            });
+        }
+    });
+    </script>
+    
+    <script src="{{ url_for('static', filename='js/script.js') }}?v=5.0"></script>
 </body>
 </html>

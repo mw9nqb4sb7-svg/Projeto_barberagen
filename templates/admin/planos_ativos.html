@@ -396,7 +396,7 @@
 
     <!-- Formulário rápido para atribuir plano a um cliente -->
     <div class="assign-plan-form" style="margin-bottom: 1.5rem;">
-        <form method="POST" action="{{ url_for('admin_adicionar_assinatura', slug=barbearia.slug) }}" style="display:flex; gap:0.75rem; flex-wrap:wrap; align-items:center;">
+        <form method="POST" action="{{ url_for('admin_adicionar_assinatura', slug=barbearia.slug) }}" style="display:flex; gap:0.75rem; flex-wrap:wrap; align-items:center;" data-loading="true" data-loading-text="Criando assinatura..." data-loading-subtext="Vinculando cliente ao plano">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             <select name="cliente_id" required style="padding:0.75rem 1rem; border-radius:8px; background: rgba(249, 250, 251, 0.8); color: #1f2937; border:1px solid rgba(139, 92, 246,0.12);">
                 <option value="">— Selecionar cliente —</option>
@@ -493,11 +493,11 @@
                     </td>
                     <td>
                         <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
-                            <form method="POST" action="{{ url_for('admin_renovar_assinatura', slug=barbearia.slug, assinatura_uuid=assinatura.uuid) }}" style="display:inline;">
+                            <form method="POST" action="{{ url_for('admin_renovar_assinatura', slug=barbearia.slug, assinatura_uuid=assinatura.uuid) }}" style="display:inline;" data-loading="true" data-loading-text="Renovando assinatura..." data-loading-subtext="Processando renovação">
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                                 <button type="submit" style="background: transparent; border: 1px solid rgba(255,255,255,0.06); color:#4ade80; padding:0.5rem 0.75rem; border-radius:8px; font-weight:700; cursor:pointer;" onclick="return confirm('Renovar assinatura? Isso resetará os cortes restantes para o valor do plano.')">🔄 Renovar</button>
                             </form>
-                            <form method="POST" action="{{ url_for('admin_cancelar_assinatura', slug=barbearia.slug, assinatura_uuid=assinatura.uuid) }}" style="display:inline;">
+                            <form method="POST" action="{{ url_for('admin_cancelar_assinatura', slug=barbearia.slug, assinatura_uuid=assinatura.uuid) }}" style="display:inline;" data-loading="true" data-loading-text="Cancelando assinatura..." data-loading-subtext="Processando cancelamento">
                                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                                 <button type="submit" style="background: transparent; border: 1px solid rgba(255,255,255,0.06); color:#ff6b6b; padding:0.5rem 0.75rem; border-radius:8px; font-weight:700; cursor:pointer;" onclick="return confirm('Tem certeza que deseja cancelar a assinatura deste cliente?')">❌ Cancelar</button>
                             </form>

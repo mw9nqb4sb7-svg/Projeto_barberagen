@@ -235,7 +235,7 @@
                 {% endif %}
             {% endwith %}
 
-            <form method="POST">
+            <form method="POST" data-loading="true" data-loading-text="Enviando mensagem..." data-loading-subtext="Criando chamado de suporte">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
                 <div class="form-row">
                     <div class="form-group">

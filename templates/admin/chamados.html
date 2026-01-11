@@ -744,9 +744,8 @@
             const originalText = syncText.textContent;
             
             try {
-                // Mostrar loading
-                syncIcon.textContent = '⏳';
-                syncText.textContent = 'Sincronizando...';
+                // Mostrar loading overlay global
+                window.LoadingOverlay.show('Sincronizando chamados...', 'Buscando atualizações do servidor');
                 
                 // Obter CSRF token
                 const csrfToken = document.querySelector('meta[name="csrf-token"]')?.content;
@@ -770,6 +769,7 @@
                         location.reload();
                     }, 1000);
                 } else {
+                    window.LoadingOverlay.hide();
                     syncIcon.textContent = '❌';
                     syncText.textContent = 'Erro na sincronização';
                     

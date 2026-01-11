@@ -386,7 +386,7 @@
             {% endif %}
         </div>
 
-        <form method="POST" action="{{ url_for('cancelar_assinatura', slug=barbearia.slug, assinatura_uuid=assinatura_ativa.uuid) }}" style="margin-top: 2rem;" onsubmit="return confirm('Tem certeza que deseja cancelar sua assinatura?')">
+        <form method="POST" action="{{ url_for('cancelar_assinatura', slug=barbearia.slug, assinatura_uuid=assinatura_ativa.uuid) }}" style="margin-top: 2rem;" onsubmit="return confirm('Tem certeza que deseja cancelar sua assinatura?')" data-loading="true" data-loading-text="Cancelando assinatura..." data-loading-subtext="Processando cancelamento">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             <button type="submit" class="btn btn-danger">
                 ❌ Cancelar assinatura

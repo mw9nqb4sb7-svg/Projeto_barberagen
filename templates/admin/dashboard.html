@@ -1927,6 +1927,8 @@ async function cancelarAgendamento(reservaId, clienteNome) {
         return;
     }
     
+    window.LoadingOverlay.show('Cancelando agendamento...', 'Processando cancelamento');
+    
     try {
         const response = await fetch(`{{ url_for('admin_cancelar_agendamento', slug=barbearia.slug, reserva_uuid='PLACEHOLDER') }}`.replace('PLACEHOLDER', reservaId), {
             method: 'POST',
@@ -1943,10 +1945,13 @@ async function cancelarAgendamento(reservaId, clienteNome) {
             // Recarregar agendamentos imediatamente
             carregarAgendamentosHoje();
             carregarTodosAgendamentos();
+            window.LoadingOverlay.hide();
         } else {
+            window.LoadingOverlay.hide();
             addNotification(`❌ ${data.message}`, 'error');
         }
     } catch (error) {
+        window.LoadingOverlay.hide();
         console.error('Erro ao cancelar:', error);
         addNotification('❌ Erro ao cancelar agendamento', 'error');
     }
@@ -1957,6 +1962,8 @@ async function concluirAtendimentoDashboard(reservaId, clienteNome) {
     if (!confirm(`Confirmar conclusão do atendimento de ${clienteNome}?`)) {
         return;
     }
+    
+    window.LoadingOverlay.show('Concluindo atendimento...', 'Finalizando serviço');
     
     try {
         const response = await fetch(`{{ url_for('admin_concluir_atendimento', slug=barbearia.slug, reserva_uuid='PLACEHOLDER') }}`.replace('PLACEHOLDER', reservaId), {
@@ -1974,10 +1981,13 @@ async function concluirAtendimentoDashboard(reservaId, clienteNome) {
             // Recarregar agendamentos imediatamente
             carregarAgendamentosHoje();
             carregarTodosAgendamentos();
+            window.LoadingOverlay.hide();
         } else {
+            window.LoadingOverlay.hide();
             addNotification(`❌ ${data.message}`, 'error');
         }
     } catch (error) {
+        window.LoadingOverlay.hide();
         console.error('Erro ao concluir atendimento:', error);
         addNotification('❌ Erro ao concluir atendimento', 'error');
     }
@@ -2056,6 +2066,42 @@ document.addEventListener('DOMContentLoaded', function() {
             item.classList.add('active');
         }
     });
+});
+</script>
+
+<!-- Loading Overlay -->
+<div id="loading-overlay" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.85);backdrop-filter:blur(5px);z-index:99999;justify-content:center;align-items:center;flex-direction:column;">
+    <div style="width:60px;height:60px;border:5px solid rgba(255,255,255,0.3);border-top:5px solid #4a9eff;border-radius:50%;animation:spin 1s linear infinite;"></div>
+    <div class="loading-text" style="color:#fff;font-size:1.2rem;font-weight:700;margin-top:1.5rem;font-family:Plus Jakarta Sans,sans-serif;">Por favor, aguarde...</div>
+    <div class="loading-subtext" style="color:rgba(255,255,255,0.8);font-size:0.95rem;margin-top:0.5rem;font-family:Plus Jakarta Sans,sans-serif;">Processando sua solicitação</div>
+</div>
+<style>
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+</style>
+<script>
+window.LoadingOverlay = {
+    show: function(text, subtext) {
+        var overlay = document.getElementById('loading-overlay');
+        if (overlay) {
+            overlay.querySelector('.loading-text').textContent = text || 'Por favor, aguarde...';
+            overlay.querySelector('.loading-subtext').textContent = subtext || 'Processando';
+            overlay.style.display = 'flex';
+        }
+    },
+    hide: function() {
+        var overlay = document.getElementById('loading-overlay');
+        if (overlay) overlay.style.display = 'none';
+    }
+};
+document.addEventListener('DOMContentLoaded', function() {
+    var loadingLinks = document.querySelectorAll('a[data-loading="true"]');
+    for (var i = 0; i < loadingLinks.length; i++) {
+        loadingLinks[i].addEventListener('click', function() {
+            var text = this.getAttribute('data-loading-text') || 'Carregando...';
+            var subtext = this.getAttribute('data-loading-subtext') || 'Aguarde';
+            window.LoadingOverlay.show(text, subtext);
+        });
+    }
 });
 </script>
 
