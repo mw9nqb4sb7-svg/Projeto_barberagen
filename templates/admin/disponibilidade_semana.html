@@ -115,7 +115,7 @@
         </div>
         
         <div class="card-form">
-        <form method="POST">
+        <form method="POST" data-loading="true" data-loading-text="Salvando disponibilidade..." data-loading-subtext="Configurando horários da semana">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             {% for dia_codigo, dia_nome in dias_opcoes %}
                 {% set dia_config = config.get(dia_codigo, {'ativo': False, 'horarios': []}) %}

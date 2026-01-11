@@ -97,7 +97,13 @@
     .perfil-info .nome { font-size: 1.25rem; font-weight: 700; color: var(--cor-primaria); }
     .perfil-info .email, .perfil-info .telefone, .perfil-info .data { font-size: 1.05rem; color: #6b7280; }
     .card-form label { font-weight: 700; color: var(--cor-primaria); }
-    .card-form input {
+    
+    /* Forçar fundo branco nos inputs - sobrescrever CSS global */
+    .card-form input,
+    .card-form input[type="text"],
+    .card-form input[type="email"],
+    .card-form input[type="tel"],
+    .card-form input[type="password"] {
         width: 100%;
         padding: 1rem;
         border-radius: 8px;
@@ -108,7 +114,11 @@
         font-size: 1.08rem;
         transition: all 0.2s;
     }
-    .card-form input:focus { outline: 2px solid var(--cor-primaria); border-color: var(--cor-secundaria); background: #ffffff !important; }
+    .card-form input:focus { 
+        outline: 2px solid var(--cor-primaria); 
+        border-color: var(--cor-secundaria); 
+        background: #ffffff !important; 
+    }
     .card-form button { margin-top: 1.2rem; font-size: 1.08rem; }
     .acoes-rapidas {
         display: flex; gap: 1.2rem; justify-content: center; margin-bottom: 2.5rem; flex-wrap: wrap;

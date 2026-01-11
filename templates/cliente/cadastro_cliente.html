@@ -272,7 +272,7 @@
             {% endwith %}
             
             <!-- Formulário de Cadastro -->
-            <form method="POST">
+            <form method="POST" data-loading="true" data-loading-text="Criando sua conta..." data-loading-subtext="Cadastrando e enviando confirmação">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <div class="form-group">
                     <label for="nome" class="form-label">👤 Nome completo</label>
