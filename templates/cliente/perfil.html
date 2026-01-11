@@ -103,12 +103,12 @@
         border-radius: 8px;
         border: 2px solid #e5e7eb;
         margin-top: 0.5rem;
-        background: #ffffff;
-        color: #1f2937;
+        background: #ffffff !important;
+        color: #1f2937 !important;
         font-size: 1.08rem;
         transition: all 0.2s;
     }
-    .card-form input:focus { outline: 2px solid var(--cor-primaria); border-color: var(--cor-secundaria); }
+    .card-form input:focus { outline: 2px solid var(--cor-primaria); border-color: var(--cor-secundaria); background: #ffffff !important; }
     .card-form button { margin-top: 1.2rem; font-size: 1.08rem; }
     .acoes-rapidas {
         display: flex; gap: 1.2rem; justify-content: center; margin-bottom: 2.5rem; flex-wrap: wrap;
@@ -212,6 +212,7 @@
     </div>
     <!-- Ações rápidas -->
     <div class="acoes-rapidas">
+        <button onclick="LoadingOverlay.show('Testando...', 'O loading está funcionando!'); setTimeout(() => LoadingOverlay.hide(), 3000);" class="btn-secondary" type="button" style="cursor: pointer;">🔄 Testar Loading</button>
         <a href="{{ url_for('dashboard', slug=barbearia.slug if barbearia else 'principal') }}" class="btn-secondary">🏠 Dashboard</a>
         <a href="{{ url_for('logout', slug=barbearia.slug if barbearia else 'principal') }}" class="btn-primary">🚪 Sair</a>
     </div>

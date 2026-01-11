@@ -3,6 +3,7 @@
 // ========== LOADING OVERLAY ==========
 window.LoadingOverlay = {
     show: function(text = 'Por favor, aguarde...', subtext = 'Processando sua solicitação') {
+        console.log('LoadingOverlay.show() chamado:', text);
         const overlay = document.getElementById('loading-overlay');
         if (overlay) {
             const textElement = overlay.querySelector('.loading-text');
@@ -10,10 +11,14 @@ window.LoadingOverlay = {
             if (textElement) textElement.textContent = text;
             if (subtextElement) subtextElement.textContent = subtext;
             overlay.classList.add('active');
+            console.log('Loading overlay ativado!');
+        } else {
+            console.error('Loading overlay não encontrado!');
         }
     },
     
     hide: function() {
+        console.log('LoadingOverlay.hide() chamado');
         const overlay = document.getElementById('loading-overlay');
         if (overlay) {
             overlay.classList.remove('active');
@@ -22,6 +27,9 @@ window.LoadingOverlay = {
 };
 
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('Script carregado - LoadingOverlay disponível:', typeof LoadingOverlay);
+    console.log('Loading overlay element:', document.getElementById('loading-overlay'));
+    
     // ========== MENU HAMBÚRGUER ==========
     const navToggle = document.querySelector('.nav-toggle');
     const navList = document.querySelector('.nav-list');
@@ -91,10 +99,13 @@ document.addEventListener('DOMContentLoaded', function() {
     // ========== AUTO LOADING EM FORMULÁRIOS ==========
     // Adiciona loading automático em formulários com data-loading
     const loadingForms = document.querySelectorAll('form[data-loading="true"]');
+    console.log('Formulários com data-loading encontrados:', loadingForms.length);
     loadingForms.forEach(form => {
+        console.log('Registrando loading para formulário:', form);
         form.addEventListener('submit', function(e) {
             const text = form.getAttribute('data-loading-text') || 'Processando...';
             const subtext = form.getAttribute('data-loading-subtext') || 'Por favor, aguarde';
+            console.log('Formulário submetido, ativando loading:', text);
             LoadingOverlay.show(text, subtext);
         });
     });
