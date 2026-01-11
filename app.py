@@ -2849,6 +2849,9 @@ def perfil():
     # Buscar assinatura ativa do usuário (se houver)
     assinatura_ativa = AssinaturaPlano.query.filter_by(cliente_id=usuario.id, status='ativa').join(PlanoMensal).first()
 
+    # Passar data_criacao como data_cadastro para compatibilidade com o template
+    usuario.data_cadastro = usuario.data_criacao
+
     try:
         return render_template('cliente/perfil.html', usuario=usuario, barbearia=barbearia, assinatura_ativa=assinatura_ativa)
     except Exception:

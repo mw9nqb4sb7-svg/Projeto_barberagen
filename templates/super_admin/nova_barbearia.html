@@ -27,7 +27,7 @@
 
     <!-- Formulário -->
     <div class="form-container">
-        <form method="POST" enctype="multipart/form-data" class="barbearia-form">
+        <form method="POST" enctype="multipart/form-data" class="barbearia-form" data-loading="true" data-loading-text="Criando barbearia..." data-loading-subtext="Configurando sistema e salvando dados">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             <div class="form-grid">
                 <!-- Logo -->

@@ -11,7 +11,7 @@
             <p style="color: #6b7280; font-size: 0.95rem; line-height: 1.5;">Crie uma senha forte para garantir a segurança da sua conta.</p>
         </div>
 
-        <form method="POST">
+        <form method="POST" data-loading="true" data-loading-text="Redefinindo senha..." data-loading-subtext="Atualizando credenciais">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             
             <div style="margin-bottom: 1.25rem;">

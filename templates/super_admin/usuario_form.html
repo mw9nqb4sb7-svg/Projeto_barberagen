@@ -27,7 +27,7 @@
 
     <!-- Formulário -->
     <div class="form-container">
-        <form method="POST" class="usuario-form">
+        <form method="POST" class="usuario-form" data-loading="true" data-loading-text="Salvando usuário..." data-loading-subtext="Processando permissões e dados">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             <div class="form-grid">
                 <!-- Nome -->

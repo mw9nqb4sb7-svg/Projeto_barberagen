@@ -285,7 +285,7 @@
     <div style="max-width: 1400px; margin: 0 auto; margin-bottom: 3rem;">
         <div class="card-form">
             <h2>➕ Cadastrar Novo Cliente</h2>
-            <form method="POST">
+            <form method="POST" data-loading="true" data-loading-text="Cadastrando cliente..." data-loading-subtext="Processando informações">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem;">
                     <div class="form-group">
@@ -354,7 +354,7 @@
     <div id="modalEdicao" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 2000; align-items: center; justify-content: center; backdrop-filter: blur(5px);">
         <div class="card-form" style="width: 90%; max-width: 500px; border: 2px solid var(--cor-primaria);">
             <h2 style="margin-bottom: 1.5rem;">Editar Cliente</h2>
-            <form id="formEdicao" method="POST">
+            <form id="formEdicao" method="POST" data-loading="true" data-loading-text="Atualizando cliente..." data-loading-subtext="Salvando alterações">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                 <div class="form-group">
                     <label for="edit_nome">Nome Completo</label>

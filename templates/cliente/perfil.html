@@ -60,13 +60,14 @@
         font-weight: 800;
         letter-spacing: -0.5px;
         line-height: 1.1;
-        margin-bottom: 1.5rem;
-        background: linear-gradient(135deg, #fff 0%, var(--cor-primaria) 100%);
+        margin-bottom: 1rem;
+        background: linear-gradient(135deg, var(--cor-primaria) 0%, var(--cor-secundaria) 100%);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
         background-clip: text;
         text-align: center;
-        margin-top: 18px; /* rely on navbar script to add proper top gap */
+        margin-top: 0.5rem;
+        padding-top: 0.5rem;
     }
     .perfil-card {
         background: rgba(249, 250, 251,0.5);
@@ -100,12 +101,12 @@
         width: 100%;
         padding: 1rem;
         border-radius: 8px;
-        border: 1px solid var(--cor-primaria);
+        border: 2px solid #e5e7eb;
         margin-top: 0.5rem;
-        background: #f3f4f6;
+        background: #ffffff;
         color: #1f2937;
         font-size: 1.08rem;
-        transition: border 0.2s;
+        transition: all 0.2s;
     }
     .card-form input:focus { outline: 2px solid var(--cor-primaria); border-color: var(--cor-secundaria); }
     .card-form button { margin-top: 1.2rem; font-size: 1.08rem; }
@@ -132,7 +133,7 @@
             padding: 0.4rem 0.7rem !important;
             font-size: 0.92rem !important;
         }
-        .perfil-hero-title { font-size: 1.1rem; margin-top: 48px; }
+        .perfil-hero-title { font-size: 1.5rem; margin-top: 0.5rem; padding-top: 0.5rem; }
         .perfil-card { padding: 0.5rem; }
         .perfil-avatar { width: 48px; height: 48px; font-size: 1.1rem; }
         .acoes-rapidas { gap: 0.3rem; }
@@ -180,11 +181,11 @@
         </div>
         {% endif %}
 
-        <div style="text-align:center; color:#cfcfcf; margin-bottom:0.6rem; font-size:0.95rem;">
+        <div style="text-align:center; color:#6b7280; margin-bottom:0.6rem; font-size:0.95rem;">
             Deseja alterar seus dados? Faça as alterações abaixo e clique em <strong>Salvar Alterações</strong>.
         </div>
 
-        <form method="POST" action="{{ url_for('perfil') }}" class="card-form">
+        <form method="POST" action="{{ url_for('perfil') }}" class="card-form" data-loading="true" data-loading-text="Salvando alterações..." data-loading-subtext="Atualizando seu perfil">
             {% if csrf_token %}
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             {% endif %}

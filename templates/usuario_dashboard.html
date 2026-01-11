@@ -855,7 +855,7 @@
                                     </span>
                                     
                                     {% if user_type == 'cliente' and reserva.status == 'agendada' %}
-                                    <form method="POST" action="{{ url_for('cancelar_reserva', reserva_uuid=reserva.uuid) }}" style="display: inline;">
+                                    <form method="POST" action="{{ url_for('cancelar_reserva', reserva_uuid=reserva.uuid) }}" style="display: inline;" data-loading="true" data-loading-text="Cancelando..." data-loading-subtext="Processando cancelamento">
                                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                                         <button type="submit" class="btn-cancel"
                                                 onclick="return confirm('Tem certeza que deseja cancelar esta reserva?')">

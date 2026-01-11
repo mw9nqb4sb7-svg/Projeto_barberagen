@@ -268,7 +268,7 @@
             {% endwith %}
             
             <!-- Formulário de Login -->
-            <form method="POST">
+            <form method="POST" data-loading="true" data-loading-text="Autenticando..." data-loading-subtext="Verificando suas credenciais">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 <div class="form-group">
                     <label for="email" class="form-label">📧 Email ou usuário</label>

@@ -241,7 +241,7 @@
         <div> 
             <h2>➕ Adicionar Novo Serviço</h2>
             <div class="card-form">
-                <form method="POST">
+                <form method="POST" data-loading="true" data-loading-text="Cadastrando serviço..." data-loading-subtext="Adicionando ao sistema">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     <div class="form-group">
                         <label for="nome">Nome do Serviço</label>

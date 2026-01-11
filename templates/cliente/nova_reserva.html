@@ -29,7 +29,10 @@
 
 <!-- Main Content -->
 <div style="max-width: 900px; margin: 3rem auto; padding: 0 2rem; width: 100%; box-sizing: border-box;">
-    <form method="POST" id="reservaForm">
+    <form method="POST" id="reservaForm" 
+          data-loading="true"
+          data-loading-text="Confirmando seu agendamento..."
+          data-loading-subtext="Verificando disponibilidade e processando sua reserva">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         
         <!-- Step 1: Profissional (simulado como serviço por enquanto) -->

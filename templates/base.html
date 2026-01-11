@@ -17,10 +17,66 @@
                 display: none !important;
             }
         }
+        
+        /* Loading Overlay */
+        #loading-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 99999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+        
+        #loading-overlay.active {
+            display: flex;
+        }
+        
+        .loading-spinner {
+            width: 60px;
+            height: 60px;
+            border: 5px solid rgba(255, 255, 255, 0.3);
+            border-top: 5px solid #8B5CF6;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        .loading-text {
+            color: #ffffff;
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-top: 1.5rem;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        
+        .loading-subtext {
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 0.95rem;
+            margin-top: 0.5rem;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
     {% block extra_head %}{% endblock %}
 </head>
 <body{% block body_class %}{% endblock %}>
+    <!-- Loading Overlay -->
+    <div id="loading-overlay">
+        <div class="loading-spinner"></div>
+        <div class="loading-text">Por favor, aguarde...</div>
+        <div class="loading-subtext">Processando sua solicitação</div>
+    </div>
+
     <!-- Mensagens Flash -->
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}

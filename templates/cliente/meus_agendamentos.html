@@ -117,7 +117,7 @@
 
                 <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(139, 92, 246, 0.2);">
                     {% if reserva.status != 'concluida' %}
-                    <form method="POST" action="{{ url_for('cancelar_reserva', reserva_uuid=reserva.uuid) }}" style="display: inline;">
+                    <form method="POST" action="{{ url_for('cancelar_reserva', reserva_uuid=reserva.uuid) }}" style="display: inline;" data-loading="true" data-loading-text="Cancelando agendamento..." data-loading-subtext="Atualizando disponibilidade">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                         <button type="submit" class="btn btn-danger btn-small"
                                 onclick="return confirm('⚠️ Tem certeza que deseja cancelar este agendamento?')">

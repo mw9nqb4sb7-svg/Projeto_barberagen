@@ -148,7 +148,7 @@
                 {% endif %}
             {% endwith %}
             
-            <form method="POST">
+            <form method="POST" data-loading="true" data-loading-text="Autenticando Super Admin..." data-loading-subtext="Verificando permissões de acesso">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                 
                 <div class="form-group">

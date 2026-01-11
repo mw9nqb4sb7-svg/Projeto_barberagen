@@ -11,7 +11,7 @@
             <p style="color: #6b7280; font-size: 0.95rem; line-height: 1.5;">Digite seu e-mail abaixo e enviaremos as instruções para definir uma nova senha.</p>
         </div>
 
-        <form method="POST">
+        <form method="POST" data-loading="true" data-loading-text="Enviando e-mail de recuperação..." data-loading-subtext="Isso pode levar alguns segundos">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
             
             <div style="margin-bottom: 1.5rem;">

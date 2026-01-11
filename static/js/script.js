@@ -1,5 +1,26 @@
 // script.js - Funcionalidades JavaScript para o Sistema de Agendamentos
 
+// ========== LOADING OVERLAY ==========
+window.LoadingOverlay = {
+    show: function(text = 'Por favor, aguarde...', subtext = 'Processando sua solicitação') {
+        const overlay = document.getElementById('loading-overlay');
+        if (overlay) {
+            const textElement = overlay.querySelector('.loading-text');
+            const subtextElement = overlay.querySelector('.loading-subtext');
+            if (textElement) textElement.textContent = text;
+            if (subtextElement) subtextElement.textContent = subtext;
+            overlay.classList.add('active');
+        }
+    },
+    
+    hide: function() {
+        const overlay = document.getElementById('loading-overlay');
+        if (overlay) {
+            overlay.classList.remove('active');
+        }
+    }
+};
+
 document.addEventListener('DOMContentLoaded', function() {
     // ========== MENU HAMBÚRGUER ==========
     const navToggle = document.querySelector('.nav-toggle');
@@ -65,6 +86,54 @@ document.addEventListener('DOMContentLoaded', function() {
                 alert.style.display = 'none';
             }, 300);
         }, 5000);
+    });
+    
+    // ========== AUTO LOADING EM FORMULÁRIOS ==========
+    // Adiciona loading automático em formulários com data-loading
+    const loadingForms = document.querySelectorAll('form[data-loading="true"]');
+    loadingForms.forEach(form => {
+        form.addEventListener('submit', function(e) {
+            const text = form.getAttribute('data-loading-text') || 'Processando...';
+            const subtext = form.getAttribute('data-loading-subtext') || 'Por favor, aguarde';
+            LoadingOverlay.show(text, subtext);
+        });
+    });
+    
+    // Adiciona loading automático em links com data-loading
+    const loadingLinks = document.querySelectorAll('a[data-loading="true"]');
+    loadingLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            const text = link.getAttribute('data-loading-text') || 'Carregando...';
+            const subtext = link.getAttribute('data-loading-subtext') || 'Por favor, aguarde';
+            LoadingOverlay.show(text, subtext);
+        });
+    });
+    
+    // Auto-loading em operações específicas (agendamentos, pagamentos, relatórios)
+    const autoLoadingSelectors = [
+        'form[action*="agendar"]',
+        'form[action*="pagamento"]',
+        'form[action*="relatorio"]',
+        'form[action*="processar"]',
+        'a[href*="exportar"]',
+        'a[href*="gerar_relatorio"]',
+        'button[data-action="process"]'
+    ];
+    
+    autoLoadingSelectors.forEach(selector => {
+        document.querySelectorAll(selector).forEach(element => {
+            const eventType = element.tagName === 'FORM' ? 'submit' : 'click';
+            element.addEventListener(eventType, function() {
+                LoadingOverlay.show('Processando...', 'Esta operação pode levar alguns segundos');
+            });
+        });
+    });
+    
+    // Desativa o loading se houver erros de validação
+    window.addEventListener('pageshow', function(event) {
+        if (event.persisted) {
+            LoadingOverlay.hide();
+        }
     });
     
     // Validação básica de formulários

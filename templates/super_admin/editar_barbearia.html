@@ -27,7 +27,7 @@
 
     <!-- Formulário -->
     <div class="form-container">
-        <form method="POST" enctype="multipart/form-data" class="barbearia-form">
+        <form method="POST" enctype="multipart/form-data" class="barbearia-form" data-loading="true" data-loading-text="Salvando alterações..." data-loading-subtext="Atualizando configurações da barbearia">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
             <div class="form-grid">
                 <!-- Logo Atual -->
@@ -495,7 +495,7 @@
         </form>
 
         <!-- Formulário oculto para deletar -->
-        <form id="deleteForm" method="POST" action="{{ url_for('super_admin_deletar_barbearia', barbearia_uuid=barbearia.uuid) }}" style="display: none;">
+        <form id="deleteForm" method="POST" action="{{ url_for('super_admin_deletar_barbearia', barbearia_uuid=barbearia.uuid) }}" style="display: none;" data-loading="true" data-loading-text="Excluindo barbearia..." data-loading-subtext="Removendo todos os dados associados">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         </form>
     </div>
