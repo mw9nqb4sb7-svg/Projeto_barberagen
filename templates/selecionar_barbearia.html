@@ -4,16 +4,280 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Selecionar Barbearia - Super Admin</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}?v=4.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}?v=4.3">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: linear-gradient(135deg, #0f0f0f 0%, #1a1a2e 100%);
+            min-height: 100vh;
+            color: #fff;
+            padding-bottom: 4rem;
+        }
+
+        /* Navbar Moderna */
+        .custom-nav {
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(139, 92, 246, 0.3);
+            padding: 1.2rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .nav-brand {
+            font-size: 1.4rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #8B5CF6, #EC4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 1px;
+        }
+
+        .nav-list {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+            transition: all 0.3s ease;
+            padding: 0.6rem 1.2rem;
+            border-radius: 8px;
+        }
+
+        .nav-link:hover {
+            color: #8B5CF6;
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        /* Container Principal */
+        .custom-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        /* Header Elegante */
+        .barbearias-header {
+            text-align: center;
+            margin-bottom: 4rem;
+            position: relative;
+        }
+
+        .barbearias-header::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, rgba(139, 92, 246, 0.15), transparent);
+            filter: blur(60px);
+            z-index: -1;
+        }
+
+        .barbearias-header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #fff, #8B5CF6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+        }
+
+        .barbearias-header p {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 500;
+        }
+
+        /* Grid de Barbearias */
+        .barbearias-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        /* Cards Modernos */
+        .barbearia-card-modern {
+            background: linear-gradient(135deg, rgba(26, 26, 46, 0.8), rgba(15, 15, 15, 0.9));
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            border-radius: 20px;
+            padding: 2.5rem;
+            text-decoration: none;
+            color: #fff;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .barbearia-card-modern::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(236, 72, 153, 0.1));
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .barbearia-card-modern:hover {
+            transform: translateY(-8px);
+            border-color: rgba(139, 92, 246, 0.6);
+            box-shadow: 0 20px 60px rgba(139, 92, 246, 0.3);
+        }
+
+        .barbearia-card-modern:hover::before {
+            opacity: 1;
+        }
+
+        .barbearia-card-icon {
+            font-size: 4rem;
+            margin-bottom: 1.5rem;
+            filter: drop-shadow(0 4px 12px rgba(139, 92, 246, 0.4));
+            position: relative;
+            z-index: 1;
+        }
+
+        .barbearia-card-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .barbearia-card-slug {
+            font-size: 1rem;
+            color: rgba(139, 92, 246, 0.9);
+            font-weight: 600;
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .barbearia-card-status {
+            display: inline-block;
+            padding: 0.5rem 1.2rem;
+            background: rgba(34, 197, 94, 0.15);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #22C55E;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* Estado vazio */
+        .no-barbearias {
+            text-align: center;
+            padding: 4rem 2rem;
+            background: rgba(26, 26, 46, 0.5);
+            border: 2px dashed rgba(139, 92, 246, 0.3);
+            border-radius: 20px;
+            margin-top: 2rem;
+        }
+
+        .no-barbearias h2 {
+            font-size: 1.8rem;
+            margin-bottom: 2rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .btn-primary {
+            display: inline-block;
+            padding: 1rem 2.5rem;
+            background: linear-gradient(135deg, #8B5CF6, #EC4899);
+            color: #fff;
+            text-decoration: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);
+        }
+
+        /* Responsivo */
+        @media (max-width: 768px) {
+            .barbearias-header h1 {
+                font-size: 2rem;
+            }
+
+            .barbearias-header p {
+                font-size: 1rem;
+            }
+
+            .barbearias-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .nav-brand {
+                font-size: 1.2rem;
+            }
+
+            .nav-list {
+                gap: 1rem;
+            }
+
+            .nav-link {
+                font-size: 0.85rem;
+                padding: 0.5rem 1rem;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Navegação Fixa -->
     <nav class="custom-nav">
         <div class="nav-content">
-            <div class="nav-brand">SUPER ADMIN</div>
+            <div class="nav-brand">✨ SUPER ADMIN</div>
             <ul class="nav-list">
-                <li><a href="/super_admin/dashboard" class="nav-link">DASHBOARD</a></li>
-                <li><a href="/super_admin/logout" class="nav-link" data-loading="true" data-loading-text="Saindo..." data-loading-subtext="Encerrando sessão">SAIR</a></li>
+                <li><a href="/super_admin/dashboard" class="nav-link">📊 DASHBOARD</a></li>
+                <li><a href="/super_admin/logout" class="nav-link" data-loading="true" data-loading-text="Saindo..." data-loading-subtext="Encerrando sessão">🚪 SAIR</a></li>
             </ul>
         </div>
     </nav>
@@ -21,20 +285,22 @@
     <div class="custom-container">
         <!-- Hero Section Elegante -->
         <div class="barbearias-header">
-            <h1>🔧 SELECIONE A BARBEARIA PARA GERENCIAR</h1>
-            <p>Como Super Admin, você pode acessar qualquer barbearia</p>
+            <h1>✂️ SELECIONE A BARBEARIA</h1>
+            <p>Gerencie qualquer estabelecimento com acesso total</p>
         </div>
 
         <!-- Grid de Barbearias -->
         {% if barbearias %}
         <div class="barbearias-grid">
             {% for barbearia in barbearias %}
-            <a href="/super_admin/login_as/{{ barbearia.slug }}" class="barbearia-card-modern">
+            <a href="/super_admin/login_as/{{ barbearia.slug }}" class="barbearia-card-modern" data-loading="true" data-loading-text="Acessando..." data-loading-subtext="Carregando {{ barbearia.nome }}">
                 <div class="barbearia-card-icon">
-                    {% if barbearia.slug == 'principal' %}🏛
+                    {% if barbearia.slug == 'principal' %}🏛️
                     {% elif barbearia.slug == 'elite' %}👑
                     {% elif barbearia.slug == 'man' %}🎩
-                    {% else %}✂{% endif %}
+                    {% elif barbearia.slug == 'premium' %}💎
+                    {% elif barbearia.slug == 'classic' %}🎭
+                    {% else %}✂️{% endif %}
                 </div>
                 <div class="barbearia-card-name">{{ barbearia.nome }}</div>
                 <div class="barbearia-card-slug">@{{ barbearia.slug }}</div>
@@ -44,8 +310,8 @@
         </div>
         {% else %}
         <div class="no-barbearias">
-            <h2>Nenhuma barbearia ativa encontrada.</h2>
-            <a href="/super_admin/nova_barbearia" class="btn-primary">Criar Nova Barbearia</a>
+            <h2>📭 Nenhuma barbearia ativa encontrada</h2>
+            <a href="/super_admin/nova_barbearia" class="btn-primary">+ Criar Nova Barbearia</a>
         </div>
         {% endif %}
     </div>
