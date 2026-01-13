@@ -742,19 +742,21 @@
                     <span class="card-badge">{{ total_reservas }}</span>
                 </div>
                 
-                <!-- Botões de Filtro (apenas para clientes) -->
+                <!-- Filtro de Reservas (apenas para clientes) -->
                 {% if user_type == 'cliente' %}
-                <div style="padding: 0 1.5rem 1.5rem; display: flex; gap: 0.5rem; justify-content: flex-start;">
-                    <button id="btn-pendentes" type="button" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.8rem 1.2rem; text-align: center; background: linear-gradient(135deg, var(--cor-primaria) 0%, var(--cor-secundaria) 100%); color: #ffffff; text-decoration: none; font-weight: 700; font-size: 0.85rem; border-radius: 12px; transition: all 0.3s ease; border: 2px solid transparent; box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3); cursor:pointer;" >📋 A ATENDER</button>
-                    <button id="btn-atendidos" type="button" style="flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.8rem 1.2rem; text-align: center; background: rgba(16, 185, 129, 0.1); color: rgba(16, 185, 129, 0.8); text-decoration: none; font-weight: 700; font-size: 0.85rem; border-radius: 12px; transition: all 0.3s ease; border: 2px solid rgba(16, 185, 129, 0.2); box-shadow: none; cursor:pointer;" >✅ ATENDIDOS</button>
+                <div style="padding: 0 1.5rem 1.5rem;">
+                    <select id="filtro-reservas" style="width: 100%; padding: 0.8rem 1.2rem; font-size: 0.9rem; font-weight: 600; border: 2px solid rgba(139, 92, 246, 0.3); border-radius: 12px; background: white; color: var(--cor-texto); cursor: pointer; transition: all 0.3s ease;">
+                        <option value="pendentes">📋 A Atender</option>
+                        <option value="atendidos">✅ Atendidos</option>
+                    </select>
                 </div>
                 <script>
                 document.addEventListener('DOMContentLoaded', function() {
                     const slug = '{{ barbearia.slug }}';
                     const reservasList = document.querySelector('.reservas-list');
                     const badge = document.querySelector('.card-badge');
-                    const btnPendentes = document.getElementById('btn-pendentes');
-                    const btnAtendidos = document.getElementById('btn-atendidos');
+                    const filtroSelect = document.getElementById('filtro-reservas');
+                    
                     function renderReservas(reservas) {
                         let html = '';
                         reservas.slice(0,5).forEach(function(r) {
@@ -780,33 +782,18 @@
                         reservasList.innerHTML = html;
                         badge.textContent = reservas.length;
                     }
-                    function setActive(filtro) {
-                        if (filtro === 'atendidos') {
-                            btnAtendidos.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
-                            btnAtendidos.style.color = '#fff';
-                            btnAtendidos.style.border = '2px solid transparent';
-                            btnPendentes.style.background = 'rgba(139, 92, 246, 0.1)';
-                            btnPendentes.style.color = 'rgba(139, 92, 246, 0.8)';
-                            btnPendentes.style.border = '2px solid rgba(139, 92, 246, 0.2)';
-                        } else {
-                            btnPendentes.style.background = 'linear-gradient(135deg, var(--cor-primaria) 0%, var(--cor-secundaria) 100%)';
-                            btnPendentes.style.color = '#fff';
-                            btnPendentes.style.border = '2px solid transparent';
-                            btnAtendidos.style.background = 'rgba(16, 185, 129, 0.1)';
-                            btnAtendidos.style.color = 'rgba(16, 185, 129, 0.8)';
-                            btnAtendidos.style.border = '2px solid rgba(16, 185, 129, 0.2)';
-                        }
-                    }
+                    
                     function fetchReservas(filtro) {
-                        setActive(filtro);
                         fetch(`/${slug}/api/reservas_cliente?filtro=${filtro}`)
                             .then(r => r.json())
                             .then(data => {
                                 renderReservas(data.reservas);
                             });
                     }
-                    btnPendentes.addEventListener('click', function() { fetchReservas('pendentes'); });
-                    btnAtendidos.addEventListener('click', function() { fetchReservas('atendidos'); });
+                    
+                    filtroSelect.addEventListener('change', function() {
+                        fetchReservas(this.value);
+                    });
                 });
                 </script>
                 {% endif %}
