@@ -206,21 +206,7 @@
             z-index: 1;
         }
 
-        /* Estado vazio */
-        .no-barbearias {
-            text-align: center;
-            padding: 4rem 2rem;
-            background: rgba(26, 26, 46, 0.5);
-            border: 2px dashed rgba(139, 92, 246, 0.3);
-            border-radius: 20px;
-            margin-top: 2rem;
-        }
 
-        .no-barbearias h2 {
-            font-size: 1.8rem;
-            margin-bottom: 2rem;
-            color: rgba(255, 255, 255, 0.8);
-        }
 
         .btn-primary {
             display: inline-block;
@@ -307,11 +293,6 @@
                 <div class="barbearia-card-status">● ATIVA</div>
             </a>
             {% endfor %}
-        </div>
-        {% else %}
-        <div class="no-barbearias">
-            <h2>📭 Nenhuma barbearia ativa encontrada</h2>
-            <a href="/super_admin/nova_barbearia" class="btn-primary">+ Criar Nova Barbearia</a>
         </div>
         {% endif %}
     </div>

@@ -713,14 +713,6 @@
                     </div>
                 </div>
                 {% endfor %}
-            {% else %}
-                <div class="empty-state">
-                    <h3>📭 Nenhum chamado encontrado</h3>
-                    <p>Você ainda não enviou nenhum chamado de suporte.</p>
-                    <a href="{{ url_for('admin_suporte', slug=barbearia.slug) }}" class="btn btn-primary">
-                        📤 Enviar Primeiro Chamado
-                    </a>
-                </div>
             {% endif %}
         </div>
     </div>
