@@ -15,11 +15,30 @@ def init_database():
     """Inicializa o banco de dados e cria tabelas se necessário"""
     try:
         from app import db, app
+        from sqlalchemy import text, inspect
 
         with app.app_context():
             # Criar todas as tabelas
             db.create_all()
             print("✅ Tabelas criadas/verficadas com sucesso")
+
+            # Verificar e adicionar colunas de redes sociais se necessário
+            inspector = inspect(db.engine)
+            if inspector.has_table('barbearia'):
+                columns = [col['name'] for col in inspector.get_columns('barbearia')]
+                
+                with db.engine.connect() as conn:
+                    if 'instagram' not in columns:
+                        print("⚠️ Adicionando coluna 'instagram'...")
+                        conn.execute(text("ALTER TABLE barbearia ADD COLUMN instagram VARCHAR(200)"))
+                        conn.commit()
+                        print("✅ Coluna 'instagram' adicionada!")
+                    
+                    if 'whatsapp' not in columns:
+                        print("⚠️ Adicionando coluna 'whatsapp'...")
+                        conn.execute(text("ALTER TABLE barbearia ADD COLUMN whatsapp VARCHAR(20)"))
+                        conn.commit()
+                        print("✅ Coluna 'whatsapp' adicionada!")
 
             # Verificar se já existe super admin
             from app import Usuario
@@ -42,6 +61,8 @@ def init_database():
 
     except Exception as e:
         print(f"❌ Erro ao inicializar banco de dados: {e}")
+        import traceback
+        traceback.print_exc()
         return False
 
     return True
