@@ -29,12 +29,17 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.85);
             backdrop-filter: blur(5px);
-            z-index: 99999;
+            -webkit-backdrop-filter: blur(5px);
+            z-index: 999999;
             justify-content: center;
             align-items: center;
             flex-direction: column;
+            -webkit-transform: translateZ(0);
+            transform: translateZ(0);
         }
         
         .loading-spinner {
@@ -120,28 +125,44 @@
     document.addEventListener('DOMContentLoaded', function() {
         console.log('✅ DOMContentLoaded disparado');
         
+        // Detectar dispositivo móvel
+        var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        console.log('📱 Dispositivo móvel:', isMobile);
+        
         // Links com data-loading
         var loadingLinks = document.querySelectorAll('a[data-loading="true"]');
         console.log('📊 Links com data-loading:', loadingLinks.length);
         for (var i = 0; i < loadingLinks.length; i++) {
-            loadingLinks[i].addEventListener('click', function() {
-                var text = this.getAttribute('data-loading-text') || 'Carregando...';
-                var subtext = this.getAttribute('data-loading-subtext') || 'Aguarde';
-                console.log('🔄 Loading ativado:', text);
-                window.LoadingOverlay.show(text, subtext);
-            });
+            (function(link) {
+                var handler = function(e) {
+                    var text = link.getAttribute('data-loading-text') || 'Carregando...';
+                    var subtext = link.getAttribute('data-loading-subtext') || 'Aguarde';
+                    console.log('🔄 Loading ativado (link):', text);
+                    window.LoadingOverlay.show(text, subtext);
+                };
+                
+                // Adicionar ambos eventos para garantir
+                link.addEventListener('click', handler, false);
+                if (isMobile) {
+                    link.addEventListener('touchstart', handler, false);
+                }
+            })(loadingLinks[i]);
         }
         
         // Formulários com data-loading
         var loadingForms = document.querySelectorAll('form[data-loading="true"]');
         console.log('📊 Formulários com data-loading:', loadingForms.length);
         for (var i = 0; i < loadingForms.length; i++) {
-            loadingForms[i].addEventListener('submit', function() {
-                var text = this.getAttribute('data-loading-text') || 'Processando...';
-                var subtext = this.getAttribute('data-loading-subtext') || 'Aguarde';
-                console.log('🔄 Loading ativado:', text);
-                window.LoadingOverlay.show(text, subtext);
-            });
+            (function(form) {
+                var handler = function(e) {
+                    var text = form.getAttribute('data-loading-text') || 'Processando...';
+                    var subtext = form.getAttribute('data-loading-subtext') || 'Aguarde';
+                    console.log('🔄 Loading ativado (form):', text);
+                    window.LoadingOverlay.show(text, subtext);
+                };
+                
+                form.addEventListener('submit', handler, false);
+            })(loadingForms[i]);
         }
     });
     </script>
