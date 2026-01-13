@@ -2095,7 +2095,6 @@ window.LoadingOverlay = {
     }
 };
 document.addEventListener('DOMContentLoaded', function() {
-    var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     var loadingLinks = document.querySelectorAll('a[data-loading="true"]');
     for (var i = 0; i < loadingLinks.length; i++) {
         (function(link) {
@@ -2105,9 +2104,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 window.LoadingOverlay.show(text, subtext);
             };
             link.addEventListener('click', handler, false);
-            if (isMobile) {
-                link.addEventListener('touchstart', handler, false);
-            }
         })(loadingLinks[i]);
     }
 });

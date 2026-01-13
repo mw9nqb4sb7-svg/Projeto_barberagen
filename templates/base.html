@@ -141,11 +141,8 @@
                     window.LoadingOverlay.show(text, subtext);
                 };
                 
-                // Adicionar ambos eventos para garantir
+                // Usar apenas click que funciona em mobile e desktop
                 link.addEventListener('click', handler, false);
-                if (isMobile) {
-                    link.addEventListener('touchstart', handler, false);
-                }
             })(loadingLinks[i]);
         }
         

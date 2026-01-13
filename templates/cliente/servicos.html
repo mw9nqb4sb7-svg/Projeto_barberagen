@@ -303,7 +303,7 @@
     <style>@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}@-webkit-keyframes spin{0%{-webkit-transform:rotate(0deg)}100%{-webkit-transform:rotate(360deg)}}</style>
     <script>
     window.LoadingOverlay={show:function(t,s){var o=document.getElementById('loading-overlay');if(o){o.querySelector('.loading-text').textContent=t||'Aguarde...';o.querySelector('.loading-subtext').textContent=s||'Processando';o.style.display='flex'}},hide:function(){var o=document.getElementById('loading-overlay');if(o)o.style.display='none'}};
-    document.addEventListener('DOMContentLoaded',function(){var m=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);var l=document.querySelectorAll('a[data-loading="true"]');for(var i=0;i<l.length;i++){(function(e){var h=function(){window.LoadingOverlay.show(e.getAttribute('data-loading-text')||'Carregando...',e.getAttribute('data-loading-subtext')||'Aguarde')};e.addEventListener('click',h,false);if(m)e.addEventListener('touchstart',h,false)})(l[i])}});
+    document.addEventListener('DOMContentLoaded',function(){var l=document.querySelectorAll('a[data-loading="true"]');for(var i=0;i<l.length;i++){(function(e){var h=function(){window.LoadingOverlay.show(e.getAttribute('data-loading-text')||'Carregando...',e.getAttribute('data-loading-subtext')||'Aguarde')};e.addEventListener('click',h,false)})(l[i])}});
     </script>
 
     <footer style="background: #000; border-top: 1px solid rgba(139, 92, 246, 0.2); padding: 2rem; text-align: center; margin-top: 4rem; border-radius: 16px;">
