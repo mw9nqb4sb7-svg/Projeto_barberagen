@@ -125,6 +125,39 @@
                     <small class="form-help">Endereço completo da barbearia</small>
                 </div>
 
+                <!-- SEÇÃO REDES SOCIAIS -->
+                <div class="form-section full-width">
+                    <h3 style="color: #ec4899; font-size: 1.3rem; margin: 2rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid #ec4899;">
+                        📱 Redes Sociais
+                    </h3>
+                </div>
+
+                <!-- Instagram -->
+                <div class="form-group">
+                    <label for="instagram" class="form-label">
+                        <span class="label-icon">📷</span>
+                        Instagram
+                    </label>
+                    <input type="url" id="instagram" name="instagram" 
+                           value="{{ barbearia.instagram or '' }}" 
+                           class="form-input" 
+                           placeholder="https://instagram.com/suabarbearia">
+                    <small class="form-help">URL completa do perfil do Instagram</small>
+                </div>
+
+                <!-- WhatsApp -->
+                <div class="form-group">
+                    <label for="whatsapp" class="form-label">
+                        <span class="label-icon">💬</span>
+                        WhatsApp
+                    </label>
+                    <input type="tel" id="whatsapp" name="whatsapp" 
+                           value="{{ barbearia.whatsapp or '' }}" 
+                           class="form-input" 
+                           placeholder="(11) 99999-9999">
+                    <small class="form-help">Número para contato via WhatsApp</small>
+                </div>
+
                 <!-- CONFIGURAÇÕES DE FUNCIONAMENTO -->
                 <div class="form-section full-width">
                     <h3 style="color: #4a9eff; font-size: 1.3rem; margin: 2rem 0 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid #4a9eff;">
@@ -577,6 +610,21 @@ document.getElementById('cnpj').addEventListener('input', function() {
 
 // Máscara para telefone
 document.getElementById('telefone').addEventListener('input', function() {
+    let value = this.value.replace(/\D/g, '');
+    if (value.length <= 11) {
+        if (value.length <= 10) {
+            value = value.replace(/^(\d{2})(\d)/, '($1) $2');
+            value = value.replace(/(\d{4})(\d)/, '$1-$2');
+        } else {
+            value = value.replace(/^(\d{2})(\d)/, '($1) $2');
+            value = value.replace(/(\d{5})(\d)/, '$1-$2');
+        }
+    }
+    this.value = value;
+});
+
+// Máscara para WhatsApp (igual ao telefone)
+document.getElementById('whatsapp').addEventListener('input', function() {
     let value = this.value.replace(/\D/g, '');
     if (value.length <= 11) {
         if (value.length <= 10) {

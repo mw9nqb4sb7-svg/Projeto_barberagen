@@ -121,29 +121,18 @@
 {% endblock %}
 
 {% block content %}
-<!-- Header -->
-<div style="background: linear-gradient(135deg, rgba(139, 92, 246, 0.3) 0%, rgba(16, 185, 129, 0.3) 100%); padding: 4rem 2rem; margin-bottom: 3rem; border: 3px solid #8b5cf6; border-radius: 20px; box-shadow: 0 20px 60px rgba(139, 92, 246, 0.3), inset 0 0 100px rgba(139, 92, 246, 0.1); position: relative; overflow: hidden;">
-    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: repeating-linear-gradient(45deg, transparent, transparent 30px, rgba(139, 92, 246, 0.05) 30px, rgba(139, 92, 246, 0.05) 60px);"></div>
-    <div style="max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem; position: relative; z-index: 1;">
-        <div>
-            <div style="display: inline-flex; align-items: center; gap: 0.75rem; background: linear-gradient(135deg, #8b5cf6, #6366f1); padding: 0.75rem 2rem; border-radius: 50px; margin-bottom: 1.5rem; box-shadow: 0 10px 30px rgba(139, 92, 246, 0.4);">
-                <span style="font-size: 1.5rem;">⚡</span>
-                <span style="color: white; font-weight: 800; font-size: 1rem; letter-spacing: 2px;">SUPER ADMIN</span>
-            </div>
-            <h1 style="font-size: 3rem; font-weight: 900; color: #ffffff; margin-bottom: 0.75rem; text-transform: uppercase; letter-spacing: 3px;">🏪 BARBEARIAS</h1>
-            <p style="color: rgba(167, 139, 250, 0.9); font-size: 1.2rem; font-weight: 600;">Gerencie todas as barbearias do sistema</p>
-        </div>
-        
-        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
-            <a href="{{ url_for('super_admin_nova_barbearia') }}" class="btn-action" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(5, 150, 105, 0.3)); border-color: #10b981; color: #6ee7b7;">
-                <span style="font-size: 1.3rem;">➕</span>
-                <span>Nova Barbearia</span>
-            </a>
-            <a href="{{ url_for('super_admin_dashboard') }}" class="btn-action">
-                <span style="font-size: 1.3rem;">🏠</span>
-                <span>Dashboard</span>
-            </a>
-        </div>
+<!-- Barra de Ações -->
+<div style="max-width: 1200px; margin: 0 auto; padding: 2rem 2rem 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+    <h1 style="font-size: 2rem; font-weight: 800; color: #a78bfa; margin: 0;">🏪 Barbearias</h1>
+    <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+        <a href="{{ url_for('super_admin_nova_barbearia') }}" class="btn-action" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(5, 150, 105, 0.3)); border-color: #10b981; color: #6ee7b7;">
+            <span style="font-size: 1.3rem;">➕</span>
+            <span>Nova Barbearia</span>
+        </a>
+        <a href="{{ url_for('super_admin_dashboard') }}" class="btn-action">
+            <span style="font-size: 1.3rem;">🏠</span>
+            <span>Dashboard</span>
+        </a>
     </div>
 </div>
 

@@ -998,12 +998,22 @@
             <div>
                 <h4 class="footer-heading">Redes Sociais</h4>
                 <div class="social-icons">
-                    <a href="#" class="social-icon">📱</a>
-                    <a href="#" class="social-icon">💬</a>
-                    <a href="#" class="social-icon">📸</a>
+                    {% if barbearia.instagram %}
+                    <a href="{{ barbearia.instagram }}" target="_blank" rel="noopener" class="social-icon" title="Instagram">📷</a>
+                    {% endif %}
+                    {% if barbearia.whatsapp %}
+                    <a href="https://wa.me/{{ barbearia.whatsapp.replace('(', '').replace(')', '').replace(' ', '').replace('-', '') }}?text=Olá,+Gostaria+de+agendar+um+horário!" target="_blank" rel="noopener" class="social-icon" title="WhatsApp">💬</a>
+                    {% endif %}
+                    {% if barbearia.telefone %}
+                    <a href="tel:{{ barbearia.telefone }}" class="social-icon" title="Telefone">📞</a>
+                    {% endif %}
                 </div>
                 <p style="color: rgba(31, 41, 55, 0.6); margin-top: 1.5rem; font-size: 0.9rem;">
+                    {% if barbearia.instagram or barbearia.whatsapp %}
                     Siga-nos nas redes sociais!
+                    {% else %}
+                    Entre em contato conosco
+                    {% endif %}
                 </p>
             </div>
         </div>

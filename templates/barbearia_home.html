@@ -662,8 +662,12 @@
                 <div>
                     <h4 style="color: var(--cor-primaria); font-size: 1rem; font-weight: 700; margin-bottom: 1rem; text-transform: uppercase; letter-spacing: 0.5px;">Social</h4>
                     <div style="display: flex; gap: 1rem;">
-                        <a href="https://www.instagram.com/leocortss._?igsh=MTh2eHE2ZjkzOWh0YQ==" style="width: 40px; height: 40px; background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.2rem;">📷</a>
-                        <a href="https://wa.me/11950819752?text=Ola,+Gostaria de agendar um horário!" style="width: 40px; height: 40px; background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.2rem;">💬</a>
+                        {% if barbearia.instagram %}
+                        <a href="{{ barbearia.instagram }}" target="_blank" rel="noopener" style="width: 40px; height: 40px; background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.2rem;">📷</a>
+                        {% endif %}
+                        {% if barbearia.whatsapp %}
+                        <a href="https://wa.me/{{ barbearia.whatsapp.replace('(', '').replace(')', '').replace(' ', '').replace('-', '') }}?text=Olá,+Gostaria+de+agendar+um+horário!" target="_blank" rel="noopener" style="width: 40px; height: 40px; background: rgba(139, 92, 246, 0.1); border: 1px solid rgba(139, 92, 246, 0.3); border-radius: 50%; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 1.2rem;">💬</a>
+                        {% endif %}
                     </div>
                 </div>
             </div>

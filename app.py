@@ -246,6 +246,10 @@ class Barbearia(db.Model):
     stat4_valor = db.Column(db.String(20), nullable=True)
     stat4_label = db.Column(db.String(100), nullable=True)
     
+    # Redes sociais
+    instagram = db.Column(db.String(200), nullable=True)  # URL do Instagram
+    whatsapp = db.Column(db.String(20), nullable=True)  # Número do WhatsApp
+    
     # Relacionamentos
     usuarios = db.relationship('UsuarioBarbearia', back_populates='barbearia', cascade="all, delete-orphan")
     servicos = db.relationship('Servico', backref='barbearia', lazy=True, cascade="all, delete-orphan")
@@ -3416,6 +3420,12 @@ def super_admin_editar_barbearia(barbearia_uuid):
         
         barbearia.stat4_valor = stat4_valor if stat4_valor else None
         barbearia.stat4_label = stat4_label if stat4_label else None
+        
+        # Atualizar redes sociais
+        instagram = request.form.get('instagram', '').strip()
+        whatsapp = request.form.get('whatsapp', '').strip()
+        barbearia.instagram = instagram if instagram else None
+        barbearia.whatsapp = whatsapp if whatsapp else None
         
         try:
             db.session.commit()
