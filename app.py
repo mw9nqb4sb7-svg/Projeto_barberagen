@@ -166,32 +166,22 @@ def require_super_admin(f):
     from functools import wraps
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        # Debug
-        print(f"[DEBUG] require_super_admin: Verificando acesso...")
-        print(f"[DEBUG] Session: {dict(session)}")
-        
         # Verificar se está logado
         if 'usuario_id' not in session:
-            print(f"[DEBUG] Usuário não logado - redirecionando para login")
             flash('Você precisa fazer login como Super Admin.', 'error')
             return redirect(url_for('super_admin_login'))
         
         # Buscar usuário e verificar tipo
         usuario = Usuario.query.get(session['usuario_id'])
         if not usuario:
-            print(f"[DEBUG] Usuário não encontrado no banco - ID: {session.get('usuario_id')}")
             session.clear()
             flash('Sessão inválida. Faça login novamente.', 'error')
             return redirect(url_for('super_admin_login'))
         
-        print(f"[DEBUG] Usuário encontrado: {usuario.nome} - Tipo: {usuario.tipo_conta}")
-        
         if usuario.tipo_conta != 'super_admin':
-            print(f"[DEBUG] Acesso negado - tipo de conta: {usuario.tipo_conta}")
             flash('Acesso negado - apenas super administradores.', 'error')
             return redirect(url_for('admin_index'))
         
-        print(f"[DEBUG] Acesso autorizado para super admin: {usuario.nome}")
         return f(*args, **kwargs)
     return decorated_function
     return decorated_function
@@ -931,8 +921,6 @@ def login(slug):
     if request.method == 'POST':
         # Rate limiting por IP
         client_ip = get_client_ip()
-        print(f"[LOGIN DEBUG] IP do cliente: {client_ip}")
-        print(f"[LOGIN DEBUG] Headers: {dict(request.headers)}")
         
         allowed, remaining, lockout_seconds = check_rate_limit(client_ip)
         
@@ -945,9 +933,6 @@ def login(slug):
         login_input = sanitize_input(request.form.get('email', '').strip())
         senha = request.form.get('senha', '')
         
-        print(f"[LOGIN DEBUG] Login input: {login_input}")
-        print(f"[LOGIN DEBUG] Senha fornecida: {'***' if senha else 'VAZIA'}")
-        
         if not login_input or not senha:
             flash('Email/usuário e senha são obrigatórios!', 'error')
             return render_template('cliente/login.html', barbearia=barbearia)
@@ -959,11 +944,7 @@ def login(slug):
             Usuario.ativo == True
         ).first()
         
-        print(f"[LOGIN DEBUG] Usuário encontrado: {usuario.nome if usuario else 'NÃO ENCONTRADO'}")
-        
         if usuario and check_password_hash(usuario.senha, senha):
-            print(f"[LOGIN DEBUG] Senha correta! Tipo de conta: {usuario.tipo_conta}")
-            
             # Super admin tem acesso a qualquer barbearia
             if usuario.tipo_conta == 'super_admin':
                 session.clear()  # Limpar sessão anterior
@@ -974,16 +955,12 @@ def login(slug):
                 session['tipo_conta'] = 'super_admin'
                 session.permanent = True  # Usar PERMANENT_SESSION_LIFETIME
                 
-                print(f"[LOGIN DEBUG] Sessão criada: {dict(session)}")
-                
                 # Registrar sucesso
                 record_login_attempt(client_ip, success=True)
-                audit_log('login_success', user_id=usuario.id, details={'slug': slug, 'tipo': 'super_admin'})
+                audit_log('login_success', user_id=usuario.id, details={'slug': slug, 'role': 'super_admin'})
                 
                 flash('Login realizado com sucesso!', 'success')
-                redirect_url = url_for('dashboard', slug=slug)
-                print(f"[LOGIN DEBUG] Redirecionando para: {redirect_url}")
-                return redirect(redirect_url)
+                return redirect(url_for('dashboard', slug=slug))
             
             # Para outros tipos de usuário, verificar vínculo com a barbearia
             usuario_barbearia = UsuarioBarbearia.query.filter_by(
@@ -3975,7 +3952,8 @@ if __name__ == '__main__':
     # Configuração para Railway
     port = int(os.environ.get('PORT', 5000))
     host = os.environ.get('HOST', '0.0.0.0')
-    debug = True  # Modo debug ativado
+    # Debug apenas em ambiente local (não em produção)
+    debug = os.environ.get('FLASK_ENV') == 'development' or os.environ.get('DEBUG', '').lower() == 'true'
 
     try:
         app.run(host=host, port=port, debug=debug, use_reloader=False)
