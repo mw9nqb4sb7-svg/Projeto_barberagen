@@ -790,24 +790,37 @@ def cadastro_redirect():
 @app.route('/<slug>')
 def barbearia_publica(slug):
     """Página pública de uma barbearia específica"""
-    barbearia = Barbearia.query.filter_by(slug=slug, ativa=True).first()
-    if not barbearia:
+    try:
+        barbearia = Barbearia.query.filter_by(slug=slug, ativa=True).first()
+        if not barbearia:
+            return f"""
+            <html>
+            <head><title>Barbearia não encontrada</title></head>
+            <body style="font-family: Arial; text-align: center; padding: 50px;">
+                <h1>❌ Barbearia não encontrada</h1>
+                <p>A barbearia "<strong>{slug}</strong>" não foi encontrada ou está inativa.</p>
+            </body>
+            </html>
+            """
+        
+        # Define contexto da barbearia
+        session['barbearia_id'] = barbearia.id
+        
+        # Mostra página da barbearia com serviços e planos ativos
+        servicos = Servico.query.filter_by(barbearia_id=barbearia.id, ativo=True).all()
+        planos = PlanoMensal.query.filter_by(barbearia_id=barbearia.id, ativo=True).all()
+    except Exception as e:
+        db.session.rollback()
+        app.logger.error(f"Erro ao carregar barbearia {slug}: {str(e)}")
         return f"""
         <html>
-        <head><title>Barbearia não encontrada</title></head>
+        <head><title>Erro</title></head>
         <body style="font-family: Arial; text-align: center; padding: 50px;">
-            <h1>❌ Barbearia não encontrada</h1>
-            <p>A barbearia "<strong>{slug}</strong>" não foi encontrada ou está inativa.</p>
+            <h1>⚠️ Erro ao carregar página</h1>
+            <p>Ocorreu um erro temporário. Tente novamente em alguns instantes.</p>
         </body>
         </html>
-        """
-    
-    # Define contexto da barbearia
-    session['barbearia_id'] = barbearia.id
-    
-    # Mostra página da barbearia com serviços e planos ativos
-    servicos = Servico.query.filter_by(barbearia_id=barbearia.id, ativo=True).all()
-    planos = PlanoMensal.query.filter_by(barbearia_id=barbearia.id, ativo=True).all()
+        """, 500
     
     return render_template('barbearia_home.html', 
                          barbearia=barbearia, 
@@ -1096,16 +1109,21 @@ def cadastro(slug):
 @app.route('/dashboard', defaults={'slug': 'principal'})
 @app.route('/<slug>/dashboard')
 def dashboard(slug):
-    barbearia = Barbearia.query.filter_by(slug=slug, ativa=True).first()
-    if not barbearia:
-        return redirect('/')
-    # garantir contexto
-    session['barbearia_id'] = barbearia.id
+    try:
+        barbearia = Barbearia.query.filter_by(slug=slug, ativa=True).first()
+        if not barbearia:
+            return redirect('/')
+        # garantir contexto
+        session['barbearia_id'] = barbearia.id
 
-    # se usuário logado e for admin da barbearia ou barbeiro, mostrar dashboard admin
-    usuario = None
-    if 'usuario_id' in session:
-        usuario = Usuario.query.get(session['usuario_id'])
+        # se usuário logado e for admin da barbearia ou barbeiro, mostrar dashboard admin
+        usuario = None
+        if 'usuario_id' in session:
+            usuario = Usuario.query.get(session['usuario_id'])
+    except Exception as e:
+        db.session.rollback()
+        app.logger.error(f"Erro no dashboard {slug}: {str(e)}")
+        return "Erro ao carregar dashboard. Tente novamente.", 500
     # Considerar super_admin também como administrador para fins de visualização
     try:
         from flask import g
